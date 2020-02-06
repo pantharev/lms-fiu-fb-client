@@ -1,0 +1,15 @@
+<h2>Dashboard</h2>
+<div class="row">
+<ng-container *ngFor="let course of courses; let i = index">
+    <div class="col-sm-2">
+        <div class="card" style="max-width: 18rem;">
+            <!--<img class="card-img-top" src="..." alt="Card image cap">-->
+            <div class="card-body">
+                <h5 class="card-title">{{course.name}}</h5>
+                <p class="card-text">{{course.description}}</p>
+                <a [routerLink]="[course.course_id, 'modules']" class="btn btn-primary">Go to Course</a>
+            </div>
+        </div>
+    </div>
+</ng-container>
+</div>

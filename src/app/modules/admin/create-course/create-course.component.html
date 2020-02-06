@@ -1,0 +1,45 @@
+<div class="center-form">
+<h2>Create New Course</h2>
+<form [formGroup]="courseForm" class="col-sm-4">
+
+    <div class="form-group">
+        <label>Name</label>
+        <input type="text" class="form-control"  formControlName="name" #name>
+    </div>
+
+    <div class="form-group">
+        <label>Description</label>
+        <textarea class="form-control"  formControlName="description" #description></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Seats</label>
+        <input type="text" class="form-control"  formControlName="seats" #seats>
+    </div>
+
+    <div class="form-group">
+        <label>Start Date</label>
+        <div class="input-group">
+            <input class="form-control" placeholder="yyyy-mm-dd"
+                   name="dp" ngbDatepicker #d="ngbDatepicker" formControlName="start_date" #start_date>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary far fa-calendar-alt" (click)="d.toggle()" type="button"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group" data-provide="datepicker">
+        <label>End Date</label>
+        <div class="input-group">
+            <input class="form-control" placeholder="yyyy-mm-dd"
+                   name="dp" ngbDatepicker #d2="ngbDatepicker" formControlName="end_date" #end_date>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary far fa-calendar-alt" (click)="d2.toggle()" type="button"></button>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" (click)="addCourse(name.value, description.value, seats.value, start_date.value, end_date.value)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Create Course</button>
+    <a routerLink="/admin" class="btn btn-warning"><i class="fas fa-arrow-circle-left"></i> Go Back</a>
+</form>
+</div>

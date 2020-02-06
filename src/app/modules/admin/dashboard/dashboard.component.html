@@ -1,0 +1,54 @@
+<h2>Admin Dashboard</h2>
+
+<nav class="nav flex-column col-sm-1">
+    <a routerLink="/admin/create-course" routerLinkActive="active" class="nav-link btn btn-primary"><i class="fas fa-plus-circle"></i> Create New Course</a>
+</nav>
+
+<h2>Courses</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th *ngFor="let colName of displayedColumns" scope="col">{{ colName }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let course of courses.res">
+            <th scope="row">{{ course.id }}</th>
+            <td>{{ course.name }}</td>
+            <td>{{ course.description }}</td>
+            <td>{{ course.seats }}</td>
+            <td>{{ course.start_date }}</td>
+            <td>{{ course.end_date }}</td>
+            <td>
+                <button type="button" (click)="editCourse(course.id)" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</button>
+                <button type="button" (click)="deleteCourse(course.id)" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Delete</button>
+                <button type="button" (click)="pendingEnrollment(course.id)" class="btn btn-warning" style="margin-left: 20px">Pending Enrollments</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<nav aria-label="Page navigation course-library">
+    <ul class="pagination">
+
+        <ng-container *ngIf="page == 0; else elseBlock">
+            <li class="page-item disabled"><button class="page-link" (click)="fetchPageCourses(page-1)">Previous</button></li>
+        </ng-container>
+        <ng-template #elseBlock>
+            <li class="page-item"><button class="page-link" (click)="fetchPageCourses(page-1)">Previous</button></li>
+        </ng-template>
+
+        <ng-container *ngFor="let maxPages of maxPagesArray; let i = index">
+        <li class="page-item"><button class="page-link" (click)="fetchPageCourses(i)">{{i}}</button></li>
+        </ng-container>
+
+        <ng-container *ngIf="page == maxPages - 1; else elseBlock2">
+            <li class="page-item disabled"><button class="page-link" (click)="fetchPageCourses(page+1)">Next</button></li>
+        </ng-container>
+        <ng-template #elseBlock2>
+            <li class="page-item"><button class="page-link" (click)="fetchPageCourses(page+1)">Next</button></li>
+        </ng-template>
+        
+    </ul>
+  </nav>

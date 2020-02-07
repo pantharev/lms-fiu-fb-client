@@ -25,4 +25,8 @@ export class AuthService {
     let headers = new HttpHeaders().set('Content-Type', 'application/json');
     return this.http.get(`${environment.apiURL}/profile`, {headers: headers});
   }
+
+  getTest() {
+    return this.http.get(`${environment.apiURL}/test`);
+  }
 }

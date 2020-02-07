@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiURL: 'https://lms-fiu.herokuapp.com/'
+  apiURL: 'https://lms-fiu.herokuapp.com'
 };

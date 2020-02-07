@@ -19,6 +19,7 @@ export class ProfileComponent implements OnInit {
 
     this.authService.getTest().subscribe((data) => {
       this.testData = data;
+      console.log(JSON.stringify(this.testData));
     })
   }
 

@@ -13,9 +13,9 @@ export class ProfileComponent implements OnInit {
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
-    this.authService.getProfile().subscribe((data) => {
+    /*this.authService.getProfile().subscribe((data) => {
       console.log("The profile data is: " + JSON.stringify(data));
-    })
+    })*/
 
     this.authService.getTest().subscribe((data) => {
       this.testData = data;

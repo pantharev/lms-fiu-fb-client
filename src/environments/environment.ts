@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiURL: 'https://lms-fiu.herokuapp.com'
+  apiURL: 'http://localhost:3000'
 };
 
 /*

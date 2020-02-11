@@ -29,4 +29,8 @@ export class AuthService {
   getTest() {
     return this.http.get(`${environment.apiURL}/test`);
   }
+
+  localLogin() {
+    
+  }
 }

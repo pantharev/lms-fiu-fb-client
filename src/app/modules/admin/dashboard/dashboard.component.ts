@@ -4,6 +4,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Course } from '../../../core/models/course.model';
 import { CourseService } from '../../../core/services/course.service';
 import { HttpParams } from '@angular/common/http';
+import { AuthenticationService } from '@app/core/services/authentication.service';
+import { User } from '@app/core/models/user';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,7 +13,7 @@ import { HttpParams } from '@angular/common/http';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-
+  currentUser: User;
   courses: any = {};
   displayedColumns = ['id', 'name', 'description', 'seats', 'start_date', 'end_date', 'Actions'];
   page = 0;
@@ -21,7 +23,9 @@ export class DashboardComponent implements OnInit {
   maxPagesArray;
   numberPerPage = 2;
 
-  constructor(private courseService: CourseService, private router: Router, private route: ActivatedRoute) { }
+  constructor(private courseService: CourseService, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService) {
+    this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+   }
 
   ngOnInit() {
     let page = this.route.snapshot.paramMap.get('page') || this.page;

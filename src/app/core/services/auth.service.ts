@@ -18,6 +18,7 @@ export class AuthService {
   }
 
   FBFacebook(){
+    
     return this.http.get(`${environment.apiURL}/auth/facebook`);
   }
 

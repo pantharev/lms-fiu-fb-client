@@ -17,6 +17,7 @@ import { FooterComponent } from './shared/footer/footer.component';
 
 import { fromEventPattern } from 'rxjs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CreateModuleComponent } from './core/modules/course/modulesManagement/create-module/create-module.component';
 
 
 
@@ -27,6 +28,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AppComponent,
     HeaderComponent,
     FooterComponent,
+    CreateModuleComponent,
 
   ],
   imports: [

@@ -9,6 +9,15 @@ export class ModuleService {
 
   constructor(private http: HttpClient) { }
 
+  addModule(courseId, number, title, lockedUntil) {
+    const moduleO = {
+      number: number,
+      title: title,
+      lockedUntil: lockedUntil
+    };
+    return this.http.post(`${environment.apiURL}/modules/${courseId}`, moduleO);
+  }
+
   getModulesByCourseId(id) {
     return this.http.get(`${environment.apiURL}/modules/${id}`);
   }

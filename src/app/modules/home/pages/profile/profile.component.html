@@ -1,2 +1,7 @@
 <p>profile works!</p>
-<p>{{testData[0]}}</p>
+<ul *ngFor="let user of profileData; let index = index" style="list-style-type: none">
+    <div *ngIf="index == 0; else elseBlock"></div>
+    <ng-template #elseBlock>
+        <li>{{user}}</li>
+    </ng-template>
+</ul>

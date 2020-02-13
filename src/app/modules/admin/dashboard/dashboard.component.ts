@@ -95,6 +95,8 @@ export class DashboardComponent implements OnInit {
       this.courseService.deleteCourse(id).subscribe(() => {
         //this.fetchCourses();
       });
+      const item = this.courses.res.find(item => item.id === id);
+      this.courses.res.splice(this.courses.res.indexOf(item));
     }
   }
 

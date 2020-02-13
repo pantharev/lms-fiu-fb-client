@@ -1,5 +1,5 @@
 <div *ngIf="currentUser">
-    <button (click)="createModule()" class="btn btn-success">Create Module</button>
+    <button (click)="createModule(courseId)" class="btn btn-success">Create Module</button>
 </div>
 
 <table class="table">
@@ -15,8 +15,8 @@
         <th scope="row">Module {{ module.module_number }}</th>
         <td>{{ module.module_title }}</td>
         <td>
-            <button type="button" (click)="editModule()" class="btn btn-primary">Edit</button>
-            <button type="button" (click)="deleteModule()" class="btn btn-danger">Delete</button>
+            <button type="button" (click)="editModule(module.course_id, module.module_id)" class="btn btn-primary">Edit</button>
+            <button type="button" (click)="deleteModule(module.module_id, module.module_number)" class="btn btn-danger">Delete</button>
         </td>
     </tr>
     </tbody>

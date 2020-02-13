@@ -21,18 +21,20 @@ export class ModulesComponent implements OnInit {
   urlPath;
   courseId;
 
-  constructor(private moduleService: ModuleService, private route: ActivatedRoute, private authenticationService: AuthenticationService) {
-    const url: Observable<string> = route.url.pipe(map(segments => segments.join('')));
-    this.urlPath = url;
-    this.courseId = this.urlPath.source._value[0].path;
-
+  constructor(private moduleService: ModuleService, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
    }
 
   ngOnInit() {
-    console.log(this.urlPath.source._value[0].path);
-    console.log(this.courseId);
+    this.route.params.subscribe(params => {
+      this.courseId = params.id;
+      console.log("param id is: " + params.id);
+    })
     this.fetchModules(this.courseId);
+  }
+
+  createModule(courseId) {
+    this.router.navigate([`courses/${courseId}/create-module`]);
   }
 
   fetchModules(courseId) {
@@ -42,4 +44,19 @@ export class ModulesComponent implements OnInit {
     })
   }
 
+  editModule(courseId, moduleId) {
+    this.router.navigate([`courses/${courseId}/edit-module/${moduleId}`]);
+  }
+
+  deleteModule(moduleId, moduleNumber) {
+    let response = confirm(`Delete Module ${moduleNumber}: Are you sure?`);
+    if(response == true){
+      this.moduleService.deleteModule(moduleId).subscribe(() => {
+        console.log("Deleted module " + moduleId);
+        //this.modules.pop();
+      });
+      const item = this.modules.find(item => item.id === moduleId);
+      this.modules.splice(this.modules.indexOf(item));
+      }
+  }
 }

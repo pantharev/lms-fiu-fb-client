@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { SidebarComponent } from '../sidebar/sidebar.component';
 import { StudentCourseService } from 'src/app/core/services/student-course.service';
 @Component({
   selector: 'app-dashboard',
@@ -14,6 +14,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.fetchStudentCourses();
+    
   }
 
   fetchStudentCourses() {
@@ -22,5 +23,21 @@ export class DashboardComponent implements OnInit {
       console.log(data);
     });
   }
+  
 
+  sidebarIsOpen = false;
+  openNav(){
+    console.log("hello");
+    document.getElementById("mySidenav").style.width = "250px";
+    document.getElementById("main").style.marginLeft = "250px";
+    this.sidebarIsOpen = true;
+  }
+
+  closeNav(){
+    console.log("goodbye");
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("main").style.marginLeft = "0";
+    this.sidebarIsOpen = false;
+  }
+  
 }

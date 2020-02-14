@@ -1,25 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-
-<div id="mySidenav" class="sidenav">
-  <a href="/courses">Courses</a>
-  <a href="/admin">Admin</a>
-  <a href="/leaderboard">Leaderboard</a>
-  <a href="/home">Home</a>
-</div>
-
+<app-sidebar></app-sidebar>
 <div id="main">
-    <div *ngIf="sidebarIsOpen == false">
-    <span (click)="openNav()">&#9776;</span>
-    </div>
-    <div *ngIf="sidebarIsOpen == true">
-    <span (click)="closeNav()">&#9776;</span>
-    </div>
-    <h2>Dashboard</h2>
+<h2>Dashboard</h2>
     <div class="row">
     <ng-container *ngFor="let course of courses; let i = index">
         <div class="col-sm-2">
@@ -34,10 +15,5 @@
         </div>
     </ng-container>
     </div>
-  
 </div>
 
-
-   
-</body>
-</html> 

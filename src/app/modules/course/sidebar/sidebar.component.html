@@ -1,1 +1,13 @@
-<p>sidebar works!</p>
+<div id="mySidenav" class="sidenav">
+    <a class="nav-link" routerLink="/courses" routerLinkActive="active">Courses</a>
+    <a class="nav-link" routerLink="/admin" routerLinkActive="active">Admin</a>
+    <a class="nav-link" routerLink="/leaderboard" routerLinkActive="active">Leaderboard</a>
+    <a class="nav-link" routerLink="/" routerLinkActive="active">Home</a>
+</div>
+  
+<div *ngIf="sidebarIsOpen == false">
+    <span (click)="openNav()">&#9776;</span>
+    </div>
+    <div *ngIf="sidebarIsOpen == true">
+    <span (click)="closeNav()">&#9776;</span>
+    </div>  

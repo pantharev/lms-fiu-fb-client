@@ -25,19 +25,6 @@ export class DashboardComponent implements OnInit {
   }
   
 
-  sidebarIsOpen = false;
-  openNav(){
-    console.log("hello");
-    document.getElementById("mySidenav").style.width = "250px";
-    document.getElementById("main").style.marginLeft = "250px";
-    this.sidebarIsOpen = true;
-  }
 
-  closeNav(){
-    console.log("goodbye");
-    document.getElementById("mySidenav").style.width = "0";
-    document.getElementById("main").style.marginLeft = "0";
-    this.sidebarIsOpen = false;
-  }
   
 }

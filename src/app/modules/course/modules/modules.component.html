@@ -1,14 +1,19 @@
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Title</th>
-        </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let module of modules">
-        <th scope="row">Module {{ module.module_number }}</th>
-        <td>{{ module.module_title }}</td>
-    </tr>
-    </tbody>
-</table>
+<app-sidebar></app-sidebar>
+<div id="main">
+    <app-sidebar-button></app-sidebar-button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let module of modules">
+                <th scope="row">Module {{ module.module_number }}</th>
+                <td>{{ module.module_title }}</td>
+            </tr>
+            
+        </tbody>
+    </table>
+</div>

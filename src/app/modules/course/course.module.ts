@@ -6,9 +6,10 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { CourseRoutingModule } from './course-routing.module';
 import { ModulesComponent } from './modules/modules.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { SidebarButtonComponent } from './sidebar-button/sidebar-button.component';
  
 @NgModule({
-  declarations: [ DashboardComponent, ModulesComponent, SidebarComponent ],
+  declarations: [ DashboardComponent, ModulesComponent, SidebarComponent, SidebarButtonComponent ],
   imports: [
     CommonModule,
     CourseRoutingModule

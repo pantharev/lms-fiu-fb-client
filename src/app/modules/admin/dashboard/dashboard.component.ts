@@ -30,7 +30,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     let page = this.route.snapshot.paramMap.get('page') || this.page;
     this.fetchCourses(page);
-    //console.log("Init page: " + page);
+    console.log("Current user in Admin: " + JSON.stringify(this.currentUser));
   }
 
   fetchCourses(page) {

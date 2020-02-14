@@ -16,11 +16,12 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     var userCookie = this.getCookie('user');
-    console.log("The user cookie is: " + this.getCookie('user'));
+    //console.log("The user cookie is: " + this.getCookie('user'));
     if(localStorage.getItem('user') == '')
       localStorage.setItem('user', userCookie);
     this.cookieService.delete('user');
-    console.log("Localstorage is: " + localStorage.getItem('user'));
+    console.log("User: " + localStorage.getItem('currentUser'));
+    //console.log("Localstorage is: " + localStorage.getItem('user'));
   }
 
 }

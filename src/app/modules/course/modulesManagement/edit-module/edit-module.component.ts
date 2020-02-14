@@ -50,9 +50,9 @@ export class EditModuleComponent implements OnInit {
 
   updateModule(number, title, lockedUntil) {
     if(this.updateForm.valid)
-    this.moduleService.updateModule(this.id, number, title, lockedUntil).subscribe(res => {
-      alert('Module updated successfully');
-    });
+      this.moduleService.updateModule(this.id, number, title, lockedUntil).subscribe(res => {
+        alert('Module updated successfully');
+      });
     else alert('Missing required fields!');
   }
 

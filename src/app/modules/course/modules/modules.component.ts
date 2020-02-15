@@ -10,6 +10,9 @@ import { User } from '@app/core/models/user';
 import { ModuleService } from 'src/app/core/services/module.service';
 import { throwToolbarMixedModesError } from '@angular/material';
 
+//import videojs from 'videojs-youtube';
+import videojs from 'video.js';
+
 @Component({
   selector: 'app-modules',
   templateUrl: './modules.component.html',
@@ -18,8 +21,12 @@ import { throwToolbarMixedModesError } from '@angular/material';
 export class ModulesComponent implements OnInit {
   currentUser: User;
   modules = [];
+  links = ['https://www.youtube.com/watch?v=TzDhdvVg9_c', 'link2', 'link3'];
+  resources = ['pdf1', 'pdf2', 'worddoc1'];
+  quizzes = ['quiz1', 'quiz2', 'quiz3'];
   urlPath;
   courseId;
+  toggleContent = [];
 
   constructor(private moduleService: ModuleService, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
@@ -31,6 +38,12 @@ export class ModulesComponent implements OnInit {
       console.log("param id is: " + params.id);
     })
     this.fetchModules(this.courseId);
+    //document.querySelector('#vid1').setAttribute('data-setup', '{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "https://youtu.be/zpOULjyy-n8"}], "playbackRates": [0.5, 1, 1.5, 2], "autoplay": false }');
+  }
+
+  ngAfterViewInit() {
+    //let videojs_options = document.querySelector('#vid1').getAttribute('data-setup');
+    //console.log(videojs_options);
   }
 
   createModule(courseId) {
@@ -58,5 +71,17 @@ export class ModulesComponent implements OnInit {
       const item = this.modules.find(item => item.id === moduleId);
       this.modules.splice(this.modules.indexOf(item));
       }
+  }
+
+  openModule(index) {
+    console.log("Opening module content");
+    if(this.toggleContent[index]){
+      this.toggleContent[index] = false;
+    }
+    else {
+      this.toggleContent[index] = true;
+    }
+      /*let listItems = document.querySelector('.toggleContent')
+      listItems.setAttribute('style', 'display: none');*/
   }
 }

@@ -1,23 +1,43 @@
-<div *ngIf="currentUser">
-    <button (click)="createModule(courseId)" class="btn btn-success">Create Module</button>
+
+<a href="../../../../assets/favicon-32x32.png" download="favicon-32x32">Download it!</a>
+
+<div class="flexbox-row">
+    <div *ngIf="currentUser">
+        <button (click)="createModule(courseId)" class="btn btn-success"><i class="fas fa-plus-circle"></i> Create Module</button>
+    </div>
+    <div class="flexbox-container" *ngFor="let module of modules; let index = index">
+            <div class="flexbox-item" (click)="openModule(index)" style="cursor:pointer">
+                <i class="fas fa-caret-down"></i> <strong>Module {{ module.module_number }} </strong>| {{ module.module_title }}
+            </div>
+            <div *ngIf="toggleContent[index]" class="flexbox-subcontainer">
+                <div class="flexbox-resources" *ngFor="let resource of resources">
+                    <i class="fas fa-paperclip"></i> {{resource}}
+                </div>
+                <div class="flexbox-links" *ngFor="let link of links">
+                    <i class="fab fa-youtube"></i> {{link}}
+                </div>
+                <div class="flexbox-quizzes" *ngFor="let quiz of quizzes">
+                    <i class="fas fa-paper-plane"></i> {{quiz}}
+                </div>
+            </div>  
+            <div class="flexbox-item-module-actions" *ngIf="currentUser">
+                <button type="button" (click)="editModule(module.course_id, module.module_id)" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</button>
+                <button type="button" (click)="deleteModule(module.module_id, module.module_number)" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Delete</button>
+            </div>
+    </div>
 </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Title</th>
-            <th scope="col" *ngIf="currentUser">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let module of modules">
-        <th scope="row">Module {{ module.module_number }}</th>
-        <td>{{ module.module_title }}</td>
-        <td>
-            <button type="button" (click)="editModule(module.course_id, module.module_id)" class="btn btn-primary">Edit</button>
-            <button type="button" (click)="deleteModule(module.module_id, module.module_number)" class="btn btn-danger">Delete</button>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<!--<video
+    id="vid1"
+    class="vjs-matrix video-js"
+    controls
+    width="854" height="480"
+    data-setup='{ 
+        "techOrder": ["youtube"],
+        "sources": [{ "type": "video/youtube", "src": "https://youtu.be/zpOULjyy-n8"}],
+        "playbackRates": [0.5, 1, 1.5, 2]
+        }'
+>
+</video>-->
+
+<iframe width="854" height="480" src="https://www.youtube.com/embed/riXcZT2ICjA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

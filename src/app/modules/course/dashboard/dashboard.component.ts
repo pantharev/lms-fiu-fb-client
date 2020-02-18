@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-
 import { User } from '@app/core/models/user';
 import { StudentCourseService } from 'src/app/core/services/student-course.service';
 import { AuthenticationService } from '@app/core/services/authentication.service';
@@ -16,7 +15,7 @@ export class DashboardComponent implements OnInit {
 
   constructor(private studentCourseService: StudentCourseService, private authService: AuthenticationService) { }
 
-  ngOnInit() {
+  ngOnInit() {  
     this.currentStudent = this.authService.currentUserValue;
     if(this.currentStudent){
       this.studentId = this.currentStudent.id;
@@ -32,5 +31,8 @@ export class DashboardComponent implements OnInit {
       console.log(data);
     });
   }
+  
 
+
+  
 }

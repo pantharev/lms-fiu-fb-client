@@ -84,11 +84,11 @@ export class LoginComponent implements OnInit {
   constructor(private authService: AuthService) { }
 
   signInWithFB(): void {
+    
     this.authService.FBFacebook().subscribe((data) => {
       console.log(data);
     });
-    //sessionStorage.setItem("user_fname",this.user.firstName);
-    //sessionStorage.setItem("user_lname",this.user.lastName);
+    
   }
 
   signOut(): void {

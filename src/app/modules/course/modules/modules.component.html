@@ -1,6 +1,7 @@
-
 <!--<a href="../../../../assets/favicon-32x32.png" download="favicon-32x32">Download it!</a>-->
-
+<app-sidebar></app-sidebar>
+<div id="main">
+  <app-sidebar-button></app-sidebar-button>
 <div class="flexbox-row">
     <div *ngIf="currentUser">
         <button (click)="createModule(courseId)" class="btn btn-success"><i class="fas fa-plus-circle"></i> Create Module</button>
@@ -76,7 +77,7 @@
             </div>
     </div>
 </div>
-
+</div>
 <!--<video
     id="vid1"
     class="vjs-matrix video-js"
@@ -89,3 +90,4 @@
         }'
 >
 </video>-->
+

@@ -7,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LeaderboardComponent implements OnInit {
 
+  modules = [{module_number: 1, module_title: "title"}];
   constructor() { }
 
   ngOnInit() {

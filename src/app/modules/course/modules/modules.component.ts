@@ -1,9 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Sanitizer } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Observable } from 'rxjs';
 import {map} from 'rxjs/operators';
 
+import { VideoService } from '@app/core/services/video.service';
 import { AuthenticationService } from '@app/core/services/authentication.service';
 import { User } from '@app/core/models/user';
 
@@ -21,15 +25,29 @@ import videojs from 'video.js';
 export class ModulesComponent implements OnInit {
   currentUser: User;
   modules = [];
-  links = ['https://www.youtube.com/watch?v=TzDhdvVg9_c', 'link2', 'link3'];
+  linksFromDB: string[] = new Array();
+  links: string[] = new Array();
+  safeLinks = new Map<number, SafeResourceUrl>();
   resources = ['pdf1', 'pdf2', 'worddoc1'];
   quizzes = ['quiz1', 'quiz2', 'quiz3'];
   urlPath;
   courseId;
   toggleContent = [];
+  moduleVideosFetched = [];
+  videoForm: FormGroup;
+  contentObject = {
+    course_id: 0,
+    course_name: "",
+    module_id: 0,
+    module_number: 0,
+    module_title: "",
+    lockedUntil: "",
+    link: ""
+  }
 
-  constructor(private moduleService: ModuleService, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService) {
+  constructor(private moduleService: ModuleService, private videoService: VideoService, private fb: FormBuilder, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService, private sanitizer: DomSanitizer, private modalService: NgbModal) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+    this.makeVideoForm();
    }
 
   ngOnInit() {
@@ -38,12 +56,39 @@ export class ModulesComponent implements OnInit {
       console.log("param id is: " + params.id);
     })
     this.fetchModules(this.courseId);
-    //document.querySelector('#vid1').setAttribute('data-setup', '{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "https://youtu.be/zpOULjyy-n8"}], "playbackRates": [0.5, 1, 1.5, 2], "autoplay": false }');
   }
 
-  ngAfterViewInit() {
-    //let videojs_options = document.querySelector('#vid1').getAttribute('data-setup');
-    //console.log(videojs_options);
+  makeVideoForm() {
+    this.videoForm = this.fb.group({
+      link: ['', Validators.required]
+    });
+  }
+
+  pushLinksToArray(linksFromDB, links) {
+    linksFromDB.forEach((val, i, arr) => {
+      links.push({link: arr[i].link, module_id: arr[i].module_id});
+      console.log("Links array: " + JSON.stringify(links));
+    })
+  }
+
+  updateVideoUrl(linksArr, moduleId) {
+    console.log("updateVideoUrl");
+      linksArr.forEach((val, i: number, arr: []) => {
+          if(val.module_id == moduleId){
+            console.log("linksArr: " + JSON.stringify(val));
+            let id = val.link.substring(32, 43);
+            let videoUrl: SafeResourceUrl;
+            let url: string;
+            url = 'https://www.youtube.com/embed/' + id;
+            videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+            this.safeLinks.set(moduleId, videoUrl);
+            console.log(this.safeLinks.get(moduleId));
+          }
+        })
+      }
+
+  open(content) {
+    this.modalService.open(content, { size: 'lg', centered: true });
   }
 
   createModule(courseId) {
@@ -54,6 +99,7 @@ export class ModulesComponent implements OnInit {
     this.moduleService.getModulesByCourseId(courseId).subscribe((data: []) => {
       this.modules = data;
       console.log(this.modules);
+      this.fetchContent(courseId, data);
     })
   }
 
@@ -80,8 +126,30 @@ export class ModulesComponent implements OnInit {
     }
     else {
       this.toggleContent[index] = true;
-    }
-      /*let listItems = document.querySelector('.toggleContent')
-      listItems.setAttribute('style', 'display: none');*/
+    }   
+  }
+
+  addVideo(link, moduleId) {
+    this.videoService.addVideo(link, moduleId).subscribe(() => {
+      alert("Added video");
+    })
+  }
+
+  fetchContent(courseId, modules) {
+    console.log("Fetching content: " + courseId);
+    this.videoService.fetchVideos(courseId).subscribe((data: []) => {
+      this.linksFromDB = data;
+      console.log(this.linksFromDB);
+      this.pushLinksToArray(data, this.links);
+      modules.forEach((val, i, arr) => {
+        let moduleval = val;
+        data.forEach((val: any, i, arr) => {
+          if(val.module_id == moduleval.module_id){
+            console.log(val.module_id);
+            this.updateVideoUrl(this.links, val.module_id);
+          }
+        })
+      })
+    })
   }
 }

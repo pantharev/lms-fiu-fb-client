@@ -3,7 +3,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpParams } from '@angular/common/http';
 
 import { Course } from '../../../../core/models/course.model';
+import { User } from '@app/core/models/user';
 import { CourseService } from '../../../../core/services/course.service';
+import { StudentCourseService } from '@app/core/services/student-course.service';
+import { AuthenticationService } from '@app/core/services/authentication.service';
 
 import { environment } from 'src/environments/environment';
 
@@ -29,13 +32,18 @@ export class CourseBrowserComponent implements OnInit {
   searchValue;
   duplicateCourse = false;
   num = 0;
+  currentUser: User;
+  studentId;
 
-  constructor(private courseService: CourseService, private router: Router, private route: ActivatedRoute) { }
+  constructor(private courseService: CourseService, private studentCourseService: StudentCourseService, private authService: AuthenticationService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
     let page = this.route.snapshot.paramMap.get('page') || this.page;
     this.fetchCourses(page);
     this.socket = io.connect(environment.apiURL);
+    this.currentUser = this.authService.currentUserValue;
+    if(this.currentUser)
+      this.studentId = this.currentUser.id;
     //console.log("Init page: " + page);
   }
 
@@ -91,9 +99,12 @@ export class CourseBrowserComponent implements OnInit {
       });
   }
 
-  studentEnroll(courseId) {
-    var student = localStorage.getItem('student');
+  studentEnroll(studentId, courseId, enrollment_status) {
     // Add student to students_courses table with pending enrollment
+    this.studentCourseService.enrollStudentToCourse(studentId, courseId, enrollment_status).subscribe(() => {
+      alert("Enrolled for course: " + courseId);
+    });
+    console.log("StudentId: " + studentId);
     console.log(`Enrollment pending for courseId: ${courseId}`);
   } 
 

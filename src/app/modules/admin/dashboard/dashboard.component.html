@@ -1,7 +1,9 @@
 <h2>Admin Dashboard</h2>
 
+<div *ngIf="currentUser">
+
 <nav class="nav flex-column col-sm-1">
-    <a routerLink="/admin/create-course" routerLinkActive="active" class="nav-link btn btn-primary"><i class="fas fa-plus-circle"></i> Create New Course</a>
+    <a routerLink="/admin/create-course" routerLinkActive="active" class="nav-link btn btn-success"><i class="fas fa-plus-circle"></i> Create New Course</a>
 </nav>
 
 <h2>Courses</h2>
@@ -52,3 +54,5 @@
         
     </ul>
   </nav>
+
+</div>

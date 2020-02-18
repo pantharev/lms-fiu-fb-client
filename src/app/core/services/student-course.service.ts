@@ -17,6 +17,15 @@ export class StudentCourseService {
     return this.http.get(`${environment.apiURL}/student-courses/s/${id}`);
   }
 
+  enrollStudentToCourse(student_id, course_id, enrollment_status) {
+    const student_course = {
+      student_id: student_id,
+      course_id: course_id,
+      enrollment_status: enrollment_status
+    }
+    return this.http.post(`${environment.apiURL}/student-courses`, student_course);
+  }
+
   acceptStudentEnrollment(student_id, course_id, enrollment_status) {
     const student_course = {
       student_id: student_id,

@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "nodemon server.js",
-    "build": "ng build",
+    "build": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -32,6 +32,8 @@
     "rxjs": "~6.4.0",
     "socket.io": "^2.3.0",
     "tslib": "^1.10.0",
+    "video.js": "^7.6.6",
+    "videojs-youtube": "^2.6.1",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {

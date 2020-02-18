@@ -1,19 +1,93 @@
+<!--<a href="../../../../assets/favicon-32x32.png" download="favicon-32x32">Download it!</a>-->
 <app-sidebar></app-sidebar>
 <div id="main">
-    <app-sidebar-button></app-sidebar-button>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Title</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let module of modules">
-                <th scope="row">Module {{ module.module_number }}</th>
-                <td>{{ module.module_title }}</td>
-            </tr>
-            
-        </tbody>
-    </table>
+  <app-sidebar-button></app-sidebar-button>
+<div class="flexbox-row">
+    <div *ngIf="currentUser">
+        <button (click)="createModule(courseId)" class="btn btn-success"><i class="fas fa-plus-circle"></i> Create Module</button>
+    </div>
+    <div class="flexbox-container" *ngFor="let module of modules; let index = index">
+            <div class="flexbox-options">
+
+                <ng-template #content let-modal>
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add Youtube Video</h4>
+                        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form [formGroup]="videoForm" class="col-sm-4">
+
+                            <div class="form-group">
+                                <label>Link</label>
+                                <input type="text" class="form-control"  formControlName="link" #link>
+                            </div>
+                        
+                            <button type="submit" (click)="addVideo(link.value, module.module_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Video</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+                    </div>
+                </ng-template>
+                <button class="btn btn-success" (click)="open(content)">Add Video</button>
+
+                <button class="btn btn-success">Add PDF</button>
+                <button class="btn btn-success">Add Quiz/Test</button>
+            </div>
+            <div class="flexbox-item" (click)="openModule(index)" style="cursor:pointer">
+                <i class="fas fa-caret-down"></i> <strong>Module {{ module.module_number }} </strong>| {{ module.module_title }}
+            </div>
+            <div *ngIf="toggleContent[index]" class="flexbox-subcontainer">
+
+                <div class="flexbox-resources" *ngFor="let resource of resources">
+                    <i class="fas fa-paperclip"></i> {{resource}}
+                </div>
+
+                <div class="flexbox-links" *ngFor="let link of safeLinks | keyvalue; let index = index">
+                    <div *ngIf="link.key == module.module_id">
+                        <i class="fab fa-youtube"></i>                  
+                        <ng-template #content let-modal>
+                            <div class="modal-header">
+                                <h4 class="modal-title">Calculus 1 - Video {{index + 1}}</h4>
+                                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p><iframe width="780" height="480" [src]="link.value" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+                            </div>
+                        </ng-template>
+                        <button class="btn btn-primary" (click)="open(content)">Watch Video {{index + 1}}</button>
+                    </div>
+                </div>
+
+                <div class="flexbox-quizzes" *ngFor="let quiz of quizzes">
+                    <i class="fas fa-paper-plane"></i> {{quiz}}
+                </div>
+
+            </div>  
+            <div class="flexbox-item-module-actions" *ngIf="currentUser">
+                <button type="button" (click)="editModule(module.course_id, module.module_id)" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</button>
+                <button type="button" (click)="deleteModule(module.module_id, module.module_number)" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Delete</button>
+            </div>
+    </div>
 </div>
+</div>
+<!--<video
+    id="vid1"
+    class="vjs-matrix video-js"
+    controls
+    width="854" height="480"
+    data-setup='{ 
+        "techOrder": ["youtube"],
+        "sources": [{ "type": "video/youtube", "src": "https://youtu.be/zpOULjyy-n8"}],
+        "playbackRates": [0.5, 1, 1.5, 2]
+        }'
+>
+</video>-->
+

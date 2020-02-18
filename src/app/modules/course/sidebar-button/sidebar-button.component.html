@@ -1,6 +1,6 @@
-<div *ngIf="sidebarIsOpen == false">
-    <span (click)="openNav()">&#9776;</span>
-    </div>
-    <div *ngIf="sidebarIsOpen == true">
-    <span (click)="closeNav()">&#9776;</span>
-    </div>  
+<div *ngIf="sidebarIsOpen == false" class="flexbox-row">
+    <span (click)="openNav()" class="flexbox-side" style="cursor: pointer"><i class="fas fa-angle-double-right fa-5x"></i></span>
+</div>
+<div *ngIf="sidebarIsOpen == true" class="flexbox-row">
+    <span (click)="closeNav()" class="flexbox-side" style="cursor: pointer"><i class="fas fa-angle-double-left fa-5x"></i></span>
+</div>  

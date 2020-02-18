@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
+import { User } from '@app/core/models/user';
 import { StudentCourseService } from 'src/app/core/services/student-course.service';
+import { AuthenticationService } from '@app/core/services/authentication.service';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -9,15 +11,23 @@ import { StudentCourseService } from 'src/app/core/services/student-course.servi
 export class DashboardComponent implements OnInit {
 
   courses: any = [];
+  currentStudent: User;
+  studentId;
 
-  constructor(private studentCourseService: StudentCourseService) { }
+  constructor(private studentCourseService: StudentCourseService, private authService: AuthenticationService) { }
 
   ngOnInit() {
-    this.fetchStudentCourses();
+    this.currentStudent = this.authService.currentUserValue;
+    if(this.currentStudent){
+      this.studentId = this.currentStudent.id;
+      this.fetchStudentCourses(this.studentId);
+      console.log(this.studentId);
+    }
   }
 
-  fetchStudentCourses() {
-    this.studentCourseService.getCoursesByStudentId(1).subscribe((data) => {
+  fetchStudentCourses(studentId) {
+    //this.studentId
+    this.studentCourseService.getCoursesByStudentId(studentId).subscribe((data) => {
       this.courses = data;
       console.log(data);
     });

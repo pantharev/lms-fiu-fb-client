@@ -28,7 +28,7 @@
             <td>{{ course.seats }}</td>
             <td>{{ course.start_date }}</td>
             <td>{{ course.end_date }}</td>
-            <td><button type="submit" (click)="studentEnroll(course.id)" class="btn btn-success">Enroll</button></td>
+            <td *ngIf="currentUser"><button type="submit" (click)="studentEnroll(studentId, course.id, 'pending')" class="btn btn-success">Enroll</button></td>
         </tr>
     </tbody>
 </table>

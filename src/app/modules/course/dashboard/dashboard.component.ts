@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { SidebarComponent } from '../sidebar/sidebar.component';
 import { StudentCourseService } from 'src/app/core/services/student-course.service';
 @Component({
   selector: 'app-dashboard',

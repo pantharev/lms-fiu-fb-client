@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light lms-bg">
+<nav class="navbar navbar-expand-lg navbar-dark lms-bg">
   <a class="navbar-brand" routerLink="/"><img src="../../../assets/android-chrome-512x512.png" alt="FIU Logo" width="32" height="32"></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
     aria-expanded="false" aria-label="Toggle navigation">
@@ -7,7 +7,7 @@
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" routerLink="/" routerLinkActive="active">Home</a>
+        <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" routerLink="/course-library" routerLinkActive="active">Course-Library</a>
@@ -22,7 +22,7 @@
   </div>
   <ul class="navbar-nav">
     <li class="nav-item" *ngIf="currentUser">
-      Hello, {{currentUser.f_name}} {{currentUser.l_name}}!
+      <span class="nav-welcome">Hello, {{currentUser.f_name}} {{currentUser.l_name}}!</span>
     </li>
     <li class="nav-item" *ngIf="!currentUser">
       <a class="nav-link" routerLink="/login" routerLinkActive="active"><i class="fas fa-sign-in-alt"></i> Login</a>

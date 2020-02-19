@@ -16,6 +16,7 @@ import { throwToolbarMixedModesError } from '@angular/material';
 
 //import videojs from 'videojs-youtube';
 import videojs from 'video.js';
+import { analyzeAndValidateNgModules } from '@angular/compiler';
 
 @Component({
   selector: 'app-modules',
@@ -27,7 +28,7 @@ export class ModulesComponent implements OnInit {
   modules = [];
   linksFromDB: string[] = new Array();
   links: string[] = new Array();
-  safeLinks = new Map<number, Object>();
+  safeLinks = new Map<number, Object[]>();
   resources = ['pdf1', 'pdf2', 'worddoc1'];
   quizzes = ['quiz1', 'quiz2', 'quiz3'];
   urlPath;
@@ -77,9 +78,11 @@ export class ModulesComponent implements OnInit {
 
   updateVideoUrl(linksArr, moduleId) {
     console.log("updateVideoUrl");
+    console.log("linksArr size: " + linksArr.length);
+    this.moduleVideosFetched[moduleId] = true;
       linksArr.forEach((val, i: number, arr: []) => {
           if(val.module_id == moduleId){
-            console.log("linksArr: " + JSON.stringify(val));
+            console.log("val: " + i + " " + JSON.stringify(val));
             let id = val.link.substring(32, 43);
             let videoUrl: SafeResourceUrl;
             let url: string;
@@ -91,8 +94,14 @@ export class ModulesComponent implements OnInit {
               video_id: val.video_id,
               url: val.link
             }
-            this.safeLinks.set(moduleId, videoObject);
+            if(this.safeLinks.get(moduleId)){
+              this.safeLinks.get(moduleId).push(videoObject);
+            }
+            else {
+              this.safeLinks.set(moduleId, [videoObject]);
+            }
             console.log("safeLinks: " + JSON.stringify(this.safeLinks.get(moduleId)));
+            console.log("safeLinks size: " + this.safeLinks.size);
           }
         })
       }
@@ -169,18 +178,26 @@ export class ModulesComponent implements OnInit {
 
   fetchContent(courseId, modules) {
     console.log("Fetching content: " + courseId);
-    this.videoService.fetchVideos(courseId).subscribe((data: []) => {
+    this.videoService.fetchVideos(courseId).subscribe((data: any[]) => {
       this.linksFromDB = data;
       console.log("linksFromDB: " + JSON.stringify(this.linksFromDB));
       this.pushLinksToArray(data, this.links);
-      modules.forEach((val, i, arr) => {
+      modules.forEach((val: any, i, arr) => {
         let moduleval = val;
-        data.forEach((val: any, i, arr) => {
+        for(let i = 0; i < data.length; i++) {
+          let val = data[i];
           if(val.module_id == moduleval.module_id){
-            console.log(val.module_id);
-            this.updateVideoUrl(this.links, val.module_id);
+            if(this.moduleVideosFetched[val.module_id] == true){
+              console.log("Modules videos fetched true");
+              break;
+              //this.updateVideoUrl(this.links, val.module_id);
+            }
+            else{
+              console.log(val.module_id);
+              this.updateVideoUrl(this.links, val.module_id);
+            }
           }
-        })
+        }
       })
     })
   }

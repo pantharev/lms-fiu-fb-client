@@ -55,50 +55,51 @@
                 <!--YOUTUBE LINKS CONTENT-->
                 <div class="flexbox-links" *ngFor="let link of safeLinks | keyvalue; let index = index">
                     <div *ngIf="link.key == module.module_id">
-                        <i class="fab fa-youtube"></i>                  
-                        <ng-template #content let-modal>
-                            <div class="modal-header">
-                                <h4 class="modal-title">{{module.module_title}} - Video {{index + 1}}</h4>
-                                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <p><iframe width="780" height="480" [src]="link.value.videoUrl" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
-                            </div>
-                        </ng-template>
-                        <button class="btn btn-primary" (click)="open(content)">Watch Video {{index + 1}}</button>
-                        <button class="btn btn-danger flexbox-module-options" (click)="deleteVideo(link.value.video_id)">Delete Video</button>
+                        <div *ngFor="let innerlink of link.value; let j = index">
+                            <i class="fab fa-youtube"></i>                  
+                            <ng-template #content let-modal>
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{{module.module_title}} - Video {{j + 1}}</h4>
+                                    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><iframe width="780" height="480" [src]="innerlink.videoUrl" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+                                </div>
+                            </ng-template>
+                            <button class="btn btn-primary" (click)="open(content)">Watch Video {{j + 1}}</button>
+                            <button class="btn btn-danger flexbox-module-options" (click)="deleteVideo(innerlink.video_id)">Delete Video</button>
 
-                        <!--FORM CONTENT IN MODAL FOR VIDEO EDIT-->
-                        <ng-template #contentVideoUpdate let-modal>
-                            <div class="modal-header">
-                                <h4 class="modal-title">Edit Youtube Video</h4>
-                                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <form [formGroup]="updateVideoForm" class="col-9">
-        
-                                    <div class="form-group">
-                                        <label>New Link</label>
-                                        <input type="text" class="form-control form-control-lg" formControlName="linkInput" #linkInput>
-                                    </div>
-                                
-                                    <button type="submit" (click)="updateVideo(linkInput.value, link.value.video_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Update Video</button>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
-                            </div>
-                        </ng-template>
-                        <button class="btn btn-success flexbox-module-options" (click)="openUpdateVideo(contentVideoUpdate, link.value.url)">Edit Video</button>
-                        <!--END OF FORM CONTENT IN MODAL FOR VIDEO EDIT-->
-
+                            <!--FORM CONTENT IN MODAL FOR VIDEO EDIT-->
+                            <ng-template #contentVideoUpdate let-modal>
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Edit Youtube Video</h4>
+                                    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form [formGroup]="updateVideoForm" class="col-9">
+            
+                                        <div class="form-group">
+                                            <label>New Link</label>
+                                            <input type="text" class="form-control form-control-lg" formControlName="linkInput" #linkInput>
+                                        </div>
+                                    
+                                        <button type="submit" (click)="updateVideo(linkInput.value, innerlink.video_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Update Video</button>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+                                </div>
+                            </ng-template>
+                            <button class="btn btn-success flexbox-module-options" (click)="openUpdateVideo(contentVideoUpdate, innerlink.url)">Edit Video</button>
+                            <!--END OF FORM CONTENT IN MODAL FOR VIDEO EDIT-->
+                        </div>
                     </div>
                 </div>
                 <!--END OF YOUTUBE LINKS CONTENT-->

@@ -6,8 +6,8 @@ const port = process.env.PORT || 8080;
 
 app.use(express.static(__dirname + '/angular-build'));
 app.use(cors());
-app.get('/*', function(req,res){
-res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
+app.get('/*', function (req, res) {
+    res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
 });
 
 app.all(() => {
@@ -19,4 +19,8 @@ app.all(() => {
 // Start the app by listening on the default Heroku port
 app.listen(port, () => {
     console.log("angular server started on port: " + port);
+});
+
+app.post('/', function (req, res) {
+    res.send("Post request sent to frontend homepage");
 });

@@ -36,7 +36,32 @@
                 <button class="btn btn-success" (click)="open(content)">Add Video</button>
                 <!--END OF FORM CONTENT IN MODAL FOR VIDEO ADD-->
 
-                <button class="btn btn-success">Add PDF</button>
+                <!--FORM CONTENT IN MODAL FOR PDF ADD-->
+                <ng-template #contentpdf let-modal>
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add PDF File</h4>
+                        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form [formGroup]="pdfForm" class="col-9">
+
+                            <div class="form-group">
+                                <label>Select a PDF File</label>
+                                <input type="file" class="form-control" id="theFile" #file (change)="handleFileInput($event.target.files)">
+                            </div>
+                        
+                            <button type="submit" (click)="addPDF(file.value, module.module_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add PDF</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+                    </div>
+                </ng-template>
+                <button class="btn btn-success" (click)="open(contentpdf)">Add PDF</button>
+                <!--END OF FORM CONTENT IN MODAL FOR PDF ADD-->
+
                 <button class="btn btn-success">Add Quiz/Test</button>
             </div>
 

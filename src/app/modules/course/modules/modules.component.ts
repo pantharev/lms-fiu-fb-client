@@ -7,6 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import {map} from 'rxjs/operators';
 
+import { PdfService } from '@app/core/services/pdf.service';
 import { VideoService } from '@app/core/services/video.service';
 import { AuthenticationService } from '@app/core/services/authentication.service';
 import { User } from '@app/core/models/user';
@@ -36,7 +37,9 @@ export class ModulesComponent implements OnInit {
   toggleContent = [];
   moduleVideosFetched = [];
   videoForm: FormGroup;
+  pdfForm: FormGroup;
   updateVideoForm: FormGroup;
+  fileToUpload: File = null;
   contentObject = {
     course_id: 0,
     course_name: "",
@@ -47,7 +50,7 @@ export class ModulesComponent implements OnInit {
     link: ""
   }
 
-  constructor(private moduleService: ModuleService, private videoService: VideoService, private fb: FormBuilder, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService, private sanitizer: DomSanitizer, private modalService: NgbModal) {
+  constructor(private moduleService: ModuleService, private videoService: VideoService, private pdfService: PdfService, private fb: FormBuilder, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService, private sanitizer: DomSanitizer, private modalService: NgbModal) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
     this.makeVideoForms();
    }
@@ -60,12 +63,16 @@ export class ModulesComponent implements OnInit {
     this.fetchModules(this.courseId);
   }
 
+  // BEGIN UTILITY FUNCTIONS
   makeVideoForms() {
     this.videoForm = this.fb.group({
       link: ['', Validators.required]
     });
     this.updateVideoForm = this.fb.group({
       linkInput: ['', Validators.required]
+    });
+    this.pdfForm = this.fb.group({
+      file: ['', Validators.required]
     });
   }
 
@@ -105,16 +112,28 @@ export class ModulesComponent implements OnInit {
           }
         })
       }
-
+      
   open(content) {
     this.modalService.open(content, { size: 'lg', centered: true });
+  }
+      
+  openModule(index) {
+    console.log("Opening module content");
+    if(this.toggleContent[index]){
+      this.toggleContent[index] = false;
+    }
+    else {
+      this.toggleContent[index] = true;
+    }   
   }
 
   openUpdateVideo(content, videoUrl) {
     this.modalService.open(content, { size: 'lg', centered: true });
     this.updateVideoForm.get('linkInput').setValue(videoUrl);
   }
+  // END UTILITY FUNCTIONS
 
+  // BEGIN MODULES CRUD
   createModule(courseId) {
     this.router.navigate([`courses/${courseId}/create-module`]);
   }
@@ -123,7 +142,7 @@ export class ModulesComponent implements OnInit {
     this.moduleService.getModulesByCourseId(courseId).subscribe((data: []) => {
       this.modules = data;
       console.log(this.modules);
-      this.fetchContent(courseId, data);
+      this.fetchVideos(courseId, data);
     })
   }
 
@@ -142,17 +161,9 @@ export class ModulesComponent implements OnInit {
       this.modules.splice(this.modules.indexOf(item));
       }
   }
+  // END MODULES CRUD
 
-  openModule(index) {
-    console.log("Opening module content");
-    if(this.toggleContent[index]){
-      this.toggleContent[index] = false;
-    }
-    else {
-      this.toggleContent[index] = true;
-    }   
-  }
-
+  // BEGIN VIDEOS CRUD
   addVideo(link, moduleId) {
     this.videoService.addVideo(link, moduleId).subscribe(() => {
       alert("Added video");
@@ -176,7 +187,7 @@ export class ModulesComponent implements OnInit {
     }
   }
 
-  fetchContent(courseId, modules) {
+  fetchVideos(courseId, modules) {
     console.log("Fetching content: " + courseId);
     this.videoService.fetchVideos(courseId).subscribe((data: any[]) => {
       this.linksFromDB = data;
@@ -201,4 +212,24 @@ export class ModulesComponent implements OnInit {
       })
     })
   }
+  // END VIDEOS CRUD
+
+  // BEGIN PDFS CRUD
+
+  handleFileInput(files: FileList){
+    this.fileToUpload = files.item(0);
+  }
+
+  addPDF(fileName, moduleId) {
+    console.log("fileName: " + this.fileToUpload.name + " fileSize: " + this.fileToUpload.size);
+    const formData: FormData = new FormData();
+    formData.append('fileKey', this.fileToUpload, this.fileToUpload.name);
+    formData.append('fileKey', moduleId);
+    console.log(formData.getAll('fileKey'));
+    this.pdfService.addPDF(formData).subscribe(() => {
+      alert("Added pdf");
+    })
+    //console.log("curFile: " + curFile.name + " size: " + curFile.size);
+  }
+
 }

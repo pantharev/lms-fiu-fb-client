@@ -10,6 +10,11 @@ app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
 });
 
+
+app.post('/', function (req, res) {
+    res.send("Post request sent to frontend");
+});
+
 app.all(() => {
     res.header('Access-Control-Allow-Origin', '*'); // your website
     res.header('Access-Control-Allow-Credentials', 'false');
@@ -21,6 +26,3 @@ app.listen(port, () => {
     console.log("angular server started on port: " + port);
 });
 
-app.post('/', function (req, res) {
-    res.send("Post request sent to frontend homepage");
-});

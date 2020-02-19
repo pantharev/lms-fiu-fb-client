@@ -2,6 +2,7 @@
 <app-sidebar></app-sidebar>
 <div id="main">
   <app-sidebar-button></app-sidebar-button>
+
 <div class="flexbox-row">
     <div *ngIf="currentUser">
         <button (click)="createModule(courseId)" class="btn btn-success"><i class="fas fa-plus-circle"></i> Create Module</button>
@@ -9,6 +10,7 @@
     <div class="flexbox-container" *ngFor="let module of modules; let index = index">
             <div class="flexbox-options">
 
+                <!--FORM CONTENT IN MODAL FOR VIDEO ADD-->
                 <ng-template #content let-modal>
                     <div class="modal-header">
                         <h4 class="modal-title">Add Youtube Video</h4>
@@ -17,7 +19,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form [formGroup]="videoForm" class="col-sm-4">
+                        <form [formGroup]="videoForm" class="col-9">
 
                             <div class="form-group">
                                 <label>Link</label>
@@ -32,51 +34,90 @@
                     </div>
                 </ng-template>
                 <button class="btn btn-success" (click)="open(content)">Add Video</button>
+                <!--END OF FORM CONTENT IN MODAL FOR VIDEO ADD-->
 
                 <button class="btn btn-success">Add PDF</button>
                 <button class="btn btn-success">Add Quiz/Test</button>
             </div>
+
+            <!--CONTENT IN EACH MODULE-->
             <div class="flexbox-item" (click)="openModule(index)" style="cursor:pointer">
                 <i class="fas fa-caret-down"></i> <strong>Module {{ module.module_number }} </strong>| {{ module.module_title }}
             </div>
             <div *ngIf="toggleContent[index]" class="flexbox-subcontainer">
 
+                <!--RESOURCES PDF CONTENT-->
                 <div class="flexbox-resources" *ngFor="let resource of resources">
                     <i class="fas fa-paperclip"></i> {{resource}}
                 </div>
+                <!--END OF RESOURCES PDF CONTENT-->
 
+                <!--YOUTUBE LINKS CONTENT-->
                 <div class="flexbox-links" *ngFor="let link of safeLinks | keyvalue; let index = index">
                     <div *ngIf="link.key == module.module_id">
                         <i class="fab fa-youtube"></i>                  
                         <ng-template #content let-modal>
                             <div class="modal-header">
-                                <h4 class="modal-title">Calculus 1 - Video {{index + 1}}</h4>
+                                <h4 class="modal-title">{{module.module_title}} - Video {{index + 1}}</h4>
                                 <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <p><iframe width="780" height="480" [src]="link.value" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+                                <p><iframe width="780" height="480" [src]="link.value.videoUrl" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
                             </div>
                         </ng-template>
                         <button class="btn btn-primary" (click)="open(content)">Watch Video {{index + 1}}</button>
+                        <button class="btn btn-danger flexbox-module-options" (click)="deleteVideo(link.value.video_id)">Delete Video</button>
+
+                        <!--FORM CONTENT IN MODAL FOR VIDEO EDIT-->
+                        <ng-template #contentVideoUpdate let-modal>
+                            <div class="modal-header">
+                                <h4 class="modal-title">Edit Youtube Video</h4>
+                                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form [formGroup]="updateVideoForm" class="col-9">
+        
+                                    <div class="form-group">
+                                        <label>New Link</label>
+                                        <input type="text" class="form-control form-control-lg" formControlName="linkInput" #linkInput>
+                                    </div>
+                                
+                                    <button type="submit" (click)="updateVideo(linkInput.value, link.value.video_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Update Video</button>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+                            </div>
+                        </ng-template>
+                        <button class="btn btn-success flexbox-module-options" (click)="openUpdateVideo(contentVideoUpdate, link.value.url)">Edit Video</button>
+                        <!--END OF FORM CONTENT IN MODAL FOR VIDEO EDIT-->
+
                     </div>
                 </div>
+                <!--END OF YOUTUBE LINKS CONTENT-->
 
+                <!--QUIZZES CONTENT-->
                 <div class="flexbox-quizzes" *ngFor="let quiz of quizzes">
                     <i class="fas fa-paper-plane"></i> {{quiz}}
                 </div>
+                <!--END OF QUIZZES CONTENT-->
 
             </div>  
             <div class="flexbox-item-module-actions" *ngIf="currentUser">
                 <button type="button" (click)="editModule(module.course_id, module.module_id)" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</button>
                 <button type="button" (click)="deleteModule(module.module_id, module.module_number)" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Delete</button>
             </div>
+            <!--END OF CONTENT IN EACH MODULE-->
     </div>
 </div>
+
 </div>
 <!--<video
     id="vid1"

@@ -27,7 +27,7 @@ export class ModulesComponent implements OnInit {
   modules = [];
   linksFromDB: string[] = new Array();
   links: string[] = new Array();
-  safeLinks = new Map<number, SafeResourceUrl>();
+  safeLinks = new Map<number, Object>();
   resources = ['pdf1', 'pdf2', 'worddoc1'];
   quizzes = ['quiz1', 'quiz2', 'quiz3'];
   urlPath;
@@ -35,6 +35,7 @@ export class ModulesComponent implements OnInit {
   toggleContent = [];
   moduleVideosFetched = [];
   videoForm: FormGroup;
+  updateVideoForm: FormGroup;
   contentObject = {
     course_id: 0,
     course_name: "",
@@ -47,7 +48,7 @@ export class ModulesComponent implements OnInit {
 
   constructor(private moduleService: ModuleService, private videoService: VideoService, private fb: FormBuilder, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService, private sanitizer: DomSanitizer, private modalService: NgbModal) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
-    this.makeVideoForm();
+    this.makeVideoForms();
    }
 
   ngOnInit() {
@@ -58,15 +59,18 @@ export class ModulesComponent implements OnInit {
     this.fetchModules(this.courseId);
   }
 
-  makeVideoForm() {
+  makeVideoForms() {
     this.videoForm = this.fb.group({
       link: ['', Validators.required]
+    });
+    this.updateVideoForm = this.fb.group({
+      linkInput: ['', Validators.required]
     });
   }
 
   pushLinksToArray(linksFromDB, links) {
     linksFromDB.forEach((val, i, arr) => {
-      links.push({link: arr[i].link, module_id: arr[i].module_id});
+      links.push({link: arr[i].link, module_id: arr[i].module_id, video_id: arr[i].video_id});
       console.log("Links array: " + JSON.stringify(links));
     })
   }
@@ -79,16 +83,27 @@ export class ModulesComponent implements OnInit {
             let id = val.link.substring(32, 43);
             let videoUrl: SafeResourceUrl;
             let url: string;
+            let videoObject = {};
             url = 'https://www.youtube.com/embed/' + id;
             videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-            this.safeLinks.set(moduleId, videoUrl);
-            console.log(this.safeLinks.get(moduleId));
+            videoObject = {
+              videoUrl: videoUrl,
+              video_id: val.video_id,
+              url: val.link
+            }
+            this.safeLinks.set(moduleId, videoObject);
+            console.log("safeLinks: " + JSON.stringify(this.safeLinks.get(moduleId)));
           }
         })
       }
 
   open(content) {
     this.modalService.open(content, { size: 'lg', centered: true });
+  }
+
+  openUpdateVideo(content, videoUrl) {
+    this.modalService.open(content, { size: 'lg', centered: true });
+    this.updateVideoForm.get('linkInput').setValue(videoUrl);
   }
 
   createModule(courseId) {
@@ -135,11 +150,28 @@ export class ModulesComponent implements OnInit {
     })
   }
 
+  updateVideo(link, videoId) {
+    console.log("link: " + link + " " + "videoId: " + videoId);
+    this.videoService.updateVideo(link, videoId).subscribe(() => {
+      alert("Updated video");
+    })
+  }
+
+  deleteVideo(videoId) {
+    console.log("Delete video: " + videoId);
+    let r = confirm("Delete video: are you sure?");
+    if(r){
+      this.videoService.deleteVideo(videoId).subscribe(() => {
+        alert("Deleted video");
+      })
+    }
+  }
+
   fetchContent(courseId, modules) {
     console.log("Fetching content: " + courseId);
     this.videoService.fetchVideos(courseId).subscribe((data: []) => {
       this.linksFromDB = data;
-      console.log(this.linksFromDB);
+      console.log("linksFromDB: " + JSON.stringify(this.linksFromDB));
       this.pushLinksToArray(data, this.links);
       modules.forEach((val, i, arr) => {
         let moduleval = val;

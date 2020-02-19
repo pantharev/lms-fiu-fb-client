@@ -12,7 +12,7 @@ app.get('/*', function (req, res) {
 
 
 app.post('/', function (req, res) {
-    res.send("Post request sent to frontend");
+    res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
 });
 
 app.all(() => {

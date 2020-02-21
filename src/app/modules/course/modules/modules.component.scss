@@ -17,13 +17,16 @@ $base-color: #d9deff;
   }
 
 
-/*.flexbox-row {
+.flexbox-row {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-}*/
+}
+
+
+
 
 .flexbox-container{
     display:flex;
@@ -96,3 +99,4 @@ $base-color: #d9deff;
 .flexbox-quizzes:hover {
     background-color: $base-color;
 }
+

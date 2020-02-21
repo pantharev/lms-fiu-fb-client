@@ -10,7 +10,6 @@ export class SidebarComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log("dropdown");
     var dropdown = document.getElementsByClassName("dropdown-btn");
     var i;
 

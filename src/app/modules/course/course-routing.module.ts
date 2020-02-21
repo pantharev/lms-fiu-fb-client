@@ -10,7 +10,7 @@ import { EditModuleComponent } from './modulesManagement/edit-module/edit-module
 const routes: Routes = [
   { path: '', component: DashboardComponent },
   { path: ':id/modules', component: ModulesComponent },
-  { path: ':id/leaderboard', component: LeaderboardComponent},
+  { path: ':id/leaderboard/', component: LeaderboardComponent},
   { path: ':id/create-module', component: CreateModuleComponent },
   { path: ':id/edit-module/:moduleId', component: EditModuleComponent }
 ];

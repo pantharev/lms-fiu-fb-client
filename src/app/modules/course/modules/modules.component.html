@@ -45,15 +45,17 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form [formGroup]="pdfForm" class="col-9">
+
+                        <form [formGroup]="pdfForm" (ngSubmit)="addPdf(module.module_id)"class="col-9" method="POST" enctype="multipart/form-data">
 
                             <div class="form-group">
                                 <label>Select a PDF File</label>
-                                <input type="file" class="form-control" id="theFile" #file (change)="handleFileInput($event.target.files)">
+                                <input id="theFile" type="file" class="form-control" name="pdf" #file (change)="handleFileInput($event)">
                             </div>
                         
-                            <button type="submit" (click)="addPDF(file.value, module.module_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add PDF</button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add PDF</button>
                         </form>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Sanitizer } from '@angular/core';
+import { Component, ElementRef, OnInit, Sanitizer, ViewChild, ViewChildren } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
@@ -72,7 +72,7 @@ export class ModulesComponent implements OnInit {
       linkInput: ['', Validators.required]
     });
     this.pdfForm = this.fb.group({
-      file: ['', Validators.required]
+      pdf: ['', Validators.required]
     });
   }
 
@@ -216,20 +216,27 @@ export class ModulesComponent implements OnInit {
 
   // BEGIN PDFS CRUD
 
-  handleFileInput(files: FileList){
-    this.fileToUpload = files.item(0);
+  handleFileInput(event){
+    if(event.target.files.length > 0){
+      const file = event.target.files[0];
+      this.pdfForm.get('pdf').setValue(file);
+    }
   }
 
-  addPDF(fileName, moduleId) {
-    console.log("fileName: " + this.fileToUpload.name + " fileSize: " + this.fileToUpload.size);
+  addPdf(moduleId) {
+    console.log("fileName: " + this.pdfForm.get('pdf').value.name + " fileSize: " + this.pdfForm.get('pdf').value.size);
     const formData: FormData = new FormData();
-    formData.append('fileKey', this.fileToUpload, this.fileToUpload.name);
+    formData.append('fileKey', this.pdfForm.get('pdf').value);
     formData.append('fileKey', moduleId);
     console.log(formData.getAll('fileKey'));
-    this.pdfService.addPDF(formData).subscribe(() => {
-      alert("Added pdf");
-    })
-    //console.log("curFile: " + curFile.name + " size: " + curFile.size);
+    this.pdfService.addPDF(formData).subscribe(
+      (res) => console.log(res),
+      (err) => console.log(err)
+    );
+  }
+
+  fetchPdfs(courseId, modules) {
+    
   }
 
 }

@@ -10,6 +10,6 @@ export class PdfService {
   constructor(private http: HttpClient) { }
 
   addPDF(formData) {
-    return this.http.post(`${environment.apiURL}/testpdf`, formData);
+    return this.http.post<any>(`${environment.apiURL}/pdfs`, formData);
   }
 }

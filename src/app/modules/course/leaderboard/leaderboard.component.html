@@ -1,5 +1,21 @@
+<!--<a href="../../../../assets/favicon-32x32.png" download="favicon-32x32">Download it!</a>-->
 <app-sidebar></app-sidebar>
 <div id="main">
     <app-sidebar-button></app-sidebar-button>
-    <p> leaderboard works </p>
-</div>
+    <div class="flexbox-row">
+        <!-- HEADER -->
+        <div class="flexbox-container">
+                <div class="flexbox-cell left">ID</div>
+                <div class="flexbox-cell center">Name</div>
+                <div class="flexbox-cell right">Points</div>
+        </div>
+
+        <!-- STUDENTS -->
+        <div class="flexbox-row" *ngFor="let student of students; let index = index">
+        <div class="flexbox-container">
+                <div class="flexbox-cell left">{{student.student_id}}</div>
+                <div class="flexbox-cell center">{{student.f_name}} {{student.l_name}}</div>
+                <div class="flexbox-cell right">{{student.points}}</div>
+            </div>
+        </div>
+    </div>

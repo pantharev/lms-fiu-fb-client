@@ -24,6 +24,7 @@ export class LeaderboardComponent implements OnInit {
 
   // Gets students from course ID
   fetchStudents(courseId) {
+    console.log("fetching students");
     this.studentCourseService.getStudentsByCourseId(courseId).subscribe((data) => {
       this.students = data;
       console.log(data);

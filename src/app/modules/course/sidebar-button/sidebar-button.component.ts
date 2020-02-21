@@ -14,7 +14,6 @@ export class SidebarButtonComponent implements OnInit {
 
   sidebarIsOpen = false;
   openNav(){
-    console.log("hello");
     
     document.getElementById("mySidenav").style.width = "250px";
     
@@ -24,7 +23,6 @@ export class SidebarButtonComponent implements OnInit {
   }
 
   closeNav(){
-    console.log("goodbye");
     document.getElementById("mySidenav").style.display = "none";
     document.getElementById("mySidenav").style.width = "0";
 

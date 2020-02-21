@@ -60,10 +60,14 @@ $base-color: #d9deff;
     align-self: flex-start;
     display: flex;
     flex-direction: column;
-    width: 300px;
+    width: 560px;
     justify-content: center;
     align-items: flex-start;
     background-color: rgb(250, 250, 250);
+}
+
+.flexbox-module-options {
+    float: right;
 }
 
 .flexbox-links{

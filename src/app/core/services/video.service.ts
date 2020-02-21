@@ -20,4 +20,16 @@ export class VideoService {
   fetchVideos(courseId) {
     return this.http.get(`${environment.apiURL}/videos/${courseId}`);
   }
+
+  updateVideo(link, videoId) {
+    const video = {
+      link: link
+    }
+    return this.http.put(`${environment.apiURL}/videos/${videoId}`, video);
+  }
+
+  deleteVideo(videoId) {
+    return this.http.delete(`${environment.apiURL}/videos/${videoId}`);
+  }
+
 }

@@ -9,8 +9,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class LeaderboardComponent implements OnInit {
 
-
+  students: any = [];
   courseId;
+
   constructor(private studentCourseService: StudentCourseService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -18,6 +19,15 @@ export class LeaderboardComponent implements OnInit {
       this.courseId = params.id;
       console.log("param id is: " + params.id);
     })
+    this.fetchStudents(this.courseId);
+  }
+
+  // Gets students from course ID
+  fetchStudents(courseId) {
+    this.studentCourseService.getStudentsByCourseId(courseId).subscribe((data) => {
+      this.students = data;
+      console.log(data);
+    });
   }
 
 }

@@ -74,16 +74,42 @@
             <div *ngIf="toggleContent[index]" class="flexbox-subcontainer">
 
                 <!--RESOURCES PDF CONTENT-->
-                <div class="flexbox-resources" *ngFor="let resource of resources">
-                    <i class="fas fa-paperclip"></i> {{resource}}
+                <div class="flexbox-resources" *ngFor="let pdf of safePdfs | keyvalue; let index = index">
+                    <div *ngIf="pdf.key == module.module_id">
+                        <div class="flexbox-resources-inner" *ngFor="let innerpdf of pdf.value; let j = index">
+                            <i class="fas fa-paperclip"></i>
+
+                            <ng-template #contentPdf let-modal>
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{{module.module_title}} - Pdf {{j + 1}}</h4>
+                                    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="embed-responsive embed-responsive-16by9">
+                                        <iframe class="embed-responsive-item" width="780" height="480" [src]="innerpdf.pdf"></iframe>
+                                        <!--<a [href]="innerpdf.pdf">Link</a>-->
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+                                </div>
+                            </ng-template>
+                            <button class="btn btn-primary" (click)="open(contentPdf)">View Pdf {{j + 1}}</button>
+                            <button class="btn btn-danger flexbox-module-options" (click)="deletePDF(innerpdf.pdf_id)">Delete Pdf</button>
+
+                        </div>
+                    </div>
                 </div>
                 <!--END OF RESOURCES PDF CONTENT-->
 
                 <!--YOUTUBE LINKS CONTENT-->
                 <div class="flexbox-links" *ngFor="let link of safeLinks | keyvalue; let index = index">
                     <div *ngIf="link.key == module.module_id">
-                        <div *ngFor="let innerlink of link.value; let j = index">
-                            <i class="fab fa-youtube"></i>                  
+                        <div class="flexbox-links-inner" *ngFor="let innerlink of link.value; let j = index">
+                            <i class="fab fa-youtube"></i>    
+
                             <ng-template #content let-modal>
                                 <div class="modal-header">
                                     <h4 class="modal-title">{{module.module_title}} - Video {{j + 1}}</h4>
@@ -92,7 +118,9 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <p><iframe width="780" height="480" [src]="innerlink.videoUrl" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+                                    <div class="embed-responsive embed-responsive-16by9">
+                                        <iframe class="embed-responsive-item" width="780" height="480" [src]="innerlink.videoUrl" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>

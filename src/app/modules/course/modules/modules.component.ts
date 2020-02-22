@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, Sanitizer, ViewChild, ViewChildren } fro
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbButtonLabel } from '@ng-bootstrap/ng-bootstrap';
 
 import { Observable } from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -30,12 +30,16 @@ export class ModulesComponent implements OnInit {
   linksFromDB: string[] = new Array();
   links: string[] = new Array();
   safeLinks = new Map<number, Object[]>();
+  pdfsFromDB: Blob[] = new Array();
+  pdfs: any[] = new Array();
+  safePdfs = new Map<number, Object[]>();
   resources = ['pdf1', 'pdf2', 'worddoc1'];
   quizzes = ['quiz1', 'quiz2', 'quiz3'];
   urlPath;
   courseId;
   toggleContent = [];
   moduleVideosFetched = [];
+  modulePDFsFetched = [];
   videoForm: FormGroup;
   pdfForm: FormGroup;
   updateVideoForm: FormGroup;
@@ -86,32 +90,81 @@ export class ModulesComponent implements OnInit {
   updateVideoUrl(linksArr, moduleId) {
     console.log("updateVideoUrl");
     console.log("linksArr size: " + linksArr.length);
-    this.moduleVideosFetched[moduleId] = true;
-      linksArr.forEach((val, i: number, arr: []) => {
-          if(val.module_id == moduleId){
-            console.log("val: " + i + " " + JSON.stringify(val));
-            let id = val.link.substring(32, 43);
-            let videoUrl: SafeResourceUrl;
-            let url: string;
-            let videoObject = {};
-            url = 'https://www.youtube.com/embed/' + id;
-            videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-            videoObject = {
-              videoUrl: videoUrl,
-              video_id: val.video_id,
-              url: val.link
-            }
-            if(this.safeLinks.get(moduleId)){
-              this.safeLinks.get(moduleId).push(videoObject);
-            }
-            else {
-              this.safeLinks.set(moduleId, [videoObject]);
-            }
-            console.log("safeLinks: " + JSON.stringify(this.safeLinks.get(moduleId)));
-            console.log("safeLinks size: " + this.safeLinks.size);
-          }
-        })
+    //this.moduleVideosFetched[moduleId] = true;
+    linksArr.forEach((val, i: number, arr: []) => {
+      if(val.module_id == moduleId){
+        this.moduleVideosFetched[moduleId] = true;
+        console.log("val: " + i + " " + JSON.stringify(val));
+        let id = val.link.substring(32, 43);
+        let videoUrl: SafeResourceUrl;
+        let url: string;
+        let videoObject = {};
+        url = 'https://www.youtube.com/embed/' + id;
+        videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+        videoObject = {
+          videoUrl: videoUrl,
+          video_id: val.video_id,
+          url: val.link
+        }
+        if(this.safeLinks.get(moduleId)){
+          this.safeLinks.get(moduleId).push(videoObject);
+        }
+        else {
+          this.safeLinks.set(moduleId, [videoObject]);
+        }
+        console.log("safeLinks: " + JSON.stringify(this.safeLinks.get(moduleId)));
+        console.log("safeLinks size: " + this.safeLinks.size);
       }
+    })
+  }
+
+  pushPDFsToArray(pdfsFromDB, pdfs) {
+    pdfsFromDB.forEach((val, i, arr) => {
+      console.log("val : " + i + " " + val);
+      let pdfData = val.pdf.data;
+      //console.log(Array.isArray(pdfData));
+      let myBuffer = Uint8Array.from(pdfData);
+
+      console.log(myBuffer);
+
+      let blob = new Blob([myBuffer.buffer], { type: 'application/pdf' });
+      //console.log(blob.size);
+      //console.log(blob);
+      pdfs.push({ module_id: val.module_id, pdf_id: val.pdf_id, pdf: blob });
+      console.log("pdfs: " + JSON.stringify(pdfs));
+    })
+  }
+
+  updatePdfData(pdfsArr, moduleId) {
+    console.log("pdfsArr size: " + pdfsArr.length);
+    //this.modulePDFsFetched[moduleId] = true;
+    pdfsArr.forEach((val, i: number, arr) => {
+      if(val.module_id == moduleId) {
+        this.modulePDFsFetched[moduleId] = true;
+        console.log("val: " + i + " " + JSON.stringify(val));
+        let pdfObject = {};
+        let cleanPDF: SafeResourceUrl;
+
+        let pdfURL = URL.createObjectURL(val.pdf);
+        console.log(pdfURL);
+        cleanPDF = this.sanitizer.bypassSecurityTrustResourceUrl(pdfURL);
+
+        pdfObject = {
+          pdf_id: val.pdf_id,
+          pdf: cleanPDF
+        }
+
+        if(this.safePdfs.get(moduleId)){
+          this.safePdfs.get(moduleId).push(pdfObject);
+        } 
+        else {
+          this.safePdfs.set(moduleId, [pdfObject]);
+        }
+        console.log("safePdfs: " + JSON.stringify(this.safePdfs.get(moduleId)));
+        console.log("safePdfs size: " + this.safePdfs.size);
+      }
+    })
+  }
       
   open(content) {
     this.modalService.open(content, { size: 'lg', centered: true });
@@ -143,6 +196,7 @@ export class ModulesComponent implements OnInit {
       this.modules = data;
       console.log(this.modules);
       this.fetchVideos(courseId, data);
+      this.fetchPdfs(courseId, data);
     })
   }
 
@@ -193,6 +247,7 @@ export class ModulesComponent implements OnInit {
       this.linksFromDB = data;
       console.log("linksFromDB: " + JSON.stringify(this.linksFromDB));
       this.pushLinksToArray(data, this.links);
+
       modules.forEach((val: any, i, arr) => {
         let moduleval = val;
         for(let i = 0; i < data.length; i++) {
@@ -201,7 +256,6 @@ export class ModulesComponent implements OnInit {
             if(this.moduleVideosFetched[val.module_id] == true){
               console.log("Modules videos fetched true");
               break;
-              //this.updateVideoUrl(this.links, val.module_id);
             }
             else{
               console.log(val.module_id);
@@ -210,6 +264,7 @@ export class ModulesComponent implements OnInit {
           }
         }
       })
+
     })
   }
   // END VIDEOS CRUD
@@ -230,13 +285,35 @@ export class ModulesComponent implements OnInit {
     formData.append('fileKey', moduleId);
     console.log(formData.getAll('fileKey'));
     this.pdfService.addPDF(formData).subscribe(
-      (res) => console.log(res),
+      (res) => {console.log(res); alert("Added PDF!"); },
       (err) => console.log(err)
     );
   }
 
   fetchPdfs(courseId, modules) {
-    
+    this.pdfService.fetchPDFs(courseId).subscribe((data: any[]) => {
+      console.log(data);
+      this.pdfsFromDB = data;
+      this.pushPDFsToArray(data, this.pdfs);
+
+      modules.forEach((val: any, i, arr) => {
+        let moduleval = val;
+        for(let i = 0; i < data.length; i++) {
+          let val = data[i];
+          if(val.module_id == moduleval.module_id){
+            if(this.modulePDFsFetched[val.module_id] == true){
+              console.log("Modules pdfs fetched true");
+              break;
+            }
+            else{
+              console.log(val.module_id);
+              this.updatePdfData(this.pdfs, val.module_id);
+            }
+          }
+        }
+      })
+
+    })
   }
 
 }

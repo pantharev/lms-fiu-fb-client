@@ -1,21 +1,4 @@
 $base-color: #d9deff;
-/* Change all text and icon colors in the player. */
-.vjs-matrix.video-js {
-    color: $base-color;
-  }
-  
-  /* Change the border of the big play button. */
-  .vjs-matrix .vjs-big-play-button {
-    border-color: $base-color;
-  }
-  
-  /* Change the color of various "bars". */
-  .vjs-matrix .vjs-volume-level,
-  .vjs-matrix .vjs-play-progress,
-  .vjs-matrix .vjs-slider-bar {
-    background: $base-color;
-  }
-
 
 .flexbox-row {
     display: flex;
@@ -75,20 +58,28 @@ $base-color: #d9deff;
 
 .flexbox-links{
     align-self: stretch;
-    border: solid black 1px;
-}
 
-.flexbox-links:hover{
-    background-color: $base-color;
+    .flexbox-links-inner {
+        align-self: stretch;
+        border: solid black 1px;
+
+        &:hover {
+            background-color: $base-color;
+        }
+    }
 }
 
 .flexbox-resources {
     align-self: stretch;
-    border: solid black 1px;
-}
 
-.flexbox-resources:hover {
-    background-color: $base-color;
+    .flexbox-resources-inner {
+        align-self: stretch;
+        border: solid black 1px;
+
+        &:hover {
+            background-color: $base-color;
+        }
+    }
 }
 
 .flexbox-quizzes {

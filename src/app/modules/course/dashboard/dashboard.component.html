@@ -1,4 +1,5 @@
 <h2>Dashboard</h2>
+<button type="button" (click)="toggleDropCourse()" class="btn btn-danger btn-sm">Toggle Course Drop</button>
 <div class="row">
     <ng-container *ngFor="let course of courses; let i = index">
         <div class="col-sm-2">
@@ -7,7 +8,10 @@
                 <div class="card-body">
                     <h5 class="card-title">{{course.name}}</h5>
                     <p class="card-text">{{course.description}}</p>
-                    <a [routerLink]="[course.course_id, 'modules']" class="btn btn-primary">Go to Course</a>
+                    <div class="flex-container">
+                        <a [routerLink]="[course.course_id, 'modules']" class="btn btn-primary flex-item">Go to Course</a>
+                        <button type="button" (click)="dropCourse(course.course_id)" class="btn btn-danger btn-sm flex-item" *ngIf="courseDrop">Drop Course</button>
+                    </div>
                 </div>
             </div>
         </div>

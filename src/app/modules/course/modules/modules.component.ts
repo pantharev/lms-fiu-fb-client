@@ -120,14 +120,14 @@ export class ModulesComponent implements OnInit {
 
   pushPDFsToArray(pdfsFromDB, pdfs) {
     pdfsFromDB.forEach((val, i, arr) => {
-      console.log("val : " + i + " " + val);
+      //console.log("val : " + i + " " + JSON.stringify(val));
       let pdfData = val.pdf.data;
       //console.log(Array.isArray(pdfData));
       let myBuffer = Uint8Array.from(pdfData);
 
-      console.log(myBuffer);
+      //console.log(myBuffer);
 
-      let blob = new Blob([myBuffer.buffer], { type: 'application/pdf' });
+      let blob = new Blob([myBuffer.buffer], { type: 'application/pdf' }); //application/octet-stream
       //console.log(blob.size);
       //console.log(blob);
       pdfs.push({ module_id: val.module_id, pdf_id: val.pdf_id, pdf: blob });
@@ -314,6 +314,16 @@ export class ModulesComponent implements OnInit {
       })
 
     })
+  }
+
+  deletePDF(pdfId) {
+    console.log("PDF ID: " + pdfId);
+    let r = confirm("Delete pdf: Are you sure?");
+    if(r){
+      this.pdfService.deletePDF(pdfId).subscribe(() => {
+        alert("Deleted pdf");
+      })
+    }
   }
 
 }

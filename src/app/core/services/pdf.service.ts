@@ -18,7 +18,7 @@ export class PdfService {
     return this.http.get(`${environment.apiURL}/pdfs/${courseId}`);
   }
 
-  fetchPDFsTest() {
-
+  deletePDF(pdfID){
+    return this.http.delete(`${environment.apiURL}/pdfs/${pdfID}`);
   }
 }

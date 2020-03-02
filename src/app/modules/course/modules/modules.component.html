@@ -3,6 +3,9 @@
 <div id="main">
   <app-sidebar-button></app-sidebar-button>
 
+<div class="progress" style="height: 30px">
+    <div class="progress-bar progress-bar-striped" id="progressbar" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">{{points}}%</div>
+</div>
 <div class="flexbox-row">
     <div *ngIf="currentUser">
         <button (click)="createModule(courseId)" class="btn btn-success"><i class="fas fa-plus-circle"></i> Create Module</button>

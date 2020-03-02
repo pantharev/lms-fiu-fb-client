@@ -8,12 +8,6 @@ $base-color: #d9deff;
     align-items: center;
 }
 
-div:target {
-    display: block;
-    transition: 1s;
-}
-
-
 .flexbox-container{
     display:flex;
     flex-direction: column;

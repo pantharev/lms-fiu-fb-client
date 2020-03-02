@@ -43,6 +43,7 @@ export class ModulesComponent implements OnInit {
   videoForm: FormGroup;
   pdfForm: FormGroup;
   updateVideoForm: FormGroup;
+  updatePdfForm: FormGroup;
   fileToUpload: File = null;
   contentObject = {
     course_id: 0,
@@ -76,6 +77,9 @@ export class ModulesComponent implements OnInit {
       linkInput: ['', Validators.required]
     });
     this.pdfForm = this.fb.group({
+      pdf: ['', Validators.required]
+    });
+    this.updatePdfForm = this.fb.group({
       pdf: ['', Validators.required]
     });
   }
@@ -171,11 +175,12 @@ export class ModulesComponent implements OnInit {
   }
       
   openModule(index) {
-    console.log("Opening module content");
     if(this.toggleContent[index]){
+      console.log("Closing module content");
       this.toggleContent[index] = false;
     }
     else {
+      console.log("Opening module content");
       this.toggleContent[index] = true;
     }   
   }
@@ -183,6 +188,11 @@ export class ModulesComponent implements OnInit {
   openUpdateVideo(content, videoUrl) {
     this.modalService.open(content, { size: 'lg', centered: true });
     this.updateVideoForm.get('linkInput').setValue(videoUrl);
+  }
+
+  openUpdatePDF(content, pdf){
+    this.modalService.open(content, { size: 'lg', centered: true });
+    this.updatePdfForm.get('pdf').setValue(pdf);
   }
   // END UTILITY FUNCTIONS
 
@@ -278,6 +288,13 @@ export class ModulesComponent implements OnInit {
     }
   }
 
+  handleFileInputUpdate(event){
+    if(event.target.files.length > 0){
+      const file = event.target.files[0];
+      this.updatePdfForm.get('pdf').setValue(file);
+    }
+  }
+
   addPdf(moduleId) {
     console.log("fileName: " + this.pdfForm.get('pdf').value.name + " fileSize: " + this.pdfForm.get('pdf').value.size);
     const formData: FormData = new FormData();
@@ -316,6 +333,16 @@ export class ModulesComponent implements OnInit {
     })
   }
 
+  updatePDF(pdfId, moduleId){
+    console.log("updatePDF");
+    const formData: FormData = new FormData();
+    formData.append('fileKey', this.updatePdfForm.get('pdf').value);
+    formData.append('fileKey', moduleId);
+    this.pdfService.updatePDF(pdfId, formData).subscribe(() => {
+      alert("Updated pdf");
+    });
+  }
+
   deletePDF(pdfId) {
     console.log("PDF ID: " + pdfId);
     let r = confirm("Delete pdf: Are you sure?");
@@ -325,5 +352,7 @@ export class ModulesComponent implements OnInit {
       })
     }
   }
+
+  // END PDFS CRUD
 
 }

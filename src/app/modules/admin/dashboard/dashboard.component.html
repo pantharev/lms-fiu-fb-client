@@ -1,12 +1,14 @@
-<h2>Admin Dashboard</h2>
+<div class="center-form">
 
-<div *ngIf="currentUser">
+    <h2>Admin Dashboard</h2>
 
-<nav class="nav flex-column col-sm-1">
-    <a routerLink="/admin/create-course" routerLinkActive="active" class="nav-link btn btn-success"><i class="fas fa-plus-circle"></i> Create New Course</a>
-</nav>
+    <div *ngIf="currentUser">
+    <h2>Courses</h2>
+    <nav class="nav flex-column col-sm-1">
+        <a routerLink="/admin/create-course" routerLinkActive="active" class="nav-link btn btn-success"><i class="fas fa-plus-circle"></i> Create New Course</a>
+    </nav>
 
-<h2>Courses</h2>
+</div>
 
 <table class="table">
     <thead>
@@ -15,7 +17,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let course of courses.res">
+        <tr *ngFor="let course of courses.res" class="trstyle">
             <th scope="row">{{ course.id }}</th>
             <td>{{ course.name }}</td>
             <td>{{ course.description }}</td>

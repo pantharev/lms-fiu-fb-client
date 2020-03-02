@@ -53,7 +53,7 @@ export class EditCourseComponent implements OnInit {
   updateCourse(name, description, seats, start_date, end_date) {
     if(this.updateForm.valid)
       this.courseService.updateCourse(this.id, name, description, seats, start_date, end_date).subscribe(res => {
-        alert('Course updated successfully');
+        this.router.navigate(['/admin']);
       });
     else alert('Missing required fields!');
   }

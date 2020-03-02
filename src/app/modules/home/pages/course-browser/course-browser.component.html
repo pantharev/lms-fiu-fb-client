@@ -1,18 +1,19 @@
-<h2>Courses</h2>
+<div class="center-form">
+    <h2>Courses</h2>
 
-<div class="container">
-    <div class="row">
-      <div class="col-lg-12">
-         <h2>Search for course</h2>
-         <input #search type="search" name="search" id="search" placeholder="search course here...." (keyup)="searchCourse(search.value)" matInput [matAutocomplete]="auto">
-         <mat-autocomplete #auto="matAutocomplete">
-             <mat-option *ngFor="let searchedCourse of searchedCourses" [value]="searchedCourse">
-                {{searchedCourse}}
-             </mat-option>
-         </mat-autocomplete>
-      </div>           
-    </div>
- </div>
+        <div class="row">
+        <div class="col-lg-12">
+            <h2>Search for course</h2>
+            <input #search type="search" name="search" id="search" placeholder="search course here...." (keyup)="searchCourse(search.value)" matInput [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let searchedCourse of searchedCourses" [value]="searchedCourse" (click)="searchedCourseFn(searchedCourse)">
+                    {{searchedCourse}}
+                </mat-option>
+            </mat-autocomplete>
+            <button type="button" class="btn btn-primary" (click)="foundCourse = false">Show all</button>
+        </div>           
+        </div>
+</div>
 
 <table class="table">
     <thead>
@@ -21,38 +22,53 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let course of courses.res">
-            <th scope="row">{{ course.id }}</th>
-            <td>{{ course.name }}</td>
-            <td>{{ course.description }}</td>
-            <td>{{ course.seats }}</td>
-            <td>{{ course.start_date }}</td>
-            <td>{{ course.end_date }}</td>
-            <td *ngIf="currentUser"><button type="submit" (click)="studentEnroll(studentId, course.id, 'pending')" class="btn btn-success">Enroll</button></td>
-        </tr>
+        <ng-container *ngIf="foundCourse; else elseBlock0">
+            <tr *ngIf="searchedCourseObject" class="trstyle">
+                <th scope="row">{{ searchedCourseObject.id }}</th>
+                <td>{{ searchedCourseObject.name }}</td>
+                <td>{{ searchedCourseObject.description }}</td>
+                <td>{{ searchedCourseObject.seats }}</td>
+                <td>{{ searchedCourseObject.start_date }}</td>
+                <td>{{ searchedCourseObject.end_date }}</td>
+                <td *ngIf="currentUser"><button type="submit" (click)="studentEnroll(studentId, searchedCourseObject.id, searchedCourseObject.name, 'pending')" class="btn btn-success">Enroll</button></td>
+            </tr>
+        </ng-container>
+        <ng-template #elseBlock0>
+            <tr *ngFor="let course of courses.res" class="trstyle">
+                <th scope="row">{{ course.id }}</th>
+                <td>{{ course.name }}</td>
+                <td>{{ course.description }}</td>
+                <td>{{ course.seats }}</td>
+                <td>{{ course.start_date }}</td>
+                <td>{{ course.end_date }}</td>
+                <td *ngIf="currentUser"><button type="submit" (click)="studentEnroll(studentId, course.id, course.name, 'pending')" class="btn btn-success">Enroll</button></td>
+            </tr>
+        </ng-template>
     </tbody>
 </table>
 
-<nav aria-label="Page navigation course-library">
-    <ul class="pagination">
+<div class="center-form">
+    <nav aria-label="Page navigation course-library">
+        <ul class="pagination">
 
-        <ng-container *ngIf="page == 0; else elseBlock">
-            <li class="page-item disabled"><button class="page-link" (click)="fetchPageCourses(page-1)">Previous</button></li>
-        </ng-container>
-        <ng-template #elseBlock>
-            <li class="page-item"><button class="page-link" (click)="fetchPageCourses(page-1)">Previous</button></li>
-        </ng-template>
+            <ng-container *ngIf="page == 0; else elseBlock">
+                <li class="page-item disabled"><button class="page-link" (click)="fetchPageCourses(page-1)">Previous</button></li>
+            </ng-container>
+            <ng-template #elseBlock>
+                <li class="page-item"><button class="page-link" (click)="fetchPageCourses(page-1)">Previous</button></li>
+            </ng-template>
 
-        <ng-container *ngFor="let maxPages of maxPagesArray; let i = index">
-        <li class="page-item"><button class="page-link" (click)="fetchPageCourses(i)">{{i}}</button></li>
-        </ng-container>
+            <ng-container *ngFor="let maxPages of maxPagesArray; let i = index">
+            <li class="page-item"><button class="page-link" (click)="fetchPageCourses(i)">{{i}}</button></li>
+            </ng-container>
 
-        <ng-container *ngIf="page == maxPages - 1; else elseBlock2">
-            <li class="page-item disabled"><button class="page-link" (click)="fetchPageCourses(page+1)">Next</button></li>
-        </ng-container>
-        <ng-template #elseBlock2>
-            <li class="page-item"><button class="page-link" (click)="fetchPageCourses(page+1)">Next</button></li>
-        </ng-template>
-        
-    </ul>
-  </nav>
+            <ng-container *ngIf="page == maxPages - 1; else elseBlock2">
+                <li class="page-item disabled"><button class="page-link" (click)="fetchPageCourses(page+1)">Next</button></li>
+            </ng-container>
+            <ng-template #elseBlock2>
+                <li class="page-item"><button class="page-link" (click)="fetchPageCourses(page+1)">Next</button></li>
+            </ng-template>
+            
+        </ul>
+    </nav>
+</div>

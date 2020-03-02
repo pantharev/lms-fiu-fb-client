@@ -30,8 +30,12 @@ export class CourseBrowserComponent implements OnInit {
   maxPagesArray;
   socket;
   searchValue;
+  searchedCourse;
+  searchedCourseObject;
+  foundCourse = false;
   duplicateCourse = false;
   num = 0;
+  numberPerPage = 5;
   currentUser: User;
   studentId;
 
@@ -48,7 +52,7 @@ export class CourseBrowserComponent implements OnInit {
   }
 
   fetchCourses(page) {
-    this.courseService.getCourses(page, 2)
+    this.courseService.getCourses(page, this.numberPerPage)
       .subscribe((data: {}) => {
         this.courses = data;
         this.page = page;
@@ -74,11 +78,11 @@ export class CourseBrowserComponent implements OnInit {
   }
 
   fetchPageCourses(pageNo) {
-    //console.log("pageNo: " + pageNo);
+    console.log("pageNo: " + pageNo);
     if(pageNo < 0) {
       return;
     }
-    this.courseService.getCourses(pageNo, 2)
+    this.courseService.getCourses(pageNo, this.numberPerPage)
       .subscribe((data: any = {}) => {
         this.courses = data;
         this.page = pageNo;
@@ -99,10 +103,10 @@ export class CourseBrowserComponent implements OnInit {
       });
   }
 
-  studentEnroll(studentId, courseId, enrollment_status) {
+  studentEnroll(studentId, courseId, course_name, enrollment_status) {
     // Add student to students_courses table with pending enrollment
     this.studentCourseService.enrollStudentToCourse(studentId, courseId, enrollment_status).subscribe(() => {
-      alert("Enrolled for course: " + courseId);
+      alert("Enrolled for course: " + course_name);
     });
     console.log("StudentId: " + studentId);
     console.log(`Enrollment pending for courseId: ${courseId}`);
@@ -125,4 +129,16 @@ export class CourseBrowserComponent implements OnInit {
         });
       });
     }
+
+  searchedCourseFn(course) {
+    this.searchedCourse = course;
+    this.foundCourse = true;
+    console.log(this.searchedCourse);
+    this.courses.res.forEach((item, index, arr) => {
+      if(this.searchedCourse == item.name){
+        console.log(item);
+        this.searchedCourseObject = item;
+      }
+    })
+  }
 }

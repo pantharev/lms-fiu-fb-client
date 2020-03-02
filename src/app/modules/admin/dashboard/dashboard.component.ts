@@ -21,7 +21,7 @@ export class DashboardComponent implements OnInit {
   currentPage;
   maxPages;
   maxPagesArray;
-  numberPerPage = 2;
+  numberPerPage = 5;
 
   constructor(private courseService: CourseService, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
@@ -64,7 +64,7 @@ export class DashboardComponent implements OnInit {
     if(pageNo < 0) {
       return;
     }
-    this.courseService.getCourses(pageNo, 2)
+    this.courseService.getCourses(pageNo, this.numberPerPage)
       .subscribe((data: any = {}) => {
         this.courses = data;
         this.page = pageNo;

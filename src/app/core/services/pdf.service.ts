@@ -18,6 +18,10 @@ export class PdfService {
     return this.http.get(`${environment.apiURL}/pdfs/${courseId}`);
   }
 
+  updatePDF(pdfID, formData){
+    return this.http.put(`${environment.apiURL}/pdfs/${pdfID}`, formData);
+  }
+
   deletePDF(pdfID){
     return this.http.delete(`${environment.apiURL}/pdfs/${pdfID}`);
   }

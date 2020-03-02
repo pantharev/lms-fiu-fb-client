@@ -71,7 +71,7 @@
             <div class="flexbox-item" (click)="openModule(index)" style="cursor:pointer">
                 <i class="fas fa-caret-down"></i> <strong>Module {{ module.module_number }} </strong>| {{ module.module_title }}
             </div>
-            <div *ngIf="toggleContent[index]" class="flexbox-subcontainer">
+            <div class="flexbox-subcontainer" *ngIf="toggleContent[index]">
 
                 <!--RESOURCES PDF CONTENT-->
                 <div class="flexbox-resources" *ngFor="let pdf of safePdfs | keyvalue; let index = index">
@@ -98,6 +98,32 @@
                             </ng-template>
                             <button class="btn btn-primary" (click)="open(contentPdf)">View Pdf {{j + 1}}</button>
                             <button class="btn btn-danger flexbox-module-options" (click)="deletePDF(innerpdf.pdf_id)">Delete Pdf</button>
+
+                            <!--FORM CONTENT IN MODAL FOR PDF EDIT-->
+                            <ng-template #contentPdfUpdate let-modal>
+                            <div class="modal-header">
+                                <h4 class="modal-title">Edit PDF</h4>
+                                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form [formGroup]="updatePdfForm" (ngSubmit)="updatePDF(innerpdf.pdf_id, module.module_id)"class="col-9" method="POST" enctype="multipart/form-data">
+
+                                    <div class="form-group">
+                                        <label>Select a PDF File</label>
+                                        <input id="theFile" type="file" class="form-control" name="pdf" #file (change)="handleFileInputUpdate($event)">
+                                    </div>
+                                
+                                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Update PDF</button>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+                            </div>
+                        </ng-template>
+                        <button class="btn btn-success flexbox-module-options" (click)="openUpdatePDF(contentPdfUpdate, innerpdf.pdf)">Edit PDF</button>
+                        <!--END OF FORM CONTENT IN MODAL FOR PDF EDIT-->
 
                         </div>
                     </div>
@@ -171,6 +197,7 @@
                 <button type="button" (click)="deleteModule(module.module_id, module.module_number)" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Delete</button>
             </div>
             <!--END OF CONTENT IN EACH MODULE-->
+
     </div>
 </div>
 

@@ -11,6 +11,8 @@ import { AuthenticationService } from '@app/core/services/authentication.service
 import { environment } from 'src/environments/environment';
 
 import io from "socket.io-client";
+import decode from 'jwt-decode';
+import { throwToolbarMixedModesError } from '@angular/material';
 
 @Component({
   selector: 'app-course-browser',
@@ -32,11 +34,15 @@ export class CourseBrowserComponent implements OnInit {
   searchValue;
   searchedCourse;
   searchedCourseObject;
+  searchedCoursesArray;
   foundCourse = false;
+  foundCourses = false;
+  foundCoursesN: number = 0;
   duplicateCourse = false;
   num = 0;
   numberPerPage = 5;
   currentUser: User;
+  tokenUser: User;
   studentId;
 
   constructor(private courseService: CourseService, private studentCourseService: StudentCourseService, private authService: AuthenticationService, private router: Router, private route: ActivatedRoute) { }
@@ -46,8 +52,9 @@ export class CourseBrowserComponent implements OnInit {
     this.fetchCourses(page);
     this.socket = io.connect(environment.apiURL);
     this.currentUser = this.authService.currentUserValue;
+    this.tokenUser = decode(this.currentUser.token);
     if(this.currentUser)
-      this.studentId = this.currentUser.id;
+      this.studentId = this.tokenUser.id;
     //console.log("Init page: " + page);
   }
 
@@ -115,6 +122,7 @@ export class CourseBrowserComponent implements OnInit {
 
   searchCourse(searchTerm) {
     if(searchTerm == ""){
+      this.foundCoursesN = 0;
       return;
     }
 
@@ -123,22 +131,40 @@ export class CourseBrowserComponent implements OnInit {
     this.socket.on('search-data', (course) => {
         this.searchedCourses.length = 0;
         this.num++;
-        console.log(this.num);
+        //console.log(course);
         course.forEach((val, i, arr) => {
-            this.searchedCourses.push(arr[i].name);
+            this.searchedCourses.push(arr[i]);
         });
+        this.searchCourseFnAll(course);
       });
     }
 
   searchedCourseFn(course) {
-    this.searchedCourse = course;
-    this.foundCourse = true;
-    console.log(this.searchedCourse);
-    this.courses.res.forEach((item, index, arr) => {
-      if(this.searchedCourse == item.name){
-        console.log(item);
-        this.searchedCourseObject = item;
-      }
+    this.foundCoursesN = 1;
+
+    let start_date = new Date(course.start_date.toString());
+    let end_date = new Date(course.end_date.toString());
+
+    course.start_date = start_date.toLocaleDateString();
+    course.end_date = end_date.toLocaleDateString();
+
+    this.searchedCourseObject = course;
+    //console.log("searched course: " + JSON.stringify(this.searchedCourseObject));
+  }
+
+  searchCourseFnAll(courses){
+    this.foundCoursesN = 2;
+
+    courses.forEach((course) => {
+      let start_date = new Date(course.start_date.toString());
+      let end_date = new Date(course.end_date.toString());
+
+      course.start_date = start_date.toLocaleDateString();
+      course.end_date = end_date.toLocaleDateString();
     })
+
+    this.searchedCoursesArray = courses;
+    //console.log("searched courses: " + JSON.stringify(this.searchedCoursesArray));
+
   }
 }

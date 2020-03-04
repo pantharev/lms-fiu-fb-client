@@ -6,46 +6,77 @@
             <h2>Search for course</h2>
             <input #search type="search" name="search" id="search" placeholder="search course here...." (keyup)="searchCourse(search.value)" matInput [matAutocomplete]="auto">
             <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let searchedCourse of searchedCourses" [value]="searchedCourse" (click)="searchedCourseFn(searchedCourse)">
-                    {{searchedCourse}}
+                <mat-option *ngFor="let searchedCourse of searchedCourses" [value]="searchedCourse.name" (click)="searchedCourseFn(searchedCourse)">
+                    {{searchedCourse.name}}
                 </mat-option>
             </mat-autocomplete>
-            <button type="button" class="btn btn-primary" (click)="foundCourse = false">Show all</button>
+            <button type="button" class="btn btn-primary" (click)="foundCoursesN = 0">Show all</button>
         </div>           
         </div>
 </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th *ngFor="let colName of displayedColumns" scope="col">{{ colName }}</th>
-        </tr>
-    </thead>
-    <tbody>
-        <ng-container *ngIf="foundCourse; else elseBlock0">
-            <tr *ngIf="searchedCourseObject" class="trstyle">
-                <th scope="row">{{ searchedCourseObject.id }}</th>
-                <td>{{ searchedCourseObject.name }}</td>
-                <td>{{ searchedCourseObject.description }}</td>
-                <td>{{ searchedCourseObject.seats }}</td>
-                <td>{{ searchedCourseObject.start_date }}</td>
-                <td>{{ searchedCourseObject.end_date }}</td>
-                <td *ngIf="currentUser"><button type="submit" (click)="studentEnroll(studentId, searchedCourseObject.id, searchedCourseObject.name, 'pending')" class="btn btn-success">Enroll</button></td>
-            </tr>
-        </ng-container>
-        <ng-template #elseBlock0>
-            <tr *ngFor="let course of courses.res" class="trstyle">
-                <th scope="row">{{ course.id }}</th>
-                <td>{{ course.name }}</td>
-                <td>{{ course.description }}</td>
-                <td>{{ course.seats }}</td>
-                <td>{{ course.start_date }}</td>
-                <td>{{ course.end_date }}</td>
-                <td *ngIf="currentUser"><button type="submit" (click)="studentEnroll(studentId, course.id, course.name, 'pending')" class="btn btn-success">Enroll</button></td>
-            </tr>
-        </ng-template>
-    </tbody>
-</table>
+<div [ngSwitch]="foundCoursesN">
+    <div *ngSwitchCase="1">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th *ngFor="let colName of displayedColumns" scope="col">{{ colName }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngIf="searchedCourseObject as course" class="trstyle">
+                    <th scope="row">{{ course.id }}</th>
+                    <td style="max-width: 125px; word-wrap: break-word;">{{ course.name }}</td>
+                    <td style="max-width: 200px; word-wrap: break-word;">{{ course.description }}</td>
+                    <td>{{ course.seats }}</td>
+                    <td>{{ course.start_date }}</td>
+                    <td>{{ course.end_date }}</td>
+                    <td *ngIf="currentUser"><button type="submit" (click)="studentEnroll(studentId, course.id, course.name, 'pending')" class="btn btn-success">Enroll</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngSwitchCase="2">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th *ngFor="let colName of displayedColumns" scope="col">{{ colName }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let course of searchedCoursesArray" class="trstyle">
+                    <th scope="row">{{ course.id }}</th>
+                    <td style="max-width: 125px; word-wrap: break-word;">{{ course.name }}</td>
+                    <td style="max-width: 200px; word-wrap: break-word;">{{ course.description }}</td>
+                    <td>{{ course.seats }}</td>
+                    <td>{{ course.start_date }}</td>
+                    <td>{{ course.end_date }}</td>
+                    <td *ngIf="currentUser"><button type="submit" (click)="studentEnroll(studentId, course.id, course.name, 'pending')" class="btn btn-success">Enroll</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngSwitchDefault>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th *ngFor="let colName of displayedColumns" scope="col">{{ colName }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let course of courses.res" class="trstyle">
+                    <th scope="row">{{ course.id }}</th>
+                    <td style="max-width: 125px; word-wrap: break-word;">{{ course.name }}</td>
+                    <td style="max-width: 200px; word-wrap: break-word;">{{ course.description }}</td>
+                    <td>{{ course.seats }}</td>
+                    <td>{{ course.start_date }}</td>
+                    <td>{{ course.end_date }}</td>
+                    <td *ngIf="currentUser"><button type="submit" (click)="studentEnroll(studentId, course.id, course.name, 'pending')" class="btn btn-success">Enroll</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <div class="center-form">
     <nav aria-label="Page navigation course-library">

@@ -1,21 +1,35 @@
-<div class="center-form">
-<h2>Dashboard</h2>
-<button type="button" (click)="toggleDropCourse()" class="btn btn-danger btn-sm">Toggle Course Drop</button>
-</div>
-<div class="row">
-    <ng-container *ngFor="let course of courses; let i = index">
-        <div class="col-sm-2">
-            <div class="card" style="max-width: 18rem;">
-                <!--<img class="card-img-top" src="..." alt="Card image cap">-->
-                <div class="card-body">
-                    <h5 class="card-title">{{course.name}}</h5>
-                    <p class="card-text">{{course.description}}</p>
-                    <div class="flex-container">
-                        <a [routerLink]="[course.course_id, 'modules']" class="btn btn-primary flex-item">Go to Course</a>
-                        <button type="button" (click)="dropCourse(course.course_id)" class="btn btn-danger btn-sm flex-item" *ngIf="courseDrop">Drop Course</button>
+<div class="center-form" style="position: relative">
+
+    <h2>Dashboard</h2>
+
+    <ng-container *ngIf="listCourses | async; else elseBlock">
+        <!--<button type="button" (click)="toggleDropCourse()" class="btn btn-danger btn-sm">Toggle Course Drop</button>-->
+        <div class="row">
+            <ng-container *ngFor="let course of listCourses | async; let index = index">
+                <ng-container *ngIf="course.enrollment_status == 'enrolled'">
+                    <button *ngIf="index == 0" type="button" (click)="toggleDropCourse()" class="btn btn-danger btn-sm center-form" style="position: absolute; top: 5px; left: 20px;">Toggle Course Drop</button>
+                    <div class="col">
+                        <div class="card" style="max-width: 18rem;">
+                            <!--<img class="card-img-top" src="..." alt="Card image cap">-->
+                            <div class="card-body">
+                                <h5 class="card-title text-wrap" style="word-wrap: break-word">{{course.name}}</h5>
+                                <p class="card-text text-wrap" style="word-wrap: break-word">{{course.description}}</p>
+                                <div class="flex-container">
+                                    <a [routerLink]="[course.course_id, 'modules']" class="btn btn-primary flex-item">Go to Course</a>
+                                    <button type="button" (click)="dropCourse(course.course_id)" class="btn btn-danger btn-sm flex-item" *ngIf="courseDrop">Drop Course</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </ng-container>
+            </ng-container>
         </div>
     </ng-container>
+
+    <ng-template #elseBlock class="center-form">
+        <p>You have no courses!</p>
+        <label>Enroll in courses</label>
+        <button routerLink="../course-library" class="btn btn-primary" style="margin-left: 10px">Enroll</button>
+    </ng-template>
+
 </div>

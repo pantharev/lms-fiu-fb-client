@@ -10,7 +10,9 @@ import {map} from 'rxjs/operators';
 import { PdfService } from '@app/core/services/pdf.service';
 import { VideoService } from '@app/core/services/video.service';
 import { AuthenticationService } from '@app/core/services/authentication.service';
+import { StudentCourseService } from '@app/core/services/student-course.service';
 import { User } from '@app/core/models/user';
+import decode from 'jwt-decode';
 
 import { ModuleService } from 'src/app/core/services/module.service';
 import { throwToolbarMixedModesError } from '@angular/material';
@@ -26,6 +28,9 @@ import { analyzeAndValidateNgModules } from '@angular/compiler';
 })
 export class ModulesComponent implements OnInit {
   currentUser: User;
+  tokenPayload: User;
+  isAdmin: Boolean;
+  isInstructor: Boolean;
   modules = [];
   linksFromDB: string[] = new Array();
   links: string[] = new Array();
@@ -35,6 +40,7 @@ export class ModulesComponent implements OnInit {
   safePdfs = new Map<number, Object[]>();
   resources = ['pdf1', 'pdf2', 'worddoc1'];
   quizzes = ['quiz1', 'quiz2', 'quiz3'];
+  points: number;
   urlPath;
   courseId;
   toggleContent = [];
@@ -55,17 +61,45 @@ export class ModulesComponent implements OnInit {
     link: ""
   }
 
-  constructor(private moduleService: ModuleService, private videoService: VideoService, private pdfService: PdfService, private fb: FormBuilder, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService, private sanitizer: DomSanitizer, private modalService: NgbModal) {
-    this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
-    this.makeVideoForms();
-   }
+  constructor(
+    private moduleService: ModuleService,
+    private videoService: VideoService, 
+    private pdfService: PdfService, 
+    private authenticationService: AuthenticationService, 
+    private studentCourseService: StudentCourseService,
+    private fb: FormBuilder, 
+    private router: Router, 
+    private route: ActivatedRoute, 
+    private sanitizer: DomSanitizer, 
+    private modalService: NgbModal
+    ) 
+    {
+      this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+      this.makeVideoForms();
+    }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.courseId = params.id;
       console.log("param id is: " + params.id);
     })
+    if(!this.currentUser){
+      return;
+    }
+    this.tokenPayload = decode(this.currentUser.token);
+    this.isAdmin = (this.tokenPayload.role === "admin");
+    this.isInstructor = (this.tokenPayload.role === "instructor");
     this.fetchModules(this.courseId);
+    this.studentCourseService.getStudentsByCourseId(this.courseId).subscribe((data: []) => {
+      data.forEach((val: any, i, arr) => {
+        if(val.student_id == this.tokenPayload.id) {
+          console.log("Got student: " + JSON.stringify(val));
+          this.points = val.points;
+          console.log("Points: " + this.points);
+          document.getElementById('progressbar').style.width = this.points + "%";
+        }
+      })
+    })
   }
 
   // BEGIN UTILITY FUNCTIONS
@@ -87,18 +121,18 @@ export class ModulesComponent implements OnInit {
   pushLinksToArray(linksFromDB, links) {
     linksFromDB.forEach((val, i, arr) => {
       links.push({link: arr[i].link, module_id: arr[i].module_id, video_id: arr[i].video_id});
-      console.log("Links array: " + JSON.stringify(links));
+      //console.log("Links array: " + JSON.stringify(links));
     })
   }
 
   updateVideoUrl(linksArr, moduleId) {
-    console.log("updateVideoUrl");
-    console.log("linksArr size: " + linksArr.length);
+    //console.log("updateVideoUrl");
+    //console.log("linksArr size: " + linksArr.length);
     //this.moduleVideosFetched[moduleId] = true;
     linksArr.forEach((val, i: number, arr: []) => {
       if(val.module_id == moduleId){
         this.moduleVideosFetched[moduleId] = true;
-        console.log("val: " + i + " " + JSON.stringify(val));
+        //console.log("val: " + i + " " + JSON.stringify(val));
         let id = val.link.substring(32, 43);
         let videoUrl: SafeResourceUrl;
         let url: string;
@@ -116,8 +150,8 @@ export class ModulesComponent implements OnInit {
         else {
           this.safeLinks.set(moduleId, [videoObject]);
         }
-        console.log("safeLinks: " + JSON.stringify(this.safeLinks.get(moduleId)));
-        console.log("safeLinks size: " + this.safeLinks.size);
+        //console.log("safeLinks: " + JSON.stringify(this.safeLinks.get(moduleId)));
+        //console.log("safeLinks size: " + this.safeLinks.size);
       }
     })
   }
@@ -135,22 +169,22 @@ export class ModulesComponent implements OnInit {
       //console.log(blob.size);
       //console.log(blob);
       pdfs.push({ module_id: val.module_id, pdf_id: val.pdf_id, pdf: blob });
-      console.log("pdfs: " + JSON.stringify(pdfs));
+      //console.log("pdfs: " + JSON.stringify(pdfs));
     })
   }
 
   updatePdfData(pdfsArr, moduleId) {
-    console.log("pdfsArr size: " + pdfsArr.length);
+    //console.log("pdfsArr size: " + pdfsArr.length);
     //this.modulePDFsFetched[moduleId] = true;
     pdfsArr.forEach((val, i: number, arr) => {
       if(val.module_id == moduleId) {
         this.modulePDFsFetched[moduleId] = true;
-        console.log("val: " + i + " " + JSON.stringify(val));
+        //console.log("val: " + i + " " + JSON.stringify(val));
         let pdfObject = {};
         let cleanPDF: SafeResourceUrl;
 
         let pdfURL = URL.createObjectURL(val.pdf);
-        console.log(pdfURL);
+        //console.log(pdfURL);
         cleanPDF = this.sanitizer.bypassSecurityTrustResourceUrl(pdfURL);
 
         pdfObject = {
@@ -164,8 +198,8 @@ export class ModulesComponent implements OnInit {
         else {
           this.safePdfs.set(moduleId, [pdfObject]);
         }
-        console.log("safePdfs: " + JSON.stringify(this.safePdfs.get(moduleId)));
-        console.log("safePdfs size: " + this.safePdfs.size);
+        //console.log("safePdfs: " + JSON.stringify(this.safePdfs.get(moduleId)));
+        //console.log("safePdfs size: " + this.safePdfs.size);
       }
     })
   }
@@ -176,11 +210,11 @@ export class ModulesComponent implements OnInit {
       
   openModule(index) {
     if(this.toggleContent[index]){
-      console.log("Closing module content");
+      //console.log("Closing module content");
       this.toggleContent[index] = false;
     }
     else {
-      console.log("Opening module content");
+      //console.log("Opening module content");
       this.toggleContent[index] = true;
     }   
   }
@@ -204,7 +238,7 @@ export class ModulesComponent implements OnInit {
   fetchModules(courseId) {
     this.moduleService.getModulesByCourseId(courseId).subscribe((data: []) => {
       this.modules = data;
-      console.log(this.modules);
+      //console.log(this.modules);
       this.fetchVideos(courseId, data);
       this.fetchPdfs(courseId, data);
     })
@@ -235,14 +269,14 @@ export class ModulesComponent implements OnInit {
   }
 
   updateVideo(link, videoId) {
-    console.log("link: " + link + " " + "videoId: " + videoId);
+    //console.log("link: " + link + " " + "videoId: " + videoId);
     this.videoService.updateVideo(link, videoId).subscribe(() => {
       alert("Updated video");
     })
   }
 
   deleteVideo(videoId) {
-    console.log("Delete video: " + videoId);
+    //console.log("Delete video: " + videoId);
     let r = confirm("Delete video: are you sure?");
     if(r){
       this.videoService.deleteVideo(videoId).subscribe(() => {
@@ -255,7 +289,7 @@ export class ModulesComponent implements OnInit {
     console.log("Fetching content: " + courseId);
     this.videoService.fetchVideos(courseId).subscribe((data: any[]) => {
       this.linksFromDB = data;
-      console.log("linksFromDB: " + JSON.stringify(this.linksFromDB));
+      //console.log("linksFromDB: " + JSON.stringify(this.linksFromDB));
       this.pushLinksToArray(data, this.links);
 
       modules.forEach((val: any, i, arr) => {
@@ -268,7 +302,7 @@ export class ModulesComponent implements OnInit {
               break;
             }
             else{
-              console.log(val.module_id);
+              //console.log(val.module_id);
               this.updateVideoUrl(this.links, val.module_id);
             }
           }
@@ -296,11 +330,11 @@ export class ModulesComponent implements OnInit {
   }
 
   addPdf(moduleId) {
-    console.log("fileName: " + this.pdfForm.get('pdf').value.name + " fileSize: " + this.pdfForm.get('pdf').value.size);
+    //console.log("fileName: " + this.pdfForm.get('pdf').value.name + " fileSize: " + this.pdfForm.get('pdf').value.size);
     const formData: FormData = new FormData();
     formData.append('fileKey', this.pdfForm.get('pdf').value);
     formData.append('fileKey', moduleId);
-    console.log(formData.getAll('fileKey'));
+    //console.log(formData.getAll('fileKey'));
     this.pdfService.addPDF(formData).subscribe(
       (res) => {console.log(res); alert("Added PDF!"); },
       (err) => console.log(err)
@@ -309,7 +343,7 @@ export class ModulesComponent implements OnInit {
 
   fetchPdfs(courseId, modules) {
     this.pdfService.fetchPDFs(courseId).subscribe((data: any[]) => {
-      console.log(data);
+      //console.log(data);
       this.pdfsFromDB = data;
       this.pushPDFsToArray(data, this.pdfs);
 
@@ -323,7 +357,7 @@ export class ModulesComponent implements OnInit {
               break;
             }
             else{
-              console.log(val.module_id);
+              //console.log(val.module_id);
               this.updatePdfData(this.pdfs, val.module_id);
             }
           }
@@ -334,7 +368,7 @@ export class ModulesComponent implements OnInit {
   }
 
   updatePDF(pdfId, moduleId){
-    console.log("updatePDF");
+    //console.log("updatePDF");
     const formData: FormData = new FormData();
     formData.append('fileKey', this.updatePdfForm.get('pdf').value);
     formData.append('fileKey', moduleId);

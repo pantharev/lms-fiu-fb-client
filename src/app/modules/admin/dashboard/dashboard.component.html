@@ -1,6 +1,6 @@
-<div class="center-form">
+<h2 class="center-form">Admin Dashboard</h2>
 
-    <h2>Admin Dashboard</h2>
+<div *ngIf="currentUser && isAdmin" class="center-form">
 
     <div *ngIf="currentUser">
     <h2>Courses</h2>
@@ -19,8 +19,8 @@
     <tbody>
         <tr *ngFor="let course of courses.res" class="trstyle">
             <th scope="row">{{ course.id }}</th>
-            <td>{{ course.name }}</td>
-            <td>{{ course.description }}</td>
+            <td style="max-width: 125px; word-wrap: break-word;">{{ course.name }}</td>
+            <td style="max-width: 200px; word-wrap: break-word;">{{ course.description }}</td>
             <td>{{ course.seats }}</td>
             <td>{{ course.start_date }}</td>
             <td>{{ course.end_date }}</td>

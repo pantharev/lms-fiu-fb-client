@@ -27,7 +27,6 @@ export class AuthenticationService implements CanActivate {
    login(email: string, password: string) {
      return this.http.post<any>(`${environment.apiURL}/auth/login`, { email, password })
             .pipe(map(user => {
-              alert("login");
               // store user details and jwt token in local storage to keep user logged in between page refreshes
               localStorage.setItem('currentUser', JSON.stringify(user));
               this.currentUserSubject.next(user);

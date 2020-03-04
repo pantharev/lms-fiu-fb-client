@@ -1,6 +1,6 @@
-<div class="center-form">
+<h2 class="center-form">Admin Dashboard</h2>
 
-    <h2>Admin Dashboard</h2>
+<div *ngIf="currentUser && isAdmin" class="center-form">
 
     <div *ngIf="currentUser">
     <h2>Courses</h2>

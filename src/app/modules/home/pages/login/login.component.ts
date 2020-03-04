@@ -32,12 +32,13 @@ export class LoginComponent implements OnInit {
 
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    //console.log(this.returnUrl);
   }
 
   // convenience getter for easy access to form fields
   get f() { return this.loginForm.controls; }
 
-  onSubmit() {
+  onSubmit(email, password) {
     this.submitted = true;
 
     // stop here if form is invalid
@@ -45,16 +46,17 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
-    this.authenticationService.login(this.f.email.value, this.f.password.value)
+    //this.loading = true;
+    this.authenticationService.login(email, password)// this.f.email.value, this.f.password.value)
         .pipe(first())
         .subscribe(
-          data => {
+          (data) => {
+            console.log(data);
+            //this.loading = false;
             this.router.navigate([this.returnUrl]);
           },
-          error => {
+          (error) => {
             this.error = error;
-            this.loading = false;
           }
         );
   }

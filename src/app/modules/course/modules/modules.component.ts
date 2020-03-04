@@ -12,6 +12,7 @@ import { VideoService } from '@app/core/services/video.service';
 import { AuthenticationService } from '@app/core/services/authentication.service';
 import { StudentCourseService } from '@app/core/services/student-course.service';
 import { User } from '@app/core/models/user';
+import decode from 'jwt-decode';
 
 import { ModuleService } from 'src/app/core/services/module.service';
 import { throwToolbarMixedModesError } from '@angular/material';
@@ -27,6 +28,9 @@ import { analyzeAndValidateNgModules } from '@angular/compiler';
 })
 export class ModulesComponent implements OnInit {
   currentUser: User;
+  tokenPayload: User;
+  isAdmin: Boolean;
+  isInstructor: Boolean;
   modules = [];
   linksFromDB: string[] = new Array();
   links: string[] = new Array();
@@ -79,10 +83,16 @@ export class ModulesComponent implements OnInit {
       this.courseId = params.id;
       console.log("param id is: " + params.id);
     })
+    if(!this.currentUser){
+      return;
+    }
+    this.tokenPayload = decode(this.currentUser.token);
+    this.isAdmin = (this.tokenPayload.role === "admin");
+    this.isInstructor = (this.tokenPayload.role === "instructor");
     this.fetchModules(this.courseId);
     this.studentCourseService.getStudentsByCourseId(this.courseId).subscribe((data: []) => {
       data.forEach((val: any, i, arr) => {
-        if(val.student_id == this.currentUser.id) {
+        if(val.student_id == this.tokenPayload.id) {
           console.log("Got student: " + JSON.stringify(val));
           this.points = val.points;
           console.log("Points: " + this.points);

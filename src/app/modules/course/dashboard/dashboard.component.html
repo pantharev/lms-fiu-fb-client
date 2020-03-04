@@ -1,6 +1,11 @@
 <div class="center-form">
 <h2>Dashboard</h2>
-<button type="button" (click)="toggleDropCourse()" class="btn btn-danger btn-sm">Toggle Course Drop</button>
+<button *ngIf="currentStudent && hasCourses | async" type="button" (click)="toggleDropCourse()" class="btn btn-danger btn-sm">Toggle Course Drop</button>
+<div *ngIf="!hasCourses | async" class="center-form">
+    <p>You have no courses!</p>
+    <label>Enroll in courses</label>
+    <button routerLink="../course-library" class="btn btn-primary" style="margin-left: 10px">Enroll</button>
+</div>
 </div>
 <div class="row">
     <ng-container *ngFor="let course of courses; let i = index">

@@ -7,7 +7,7 @@
     <div class="progress-bar progress-bar-striped" id="progressbar" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">{{points}}%</div>
 </div>
 <div class="flexbox-row">
-    <div *ngIf="currentUser">
+    <div *ngIf="currentUser && (isAdmin || isInstructor)">
         <button (click)="createModule(courseId)" class="btn btn-success"><i class="fas fa-plus-circle"></i> Create Module</button>
     </div>
     <div class="flexbox-container" *ngFor="let module of modules; let index = index">
@@ -29,14 +29,14 @@
                                 <input type="text" class="form-control"  formControlName="link" #link>
                             </div>
                         
-                            <button type="submit" (click)="addVideo(link.value, module.module_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Video</button>
+                            <button *ngIf="isAdmin || isInstructor" type="submit" (click)="addVideo(link.value, module.module_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Video</button>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
                     </div>
                 </ng-template>
-                <button class="btn btn-success" (click)="open(content)">Add Video</button>
+                <button *ngIf="isAdmin || isInstructor" class="btn btn-success" (click)="open(content)">Add Video</button>
                 <!--END OF FORM CONTENT IN MODAL FOR VIDEO ADD-->
 
                 <!--FORM CONTENT IN MODAL FOR PDF ADD-->
@@ -64,10 +64,10 @@
                         <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
                     </div>
                 </ng-template>
-                <button class="btn btn-success" (click)="open(contentpdf)">Add PDF</button>
+                <button *ngIf="isAdmin || isInstructor" class="btn btn-success" (click)="open(contentpdf)">Add PDF</button>
                 <!--END OF FORM CONTENT IN MODAL FOR PDF ADD-->
 
-                <button class="btn btn-success">Add Quiz/Test</button>
+                <button *ngIf="isAdmin || isInstructor" class="btn btn-success">Add Quiz/Test</button>
             </div>
 
             <!--CONTENT IN EACH MODULE-->
@@ -100,7 +100,7 @@
                                 </div>
                             </ng-template>
                             <button class="btn btn-primary" (click)="open(contentPdf)">View Pdf {{j + 1}}</button>
-                            <button class="btn btn-danger flexbox-module-options" (click)="deletePDF(innerpdf.pdf_id)">Delete Pdf</button>
+                            <button *ngIf="isAdmin || isInstructor" class="btn btn-danger flexbox-module-options" (click)="deletePDF(innerpdf.pdf_id)">Delete Pdf</button>
 
                             <!--FORM CONTENT IN MODAL FOR PDF EDIT-->
                             <ng-template #contentPdfUpdate let-modal>
@@ -125,7 +125,7 @@
                                 <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
                             </div>
                         </ng-template>
-                        <button class="btn btn-success flexbox-module-options" (click)="openUpdatePDF(contentPdfUpdate, innerpdf.pdf)">Edit PDF</button>
+                        <button *ngIf="isAdmin || isInstructor" class="btn btn-success flexbox-module-options" (click)="openUpdatePDF(contentPdfUpdate, innerpdf.pdf)">Edit PDF</button>
                         <!--END OF FORM CONTENT IN MODAL FOR PDF EDIT-->
 
                         </div>
@@ -156,7 +156,7 @@
                                 </div>
                             </ng-template>
                             <button class="btn btn-primary" (click)="open(content)">Watch Video {{j + 1}}</button>
-                            <button class="btn btn-danger flexbox-module-options" (click)="deleteVideo(innerlink.video_id)">Delete Video</button>
+                            <button *ngIf="isAdmin || isInstructor" class="btn btn-danger flexbox-module-options" (click)="deleteVideo(innerlink.video_id)">Delete Video</button>
 
                             <!--FORM CONTENT IN MODAL FOR VIDEO EDIT-->
                             <ng-template #contentVideoUpdate let-modal>
@@ -181,7 +181,7 @@
                                     <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
                                 </div>
                             </ng-template>
-                            <button class="btn btn-success flexbox-module-options" (click)="openUpdateVideo(contentVideoUpdate, innerlink.url)">Edit Video</button>
+                            <button *ngIf="isAdmin || isInstructor" class="btn btn-success flexbox-module-options" (click)="openUpdateVideo(contentVideoUpdate, innerlink.url)">Edit Video</button>
                             <!--END OF FORM CONTENT IN MODAL FOR VIDEO EDIT-->
                         </div>
                     </div>
@@ -196,8 +196,8 @@
 
             </div>  
             <div class="flexbox-item-module-actions" *ngIf="currentUser">
-                <button type="button" (click)="editModule(module.course_id, module.module_id)" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</button>
-                <button type="button" (click)="deleteModule(module.module_id, module.module_number)" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Delete</button>
+                <button *ngIf="isAdmin || isInstructor" type="button" (click)="editModule(module.course_id, module.module_id)" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</button>
+                <button *ngIf="isAdmin || isInstructor" type="button" (click)="deleteModule(module.module_id, module.module_number)" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Delete</button>
             </div>
             <!--END OF CONTENT IN EACH MODULE-->
 

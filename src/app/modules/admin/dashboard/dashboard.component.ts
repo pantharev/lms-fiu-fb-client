@@ -6,6 +6,7 @@ import { CourseService } from '../../../core/services/course.service';
 import { HttpParams } from '@angular/common/http';
 import { AuthenticationService } from '@app/core/services/authentication.service';
 import { User } from '@app/core/models/user';
+import decode from 'jwt-decode';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,6 +15,8 @@ import { User } from '@app/core/models/user';
 })
 export class DashboardComponent implements OnInit {
   currentUser: User;
+  isAdmin: Boolean;
+  tokenPayload;
   courses: any = {};
   displayedColumns = ['id', 'name', 'description', 'seats', 'start_date', 'end_date', 'Actions'];
   page = 0;
@@ -24,13 +27,19 @@ export class DashboardComponent implements OnInit {
   numberPerPage = 5;
 
   constructor(private courseService: CourseService, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService) {
-    this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+    //this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
    }
 
   ngOnInit() {
     let page = this.route.snapshot.paramMap.get('page') || this.page;
     this.fetchCourses(page);
-    console.log("Current user in Admin: " + JSON.stringify(this.currentUser));
+    this.currentUser = this.authenticationService.currentUserValue;
+    if(this.currentUser){
+      this.tokenPayload = decode(this.currentUser.token);
+      this.isAdmin = (this.tokenPayload.role === "admin");
+      console.log("Current user in Admin: " + JSON.stringify(this.currentUser));
+      console.log("tokenPayload: " + JSON.stringify(this.tokenPayload));
+    }
   }
 
   fetchCourses(page) {

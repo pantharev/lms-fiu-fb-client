@@ -3,24 +3,37 @@
 <a href="https://localhost:3000/auth/logout" class="btn btn-primary"><i class="fab fa-facebook"></i>Logout</a>-->
 
 <div class="col-md-6 offset-md-3 mt-5">
-    <div class="alert alert-info">
-        email: doe@mail.com<br />
-        Password: pass
+    <div class="row justify-content-center">
+        <div class="alert alert-info">
+            <h4 style="color: red">Admin</h4>
+            email: doe@mail.com<br />
+            Password: pass
+        </div>
+        <div class="alert alert-info">
+            <h4 style="color: green">Instructor</h4>
+            email: mail2@mail.edu<br />
+            Password: pass
+        </div>
+        <div class="alert alert-info">
+            <h4 style="color: blue">Student</h4>
+            email: mail3@mail.edu<br />
+            Password: pass
+        </div>
     </div>
     <div class="card">
         <h4 class="card-header">Angular 8 JWT Login Example</h4>
         <div class="card-body">
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit(email.value, password.value)">
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+                    <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" #email/>
                     <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
                         <div *ngIf="f.email.errors.required">Email is required</div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+                    <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" #password/>
                     <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
                         <div *ngIf="f.password.errors.required">Password is required</div>
                     </div>

@@ -90,7 +90,7 @@ export class ModulesComponent implements OnInit {
       return;
     }
     this.todayDate = new Date();
-    console.log(this.todayDate.toLocaleString());
+    //console.log(this.todayDate.toLocaleString());
     this.tokenPayload = decode(this.currentUser.token);
     this.isAdmin = (this.tokenPayload.role === "admin");
     this.isInstructor = (this.tokenPayload.role === "instructor");
@@ -246,15 +246,15 @@ export class ModulesComponent implements OnInit {
       
       data.forEach((moduleO: any, i, arr) => {
         let lockedUntil = new Date(moduleO.lockedUntil.toString());
-        //moduleO.lockedUntil = lockedUntil.toLocaleDateString();
         this.moduleLocked[i] = false;
         if(this.todayDate < lockedUntil){
-          console.log(this.todayDate.toLocaleDateString() + " < " + JSON.stringify(moduleO));
+          //console.log(this.todayDate.toLocaleDateString() + " < " + JSON.stringify(moduleO));
           this.moduleLocked[i] = true;
         }
+        moduleO.lockedUntil = lockedUntil.toLocaleDateString();
       })
       this.modules = data;
-      console.log(this.modules);
+      //console.log(this.modules);
       this.fetchVideos(courseId, data);
       this.fetchPdfs(courseId, data);
     })

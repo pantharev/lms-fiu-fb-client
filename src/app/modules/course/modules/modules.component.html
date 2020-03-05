@@ -12,7 +12,10 @@
     </div>
     <div class="flexbox-container" *ngFor="let module of modules; let index = index">
         <ng-container *ngIf="!moduleLocked[index] || isAdmin || isInstructor; else lockedBlock">
-        <!---->
+            <span *ngIf="!moduleLocked[index] && (isAdmin || isInstructor); else lockedBlock0"style="color: blue;">locked until: {{module.lockedUntil}}</span>
+            <ng-template #lockedBlock0>
+                <span *ngIf="isAdmin || isInstructor" style="color: red">locked until: {{module.lockedUntil}}</span>
+            </ng-template>
             <div class="flexbox-options">
 
                 <!--FORM CONTENT IN MODAL FOR VIDEO ADD-->
@@ -209,6 +212,7 @@
         </ng-container>
 
             <ng-template #lockedBlock>
+                <span style="color: red;">locked until: {{module.lockedUntil}}</span>
                 <div class="flexbox-item" (click)="openModule(index)" style="cursor: not-allowed; opacity: 0.5;">
                     <i class="fas fa-caret-right"></i> <strong>Module {{ module.module_number }} </strong>| {{ module.module_title }}
                 </div>

@@ -12,22 +12,17 @@ app.get('/*', function (req, res) {
 
 
 app.post('/', function (req, res) {
-    console.log("Test1");
     //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
-    res.send(req.fresh);
-    console.log("Test2");
-    console.log(req);
-
-    //parse_signed_request(req);
+    res.send(parse_signed_request(req));
 });
 
-function parse_signed_request(signed_request, secret) {
+function parse_signed_request(signed_request) {
     encoded_data = signed_request.split('.', 2);
     // decode the data
     sig = encoded_data[0];
     json = base64url.decode(encoded_data[1]);
     data = JSON.parse(json); // ERROR Occurs Here!
-
+    /*
     // check algorithm - not relevant to error
     if (!data.algorithm || data.algorithm.toUpperCase() != 'HMAC-SHA256') {
         console.error('Unknown algorithm. Expected HMAC-SHA256');
@@ -40,7 +35,7 @@ function parse_signed_request(signed_request, secret) {
         console.error('Bad signed JSON Signature!');
         return null;
     }
-
+    */
     return data;
 }
 

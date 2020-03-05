@@ -17,7 +17,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let course of courses.res" class="trstyle">
+        <tr *ngFor="let course of courses.res; let i = index" class="trstyle">
             <th scope="row">{{ course.id }}</th>
             <td style="max-width: 125px; word-wrap: break-word;">{{ course.name }}</td>
             <td style="max-width: 200px; word-wrap: break-word;">{{ course.description }}</td>
@@ -27,7 +27,7 @@
             <td>
                 <button type="button" (click)="editCourse(course.id)" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</button>
                 <button type="button" (click)="deleteCourse(course.id)" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Delete</button>
-                <button type="button" (click)="pendingEnrollment(course.id)" class="btn btn-warning" style="margin-left: 20px">Pending Enrollments</button>
+                <button type="button" (click)="pendingEnrollment(course.id)" class="btn btn-warning" style="margin-left: 20px"><span class="badge badge-light">{{students[i]}}</span> Pending Enrollments</button>
             </td>
         </tr>
     </tbody>

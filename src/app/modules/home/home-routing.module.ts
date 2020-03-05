@@ -6,11 +6,13 @@ import { CourseBrowserComponent } from './pages/course-browser/course-browser.co
 import { LoginComponent } from './pages/login/login.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 
+import { AuthenticationService as AuthGuard } from '@app/core/services/authentication.service';
+
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'course-library', component: CourseBrowserComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'profile', component: ProfileComponent }
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] }
 ]
 
 @NgModule({

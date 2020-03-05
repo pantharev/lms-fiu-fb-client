@@ -5,6 +5,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { CreateCourseComponent } from './create-course/create-course.component';
 import { EditCourseComponent } from './edit-course/edit-course.component';
 import { PendingEnrollmentComponent } from './pending-enrollment/pending-enrollment.component';
+
 import { AuthenticationService as AuthGuard } from '@app/core/services/authentication.service';
 
 const routes: Routes = [

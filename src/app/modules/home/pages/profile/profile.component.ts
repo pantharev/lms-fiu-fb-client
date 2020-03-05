@@ -8,13 +8,13 @@ import { AuthService } from 'src/app/core/services/auth.service';
 })
 export class ProfileComponent implements OnInit {
 
-  profileData = [];
+  profileData;
 
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
-    this.authService.getProfile().subscribe((data: any = []) => {
-      this.profileData = Object.values(data);
+    this.authService.getProfile().subscribe((data) => {
+      this.profileData = data;
       console.log(this.profileData);
       console.log("The profile data is: " + JSON.stringify(data));
     })

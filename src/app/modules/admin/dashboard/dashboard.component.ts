@@ -5,6 +5,8 @@ import { Course } from '../../../core/models/course.model';
 import { CourseService } from '../../../core/services/course.service';
 import { HttpParams } from '@angular/common/http';
 import { AuthenticationService } from '@app/core/services/authentication.service';
+import { StudentCourseService } from 'src/app/core/services/student-course.service';
+
 import { User } from '@app/core/models/user';
 import decode from 'jwt-decode';
 
@@ -21,12 +23,13 @@ export class DashboardComponent implements OnInit {
   displayedColumns = ['id', 'name', 'description', 'seats', 'start_date', 'end_date', 'Actions'];
   page = 0;
   pages = [];
+  students: any = [];
   currentPage;
   maxPages;
   maxPagesArray;
   numberPerPage = 5;
 
-  constructor(private courseService: CourseService, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService) {
+  constructor(private courseService: CourseService, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService, private studentCourseService: StudentCourseService) {
     //this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
    }
 
@@ -54,7 +57,20 @@ export class DashboardComponent implements OnInit {
         //console.log(this.pages);
         console.log('Data requested...');
         //console.log(this.courses.res);
-        this.courses.res.forEach((item, index, arr) => {
+        this.courses.res.forEach((course, index, arr) => {
+          let counter = 0;
+          this.studentCourseService.getStudentsByCourseId(course.id).subscribe((res: []) => {
+            res.forEach((val: any) => {
+              if(val.enrollment_status == "pending"){
+                counter++;
+                this.students[index] = counter;
+              }
+              counter = 0;
+            })
+            //this.students = res;
+            //console.log("i: " + index + " course: " + JSON.stringify(course));
+            //console.log(this.students);
+          });
           let start_date = new Date(arr[index].start_date.toString());
           let end_date = new Date(arr[index].end_date.toString());
 

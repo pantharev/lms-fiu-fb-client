@@ -13,17 +13,17 @@ app.get('/*', function (req, res) {
 
 app.post('/', function (req, res) {
     //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
-    if (req.params.test != null) {
-        res.send(req.params.test);
+    if (req.param('test') != null) {
+        res.send(req.param('test'));
     }
-    else if (req.params.signed_request != null) {
-        res.send(req.params.signed_request);
+    else if (req.param('signed_request') != null) {
+        res.send(req.param('signed_request'));
     }
     else {
-        res.send("request param not found");
+        res.send("param didn't work");
     }
 });
-
+/*
 function parse_signed_request(signed_request) {
     encoded_data = signed_request.split('.', 2);
     // decode the data
@@ -47,7 +47,7 @@ function parse_signed_request(signed_request) {
     }
     return data;
 }
-
+*/
 
 app.all(() => {
     res.header('Access-Control-Allow-Origin', '*'); // your website

@@ -11,6 +11,8 @@
         <button (click)="createModule(courseId)" class="btn btn-success"><i class="fas fa-plus-circle"></i> Create Module</button>
     </div>
     <div class="flexbox-container" *ngFor="let module of modules; let index = index">
+        <ng-container *ngIf="!moduleLocked[index] || isAdmin || isInstructor; else lockedBlock">
+        <!---->
             <div class="flexbox-options">
 
                 <!--FORM CONTENT IN MODAL FOR VIDEO ADD-->
@@ -71,11 +73,15 @@
             </div>
 
             <!--CONTENT IN EACH MODULE-->
-            <div class="flexbox-item" (click)="openModule(index)" style="cursor:pointer">
-                <i class="fas fa-caret-down"></i> <strong>Module {{ module.module_number }} </strong>| {{ module.module_title }}
+            <div class="flexbox-item" *ngIf="!toggleContent[index]; else moduleBlock" (click)="openModule(index)" style="cursor:pointer">
+                <i class="fas fa-caret-right"></i> <strong>Module {{ module.module_number }} </strong>| {{ module.module_title }}
             </div>
+            <ng-template #moduleBlock>
+                <div class="flexbox-item" (click)="openModule(index)" style="cursor:pointer">
+                    <i class="fas fa-caret-down"></i> <strong>Module {{ module.module_number }} </strong>| {{ module.module_title }}
+                </div>
+            </ng-template>
             <div class="flexbox-subcontainer" *ngIf="toggleContent[index]">
-
                 <!--RESOURCES PDF CONTENT-->
                 <div class="flexbox-resources" *ngFor="let pdf of safePdfs | keyvalue; let index = index">
                     <div *ngIf="pdf.key == module.module_id">
@@ -200,7 +206,13 @@
                 <button *ngIf="isAdmin || isInstructor" type="button" (click)="deleteModule(module.module_id, module.module_number)" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Delete</button>
             </div>
             <!--END OF CONTENT IN EACH MODULE-->
+        </ng-container>
 
+            <ng-template #lockedBlock>
+                <div class="flexbox-item" (click)="openModule(index)" style="cursor: not-allowed; opacity: 0.5;">
+                    <i class="fas fa-caret-right"></i> <strong>Module {{ module.module_number }} </strong>| {{ module.module_title }}
+                </div>
+            </ng-template>
     </div>
 </div>
 

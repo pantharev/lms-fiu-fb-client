@@ -27,7 +27,7 @@
             <td>
                 <button type="button" (click)="editCourse(course.id)" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</button>
                 <button type="button" (click)="deleteCourse(course.id)" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Delete</button>
-                <button type="button" (click)="pendingEnrollment(course.id)" class="btn btn-warning" style="margin-left: 20px"><span class="badge badge-light">{{students[i]}}</span> Pending Enrollments</button>
+                <button type="button" (click)="pendingEnrollment(course.id)" class="btn btn-warning" style="margin-left: 20px"><span *ngIf="students[i] > 0"class="badge badge-light">{{students[i]}}</span> Pending Enrollments</button>
             </td>
         </tr>
     </tbody>

@@ -31,7 +31,10 @@ export class ModulesComponent implements OnInit {
   tokenPayload: User;
   isAdmin: Boolean;
   isInstructor: Boolean;
+  isStudent: Boolean;
   modules = [];
+  todayDate;
+  moduleLocked: Boolean[] = [];
   linksFromDB: string[] = new Array();
   links: string[] = new Array();
   safeLinks = new Map<number, Object[]>();
@@ -86,14 +89,17 @@ export class ModulesComponent implements OnInit {
     if(!this.currentUser){
       return;
     }
+    this.todayDate = new Date();
+    console.log(this.todayDate.toLocaleString());
     this.tokenPayload = decode(this.currentUser.token);
     this.isAdmin = (this.tokenPayload.role === "admin");
     this.isInstructor = (this.tokenPayload.role === "instructor");
+    this.isStudent = (this.tokenPayload.role === "student");
     this.fetchModules(this.courseId);
     this.studentCourseService.getStudentsByCourseId(this.courseId).subscribe((data: []) => {
       data.forEach((val: any, i, arr) => {
         if(val.student_id == this.tokenPayload.id) {
-          console.log("Got student: " + JSON.stringify(val));
+          //console.log("Got student: " + JSON.stringify(val));
           this.points = val.points;
           console.log("Points: " + this.points);
           document.getElementById('progressbar').style.width = this.points + "%";
@@ -237,8 +243,18 @@ export class ModulesComponent implements OnInit {
 
   fetchModules(courseId) {
     this.moduleService.getModulesByCourseId(courseId).subscribe((data: []) => {
+      
+      data.forEach((moduleO: any, i, arr) => {
+        let lockedUntil = new Date(moduleO.lockedUntil.toString());
+        //moduleO.lockedUntil = lockedUntil.toLocaleDateString();
+        this.moduleLocked[i] = false;
+        if(this.todayDate < lockedUntil){
+          console.log(this.todayDate.toLocaleDateString() + " < " + JSON.stringify(moduleO));
+          this.moduleLocked[i] = true;
+        }
+      })
       this.modules = data;
-      //console.log(this.modules);
+      console.log(this.modules);
       this.fetchVideos(courseId, data);
       this.fetchPdfs(courseId, data);
     })

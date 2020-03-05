@@ -24,23 +24,26 @@ $base-color: #d9deff;
 }
 
 .flexbox-options {
+    margin-bottom: 15px;
     align-self: flex-end;
 }
 
 .flexbox-item {
     align-self: stretch;
     background-color: transparent;
-    border: solid black 1px;
+    border: solid rgb(175, 175, 175) 1px;
 }
 
 
 .flexbox-item-module-actions {
-    align-self: flex-start;
+    margin-top: 15px;
+    align-self: flex-end;
     background-color: transparent;
     border: solid black 1px;
 }
 
 .flexbox-subcontainer {
+    margin-top: 15px;
     align-self: flex-start;
     display: flex;
     flex-direction: column;

@@ -13,7 +13,12 @@ app.get('/*', function (req, res) {
 
 app.post('/', function (req, res) {
     //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
-    res.send(req.get("signed-request"));
+    if (req.get("signed_request") != null) {
+        res.send(req.get("signed_request"));
+    }
+    else {
+        res.send("signed_request not recognized");
+    }
 });
 
 function parse_signed_request(signed_request) {

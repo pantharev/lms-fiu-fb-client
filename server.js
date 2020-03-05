@@ -13,7 +13,7 @@ app.get('/*', function (req, res) {
 
 app.post('/', function (req, res) {
     //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
-    res.send(parse_signed_request(req));
+    res.send(req.get("signed-request"));
 });
 
 function parse_signed_request(signed_request) {

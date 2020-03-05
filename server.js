@@ -13,6 +13,8 @@ app.get('/*', function (req, res) {
 
 app.post('/', function (req, res) {
     //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
+    res.send(req);
+    /*
     if (req.originalUrl != null) {
         res.send(req.originalUrl);
     }
@@ -22,6 +24,7 @@ app.post('/', function (req, res) {
     else {
         res.send("originalURL didn't work");
     }
+    */
 });
 /*
 function parse_signed_request(signed_request) {

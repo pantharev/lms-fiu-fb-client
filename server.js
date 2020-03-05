@@ -13,7 +13,8 @@ app.get('/*', function (req, res) {
 
 app.post('/', function (req, res) {
     console.log("Test1");
-    res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
+    //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
+    res.json(req.body);
     console.log("Test2");
     console.log(req);
 

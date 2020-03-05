@@ -51,10 +51,12 @@ export class CourseBrowserComponent implements OnInit {
     let page = this.route.snapshot.paramMap.get('page') || this.page;
     this.fetchCourses(page);
     this.socket = io.connect(environment.apiURL);
-    this.currentUser = this.authService.currentUserValue;
-    this.tokenUser = decode(this.currentUser.token);
-    if(this.currentUser)
-      this.studentId = this.tokenUser.id;
+    if(this.authService.currentUserValue){
+      this.currentUser = this.authService.currentUserValue;
+      this.tokenUser = decode(this.currentUser.token);
+      if(this.currentUser)
+        this.studentId = this.tokenUser.id;
+    }
     //console.log("Init page: " + page);
   }
 
@@ -126,6 +128,7 @@ export class CourseBrowserComponent implements OnInit {
       return;
     }
 
+    //console.log("socketid: " + this.socket.id);
     this.socket.emit('search', searchTerm);
 
     this.socket.on('search-data', (course) => {

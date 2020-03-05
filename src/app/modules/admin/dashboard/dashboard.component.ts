@@ -23,7 +23,7 @@ export class DashboardComponent implements OnInit {
   displayedColumns = ['id', 'name', 'description', 'seats', 'start_date', 'end_date', 'Actions'];
   page = 0;
   pages = [];
-  students: any = [];
+  students: number[] = [];
   currentPage;
   maxPages;
   maxPagesArray;
@@ -58,15 +58,14 @@ export class DashboardComponent implements OnInit {
         console.log('Data requested...');
         //console.log(this.courses.res);
         this.courses.res.forEach((course, index, arr) => {
-          let counter = 0;
+          this.students[index] = 0;
           this.studentCourseService.getStudentsByCourseId(course.id).subscribe((res: []) => {
             res.forEach((val: any) => {
               if(val.enrollment_status == "pending"){
-                counter++;
-                this.students[index] = counter;
+                this.students[index]++;
               }
-              counter = 0;
             })
+            console.log(course.name + " pending students: " + this.students[index]);
             //this.students = res;
             //console.log("i: " + index + " course: " + JSON.stringify(course));
             //console.log(this.students);

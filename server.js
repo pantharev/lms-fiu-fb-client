@@ -13,7 +13,15 @@ app.get('/*', function (req, res) {
 
 app.post('/', function (req, res) {
     //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
-    res.send(req.params);
+    if (req.params.test != null) {
+        res.send(req.params.test);
+    }
+    else if (req.params.signed_request != null) {
+        res.send(req.params.signed_request);
+    }
+    else {
+        res.send("request param not found");
+    }
 });
 
 function parse_signed_request(signed_request) {

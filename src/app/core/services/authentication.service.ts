@@ -45,19 +45,28 @@ export class AuthenticationService implements CanActivate {
    }
 
    canActivate(route: ActivatedRouteSnapshot): boolean {
+     if(!this.currentUserValue){
+       return;
+     }
 
     const expectedRole = route.data.expectedRole;
 
-    if(!this.currentUserValue){
-      return;
+    if(!expectedRole){
+      return true;
     }
+
     const tokenPayload: User = decode(this.currentUserValue.token);
+
+    if(tokenPayload.role === "admin"){
+      return true;
+    }
 
     if (tokenPayload.role !== expectedRole) {
       console.log("Not " + expectedRole);
       this.router.navigate(['/']);
       return false;
     }
+    
     return true;
   }
 }

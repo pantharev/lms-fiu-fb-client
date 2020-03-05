@@ -23,11 +23,11 @@ export class PendingEnrollmentComponent implements OnInit {
 
       this.courseService.getCourseById(this.id).subscribe(res => {
         this.course = res;
-        console.log(this.course);
+        //console.log(this.course);
       })
       this.studentCourseService.getStudentsByCourseId(this.id).subscribe(res => {
         this.students = res;
-        console.log(this.students);
+        //console.log(this.students);
       });
     });
   }

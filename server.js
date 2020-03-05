@@ -13,14 +13,14 @@ app.get('/*', function (req, res) {
 
 app.post('/', function (req, res) {
     //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
-    if (req.param('test') != null) {
-        res.send(req.param('test'));
+    if (req.originalUrl != null) {
+        res.send(req.originalUrl);
     }
     else if (req.param('signed_request') != null) {
         res.send(req.param('signed_request'));
     }
     else {
-        res.send("param didn't work");
+        res.send("originalURL didn't work");
     }
 });
 /*

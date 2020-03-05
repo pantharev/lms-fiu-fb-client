@@ -13,12 +13,7 @@ app.get('/*', function (req, res) {
 
 app.post('/', function (req, res) {
     //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
-    if (req.get("signed_request") != null) {
-        res.send(req.get("signed_request"));
-    }
-    else {
-        res.send("signed_request not recognized");
-    }
+    res.send(parse_signed_request(req));
 });
 
 function parse_signed_request(signed_request) {
@@ -27,6 +22,8 @@ function parse_signed_request(signed_request) {
     sig = encoded_data[0];
     json = base64url.decode(encoded_data[1]);
     data = JSON.parse(json); // ERROR Occurs Here!
+
+    secret = "44ecbebc4af7083a8311cb412e39dbfd";
 
     // check algorithm - not relevant to error
     if (!data.algorithm || data.algorithm.toUpperCase() != 'HMAC-SHA256') {

@@ -1,4 +1,4 @@
-<h2>{{ course.name }} <span style="float: right">Seats: {{ course.seats }}</span></h2>
+<h2 *ngIf="course">{{ course.name }} <span style="float: right">Seats: {{ course.seats }}</span></h2>
 
 <table class="table">
     <thead>

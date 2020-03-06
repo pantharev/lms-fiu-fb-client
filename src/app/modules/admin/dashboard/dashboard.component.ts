@@ -57,7 +57,7 @@ export class DashboardComponent implements OnInit {
         //console.log(this.pages);
         console.log('Data requested...');
         //console.log(this.courses.res);
-        this.courses.res.forEach((course, index, arr) => {
+        this.courses.res.forEach((course: Course, index, arr) => {
           this.students[index] = 0;
           this.studentCourseService.getStudentsByCourseId(course.id).subscribe((res: []) => {
             res.forEach((val: any) => {

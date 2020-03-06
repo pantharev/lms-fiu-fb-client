@@ -1,6 +1,6 @@
 <h2 *ngIf="course">{{ course.name }} <span style="float: right">Seats: {{ course.seats }}</span></h2>
 
-<table class="table">
+<table class="table" *ngIf="!noSeats; else elseBlock">
     <thead>
         <tr>
             <th scope="col">studentID</th>
@@ -25,5 +25,9 @@
         </tr>
     </tbody>
 </table>
+
+<ng-template #elseBlock>
+    <h2 class="center-form">No seats available!</h2>
+</ng-template>
 
 <a routerLink="/admin" class="btn btn-warning"><i class="fas fa-arrow-circle-left"></i> Go Back</a>

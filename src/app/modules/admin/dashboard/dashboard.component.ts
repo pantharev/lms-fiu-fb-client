@@ -45,20 +45,17 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  fetchCourses(page) {
-    this.courseService.getCourses(page, this.numberPerPage)
-      .subscribe((data: {}) => {
-        this.courses = data;
-        this.page = page;
-        this.currentPage = this.courses.pagination.current;
-        this.maxPages = this.courses.pagination.maxPages;
-        this.maxPagesArray = new Array(this.maxPages);
-        this.pages = Object.values(this.courses.pagination);
-        //console.log(this.pages);
-        console.log('Data requested...');
-        //console.log(this.courses.res);
-        this.courses.res.forEach((course: Course, index, arr) => {
-          this.students[index] = 0;
+  pendingEnrollmentsNotification(courses: []){
+    courses.forEach((course: Course, index, arr) => {
+      let start_date = new Date(course.start_date.toString());
+      let end_date = new Date(course.end_date.toString());
+
+      course.start_date = start_date.toLocaleDateString();
+      course.end_date = end_date.toLocaleDateString();
+      if(course.seats < 1){
+        return;
+      }
+      this.students[index] = 0;
           this.studentCourseService.getStudentsByCourseId(course.id).subscribe((res: []) => {
             res.forEach((val: any) => {
               if(val.enrollment_status == "pending"){
@@ -70,15 +67,22 @@ export class DashboardComponent implements OnInit {
             //console.log("i: " + index + " course: " + JSON.stringify(course));
             //console.log(this.students);
           });
-          let start_date = new Date(arr[index].start_date.toString());
-          let end_date = new Date(arr[index].end_date.toString());
+    });
+  }
 
-          arr[index].start_date = start_date.toLocaleDateString();
-          arr[index].end_date = end_date.toLocaleDateString();
+  fetchCourses(page) {
+    this.courseService.getCourses(page, this.numberPerPage)
+      .subscribe((data: {}) => {
+        this.courses = data;
+        this.page = page;
+        this.currentPage = this.courses.pagination.current;
+        this.maxPages = this.courses.pagination.maxPages;
+        this.maxPagesArray = new Array(this.maxPages);
+        this.pages = Object.values(this.courses.pagination);
 
-      });
-        //console.log('Data requested...');
-        //console.log(this.courses);
+        console.log('Data requested...');
+
+        this.pendingEnrollmentsNotification(this.courses.res);
         this.router.navigate(['/admin', { page: page}]);
       });
   }
@@ -94,17 +98,11 @@ export class DashboardComponent implements OnInit {
         this.page = pageNo;
         this.currentPage = this.courses.pagination.current;
         this.maxPages = this.courses.pagination.maxPages;
-        this.courses.res.forEach((item, index, arr) => {
-            let start_date = new Date(arr[index].start_date.toString());
-            let end_date = new Date(arr[index].end_date.toString());
 
-            arr[index].start_date = start_date.toLocaleDateString();
-            arr[index].end_date = end_date.toLocaleDateString();
+        this.pendingEnrollmentsNotification(this.courses.res);
 
-        });
         console.log('Data requested...' + pageNo);
-        //console.log(this.courses);
-        //console.log("Current page: " + this.courses.pagination.current);
+    
         this.router.navigate(['/admin', { page: this.courses.pagination.current}]);
       });
   }

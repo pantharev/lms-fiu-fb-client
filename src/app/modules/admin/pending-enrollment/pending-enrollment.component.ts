@@ -16,6 +16,7 @@ export class PendingEnrollmentComponent implements OnInit {
   id: number;
   course: Course;
   students: any = [];
+  noSeats: Boolean = false;
 
   constructor(private studentCourseService: StudentCourseService, private courseService: CourseService, private route: ActivatedRoute) { }
 
@@ -25,12 +26,22 @@ export class PendingEnrollmentComponent implements OnInit {
 
       this.courseService.getCourseById(this.id).subscribe((res: Course) => {
         this.course = res;
+        if(this.course.seats < 1) {
+          this.noSeats = true;
+          console.log("no seats: " + this.noSeats);
+        }
         console.log(this.course);
+        if(!this.noSeats){
+          this.studentCourseService.getStudentsByCourseId(this.id).subscribe(res => {
+            this.students = res;
+            //console.log(this.students);
+          });
+        }
       })
-      this.studentCourseService.getStudentsByCourseId(this.id).subscribe(res => {
+      /*this.studentCourseService.getStudentsByCourseId(this.id).subscribe(res => {
         this.students = res;
         //console.log(this.students);
-      });
+      });*/
     });
   }
 

@@ -13,19 +13,24 @@ app.get('/*', function (req, res) {
 
 app.post('/', function (req, res) {
     //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
-    res.send(req);
-    /*
-    if (req.originalUrl != null) {
-        res.send(req.originalUrl);
+
+    if (req.body != null) {
+        res.send(req.body)
     }
-    else if (req.param('signed_request') != null) {
-        res.send(req.param('signed_request'));
-    }
-    else {
-        res.send("originalURL didn't work");
-    }
-    */
+    else
+        res.status(404).send("no body here dog");
 });
+/*
+if (req.originalUrl != null) {
+    res.send(req.originalUrl);
+}
+else if (req.param('signed_request') != null) {
+    res.send(req.param('signed_request'));
+}
+else {
+    res.send("originalURL didn't work");
+}
+*/
 /*
 function parse_signed_request(signed_request) {
     encoded_data = signed_request.split('.', 2);

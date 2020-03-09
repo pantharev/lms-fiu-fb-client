@@ -14,7 +14,7 @@ app.get('/*', function (req, res) {
 app.post('/', function (req, res) {
     //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
 
-    if (req.body != null) {
+    if (req.body) {
         res.send(req.body)
     }
     else

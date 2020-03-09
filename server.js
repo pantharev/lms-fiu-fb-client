@@ -22,24 +22,11 @@ app.post('/', function (req, res) {
     if (_.isEmpty(req.body)) {
         res.send("ITS EMPTY BRO");
     }
-    else if (!_.isEmpty(req.body)) {
-        res.send(req.body);
+    else {
+        res.send(parse_signed_request(req.body));
     }
-    else
-        res.status(404).send("no body here dog");
 });
-/*
-if (req.originalUrl != null) {
-    res.send(req.originalUrl);
-}
-else if (req.param('signed_request') != null) {
-    res.send(req.param('signed_request'));
-}
-else {
-    res.send("originalURL didn't work");
-}
-*/
-/*
+
 function parse_signed_request(signed_request) {
     encoded_data = signed_request.split('.', 2);
     // decode the data
@@ -63,7 +50,7 @@ function parse_signed_request(signed_request) {
     }
     return data;
 }
-*/
+
 
 app.all(() => {
     res.header('Access-Control-Allow-Origin', '*'); // your website

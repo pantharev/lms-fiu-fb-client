@@ -5,6 +5,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const port = process.env.PORT || 8080;
 const _ = require("lodash");
+const base64url = require("base64-url");
 app.use(express.static(__dirname + '/angular-build'));
 app.use(cors());
 app.get('/*', function (req, res) {
@@ -23,18 +24,23 @@ app.post('/', function (req, res) {
         res.send("ITS EMPTY BRO");
     }
     else {
-        res.send(parse_signed_request(req.body));
+        res.send(parse_signed_request(req.body.signed_request));
     }
 });
 
 function parse_signed_request(signed_request) {
-    encoded_data = signed_request.split('.', 2);
+    var encoded_data = signed_request.split('.', 2);
     // decode the data
-    sig = encoded_data[0];
-    json = base64url.decode(encoded_data[1]);
-    data = JSON.parse(json); // ERROR Occurs Here!
 
-    secret = "44ecbebc4af7083a8311cb412e39dbfd";
+    var sig = base64url.decode(encoded_data[0]);
+    var payload = base64url.decode(encoded_data[1]);
+    console.log("sig: " + sig);
+    console.log("payload: " + payload);
+    return payload;
+    //var json = base64url.decode(encoded_data[1]);
+    //var data2 = JSON.parse(json); // ERROR Occurs Here!
+    /*
+    var secret = "44ecbebc4af7083a8311cb412e39dbfd";
 
     // check algorithm - not relevant to error
     if (!data.algorithm || data.algorithm.toUpperCase() != 'HMAC-SHA256') {
@@ -43,12 +49,13 @@ function parse_signed_request(signed_request) {
     }
 
     // check sig - not relevant to error
-    expected_sig = crypto.createHmac('sha256', secret).update(encoded_data[1]).digest('base64').replace(/\+/g, '-').replace(/\//g, '_').replace('=', '');
+    var expected_sig = crypto.createHmac('sha256', secret).update(encoded_data[1]).digest('base64').replace(/\+/g, '-').replace(/\//g, '_').replace('=', '');
     if (sig !== expected_sig) {
         console.error('Bad signed JSON Signature!');
         return null;
     }
     return data;
+    */
 }
 
 

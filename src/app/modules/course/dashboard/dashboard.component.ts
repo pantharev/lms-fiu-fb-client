@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '@app/core/models/user';
+import { Course } from '@app/core/models/course.model';
+
+import { CourseService } from '@app/core/services/course.service';
 import { StudentCourseService } from 'src/app/core/services/student-course.service';
 import { AuthenticationService } from '@app/core/services/authentication.service';
 import decode from 'jwt-decode';
@@ -11,7 +14,8 @@ import decode from 'jwt-decode';
 })
 export class DashboardComponent implements OnInit {
 
-  courses: any = [];
+  courses: Course[] = [];
+  course: Course;
   currentStudent: User;
   tokenPayload: User;
   hasCourses;
@@ -19,7 +23,7 @@ export class DashboardComponent implements OnInit {
   studentId;
   courseDrop: Boolean = false;
 
-  constructor(private studentCourseService: StudentCourseService, private authService: AuthenticationService) { }
+  constructor(private studentCourseService: StudentCourseService, private courseService: CourseService, private authService: AuthenticationService) { }
 
   ngOnInit() {  
     this.currentStudent = this.authService.currentUserValue;
@@ -29,7 +33,6 @@ export class DashboardComponent implements OnInit {
       //this.hasCourses = this.asyncFetchStudentCourses(this.studentId);
       this.listCourses = this.studentCourseService.getCoursesByStudentId(this.studentId);
       console.log(this.studentId);
-      //console.log(this.hasCourses);
     }
   }
 
@@ -81,10 +84,16 @@ export class DashboardComponent implements OnInit {
   }
   
   dropCourse(courseId) {
+    this.courseService.getCourseById(courseId).subscribe((course: Course) => {
+      this.course = course;
+    })
     let r = confirm("Drop the course? Are you sure?");
     if(r){
       this.studentCourseService.declineStudentEnrollment(this.studentId, courseId).subscribe(() => {
         alert("Dropped the course");
+        this.courseService.updateCourseSeats(courseId, this.course.seats + 1).subscribe(() => {
+          console.log("incremented seats by 1: " + (this.course.seats + 1));
+        })
       })
     }
   }

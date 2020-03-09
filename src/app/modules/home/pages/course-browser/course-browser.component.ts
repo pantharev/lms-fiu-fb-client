@@ -23,6 +23,7 @@ export class CourseBrowserComponent implements OnInit {
 
   //courses: Course[];
   courses: any = {};
+  coursesUnavailable: Boolean[] = [];
   pages: any = [];
   searchedCourses: any = [];
   displayedColumns = ['id', 'name', 'description', 'seats', 'start_date', 'end_date', 'Enrollment'];
@@ -72,13 +73,16 @@ export class CourseBrowserComponent implements OnInit {
         //console.log(this.pages);
         console.log('Data requested...');
         //console.log(this.courses.res);
-        this.courses.res.forEach((item, index, arr) => {
+        this.courses.res.forEach((course: Course, index, arr) => {
           let start_date = new Date(arr[index].start_date.toString());
           let end_date = new Date(arr[index].end_date.toString());
 
           arr[index].start_date = start_date.toLocaleDateString();
           arr[index].end_date = end_date.toLocaleDateString();
-
+          this.coursesUnavailable[index] = false;
+          if(course.seats < 1){
+            this.coursesUnavailable[index] = true;
+          }
       });
         //console.log('Data requested...');
         //console.log(this.courses);
@@ -97,13 +101,16 @@ export class CourseBrowserComponent implements OnInit {
         this.page = pageNo;
         this.currentPage = this.courses.pagination.current;
         this.maxPages = this.courses.pagination.maxPages;
-        this.courses.res.forEach((item, index, arr) => {
+        this.courses.res.forEach((course: Course, index, arr) => {
             let start_date = new Date(arr[index].start_date.toString());
             let end_date = new Date(arr[index].end_date.toString());
 
             arr[index].start_date = start_date.toLocaleDateString();
             arr[index].end_date = end_date.toLocaleDateString();
-
+            this.coursesUnavailable[index] = false;
+            if(course.seats < 1){
+              this.coursesUnavailable[index] = true;
+            }
         });
         console.log('Data requested...' + pageNo);
         //console.log(this.courses);
@@ -114,11 +121,15 @@ export class CourseBrowserComponent implements OnInit {
 
   studentEnroll(studentId, courseId, course_name, enrollment_status) {
     // Add student to students_courses table with pending enrollment
-    this.studentCourseService.enrollStudentToCourse(studentId, courseId, enrollment_status).subscribe(() => {
-      alert("Enrolled for course: " + course_name);
-    });
-    console.log("StudentId: " + studentId);
-    console.log(`Enrollment pending for courseId: ${courseId}`);
+    this.courseService.getCourseById(courseId).subscribe((course: Course) => {
+      if(course.seats > 0){
+        this.studentCourseService.enrollStudentToCourse(studentId, courseId, enrollment_status).subscribe(() => {
+          alert("Enrolled for course: " + course_name);
+        });
+        console.log("StudentId: " + studentId);
+        console.log(`Enrollment pending for courseId: ${courseId}`);
+      }
+    })
   } 
 
 

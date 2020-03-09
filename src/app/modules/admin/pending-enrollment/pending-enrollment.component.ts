@@ -4,6 +4,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { StudentCourseService } from 'src/app/core/services/student-course.service';
 import { CourseService } from 'src/app/core/services/course.service';
 
+import { Course } from '@app/core/models/course.model';
+
 @Component({
   selector: 'app-pending-enrollment',
   templateUrl: './pending-enrollment.component.html',
@@ -12,8 +14,9 @@ import { CourseService } from 'src/app/core/services/course.service';
 export class PendingEnrollmentComponent implements OnInit {
 
   id: number;
-  course: any = {};
+  course: Course;
   students: any = [];
+  noSeats: Boolean = false;
 
   constructor(private studentCourseService: StudentCourseService, private courseService: CourseService, private route: ActivatedRoute) { }
 
@@ -21,14 +24,24 @@ export class PendingEnrollmentComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.id = params.id;
 
-      this.courseService.getCourseById(this.id).subscribe(res => {
+      this.courseService.getCourseById(this.id).subscribe((res: Course) => {
         this.course = res;
-        //console.log(this.course);
+        if(this.course.seats < 1) {
+          this.noSeats = true;
+          console.log("no seats: " + this.noSeats);
+        }
+        console.log(this.course);
+        if(!this.noSeats){
+          this.studentCourseService.getStudentsByCourseId(this.id).subscribe(res => {
+            this.students = res;
+            //console.log(this.students);
+          });
+        }
       })
-      this.studentCourseService.getStudentsByCourseId(this.id).subscribe(res => {
+      /*this.studentCourseService.getStudentsByCourseId(this.id).subscribe(res => {
         this.students = res;
         //console.log(this.students);
-      });
+      });*/
     });
   }
 
@@ -45,6 +58,11 @@ export class PendingEnrollmentComponent implements OnInit {
             this.students.splice(i, 1);
           }
         }
+
+        this.courseService.updateCourseSeats(courseId, this.course.seats - 1).subscribe(() => {
+          console.log("seats decremented by 1");
+          this.course.seats = this.course.seats - 1;
+        })
 
       });
     }

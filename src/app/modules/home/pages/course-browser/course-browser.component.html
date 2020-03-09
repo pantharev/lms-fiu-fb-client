@@ -64,14 +64,17 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let course of courses.res" class="trstyle">
+                <tr *ngFor="let course of courses.res; let index = index" class="trstyle">
                     <th scope="row">{{ course.id }}</th>
                     <td style="max-width: 125px; word-wrap: break-word;">{{ course.name }}</td>
                     <td style="max-width: 200px; word-wrap: break-word;">{{ course.description }}</td>
                     <td>{{ course.seats }}</td>
                     <td>{{ course.start_date }}</td>
                     <td>{{ course.end_date }}</td>
-                    <td *ngIf="currentUser"><button type="submit" (click)="studentEnroll(studentId, course.id, course.name, 'pending')" class="btn btn-success">Enroll</button></td>
+                    <td *ngIf="currentUser && !coursesUnavailable[index]; else elseBlock"><button type="submit" (click)="studentEnroll(studentId, course.id, course.name, 'pending')" class="btn btn-success">Enroll</button></td>
+                    <ng-template #elseBlock>
+                        <td *ngIf="currentUser"><button class="btn btn-danger" style="cursor: not-allowed" disabled>Full</button></td>
+                    </ng-template>
                 </tr>
             </tbody>
         </table>

@@ -41,6 +41,13 @@ export class CourseService {
     return this.http.put(`${environment.apiURL}/courses/${id}`, course); //post
   }
 
+  updateCourseSeats(id, seats){
+    const seatObject = {
+      seats: seats
+    };
+    return this.http.put(`${environment.apiURL}/courses/s/${id}`, seatObject);
+  }
+
   deleteCourse(id) {
     return this.http.delete(`${environment.apiURL}/courses/${id}`); //get
   }

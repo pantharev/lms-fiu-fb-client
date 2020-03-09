@@ -2,20 +2,28 @@ const path = require("path");
 const express = require("express");
 const cors = require('cors');
 const app = express();
+const bodyParser = require("body-parser");
 const port = process.env.PORT || 8080;
-
+const _ = require("lodash");
 app.use(express.static(__dirname + '/angular-build'));
 app.use(cors());
 app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
 });
 
+app.use(bodyParser.json());
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 app.post('/', function (req, res) {
     //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
 
-    if (req.body) {
-        res.send(req.body)
+    if (_.isEmpty(req.body)) {
+        res.send("ITS EMPTY BRO");
+    }
+    else if (!_.isEmpty(req.body)) {
+        res.send(req.body);
     }
     else
         res.status(404).send("no body here dog");

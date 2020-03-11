@@ -22,7 +22,7 @@
             <div class="flexbox-options">
 
                 <!--FORM CONTENT IN MODAL FOR VIDEO ADD-->
-                <ng-template #content let-modal>
+                <ng-template #contentVideoAdd let-modal>
                     <div class="modal-header">
                         <h4 class="modal-title">Add Youtube Video</h4>
                         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
@@ -44,11 +44,11 @@
                         <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
                     </div>
                 </ng-template>
-                <button *ngIf="isAdmin || isInstructor" class="btn btn-success" (click)="open(content)">Add Video</button>
+                <button *ngIf="isAdmin || isInstructor" class="btn btn-success" (click)="open(contentVideoAdd)">Add Video</button>
                 <!--END OF FORM CONTENT IN MODAL FOR VIDEO ADD-->
 
                 <!--FORM CONTENT IN MODAL FOR PDF ADD-->
-                <ng-template #contentpdf let-modal>
+                <ng-template #contentPdfAdd let-modal>
                     <div class="modal-header">
                         <h4 class="modal-title">Add PDF File</h4>
                         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
@@ -72,10 +72,40 @@
                         <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
                     </div>
                 </ng-template>
-                <button *ngIf="isAdmin || isInstructor" class="btn btn-success" (click)="open(contentpdf)">Add PDF</button>
+                <button *ngIf="isAdmin || isInstructor" class="btn btn-success" (click)="open(contentPdfAdd)">Add PDF</button>
                 <!--END OF FORM CONTENT IN MODAL FOR PDF ADD-->
 
-                <button *ngIf="isAdmin || isInstructor" class="btn btn-success">Add Quiz/Test</button>
+                <!--FORM CONTENT IN MODAL FOR SURVEY ADD-->
+                <ng-template #contentSurveyAdd let-modal>
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add Qualtrics Quiz/Exam</h4>
+                        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form [formGroup]="surveyForm" class="col-9">
+
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" class="form-control"  formControlName="name" #name>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Link</label>
+                                <input type="text" class="form-control"  formControlName="link" #link>
+                            </div>
+                        
+                            <button *ngIf="isAdmin || isInstructor" type="submit" (click)="addSurvey(name.value, link.value, module.module_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Quiz/Exam</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+                    </div>
+                </ng-template>
+                <button *ngIf="isAdmin || isInstructor" class="btn btn-success" (click)="open(contentSurveyAdd)">Add Quiz/Exam</button>
+                <!--END OF FORM CONTENT IN MODAL FOR SURVEY ADD-->
+
             </div>
 
             <!--CONTENT IN EACH MODULE-->
@@ -112,7 +142,7 @@
                                 </div>
                             </ng-template>
                             <button class="btn btn-primary" (click)="open(contentPdf)">View Pdf {{j + 1}}</button>
-                            <button *ngIf="isAdmin || isInstructor" class="btn btn-danger flexbox-module-options" (click)="deletePDF(innerpdf.pdf_id)">Delete Pdf</button>
+                            <button *ngIf="isAdmin || isInstructor" class="btn btn-danger flexbox-module-options" (click)="deletePDF(innerpdf.pdf_id, j)">Delete Pdf</button>
 
                             <!--FORM CONTENT IN MODAL FOR PDF EDIT-->
                             <ng-template #contentPdfUpdate let-modal>
@@ -151,7 +181,7 @@
                         <div class="flexbox-links-inner" *ngFor="let innerlink of link.value; let j = index">
                             <i class="fab fa-youtube"></i>    
 
-                            <ng-template #content let-modal>
+                            <ng-template #contentVideo let-modal>
                                 <div class="modal-header">
                                     <h4 class="modal-title">{{module.module_title}} - Video {{j + 1}}</h4>
                                     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
@@ -167,8 +197,8 @@
                                     <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
                                 </div>
                             </ng-template>
-                            <button class="btn btn-primary" (click)="open(content)">Watch Video {{j + 1}}</button>
-                            <button *ngIf="isAdmin || isInstructor" class="btn btn-danger flexbox-module-options" (click)="deleteVideo(innerlink.video_id)">Delete Video</button>
+                            <button class="btn btn-primary" (click)="open(contentVideo)">Watch Video {{j + 1}}</button>
+                            <button *ngIf="isAdmin || isInstructor" class="btn btn-danger flexbox-module-options" (click)="deleteVideo(innerlink.video_id, j)">Delete Video</button>
 
                             <!--FORM CONTENT IN MODAL FOR VIDEO EDIT-->
                             <ng-template #contentVideoUpdate let-modal>
@@ -200,11 +230,65 @@
                 </div>
                 <!--END OF YOUTUBE LINKS CONTENT-->
 
-                <!--QUIZZES CONTENT-->
-                <div class="flexbox-quizzes" *ngFor="let quiz of quizzes">
-                    <i class="fas fa-paper-plane"></i> {{quiz}}
+                <!--QUIZZES LINKS CONTENT-->
+                <div class="flexbox-links" *ngFor="let survey of safeSurveys | keyvalue; let index = index">
+                    <div *ngIf="survey.key == module.module_id">
+                        <div class="flexbox-links-inner" *ngFor="let surveyObject of survey.value; let j = index">
+                            <i class="fas fa-paper-plane"></i>    
+
+                            <ng-template #contentSurvey let-modal>
+                                <div class="modal-header">
+                                    <h4 class="modal-title">{{module.module_title}} - Quiz {{j + 1}}</h4>
+                                    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="embed-responsive embed-responsive-16by9">
+                                        <iframe class="embed-responsive-item" width="780" height="480" [src]="surveyObject.surveyUrl" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+                                </div>
+                            </ng-template>
+                            <button class="btn btn-primary" (click)="open(contentSurvey)">Take Quiz {{j + 1}}</button>
+                            <button *ngIf="isAdmin || isInstructor" class="btn btn-danger flexbox-module-options" (click)="deleteSurvey(surveyObject.survey_id, j)">Delete Quiz/Exam</button>
+
+                            <!--FORM CONTENT IN MODAL FOR QUIZ EDIT-->
+                            <ng-template #contentSurveyUpdate let-modal>
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Edit Quiz/Exam</h4>
+                                    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form [formGroup]="updateSurveyForm" class="col-9">
+            
+                                        <div class="form-group">
+                                            <label>New Name</label>
+                                            <input type="text" class="form-control form-control-lg" formControlName="name" #name>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>New Link</label>
+                                            <input type="text" class="form-control form-control-lg" formControlName="link" #link>
+                                        </div>
+                                    
+                                        <button type="submit" (click)="updateSurvey(name.value, link.value, surveyObject.survey_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Update Quiz/Exam</button>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+                                </div>
+                            </ng-template>
+                            <button *ngIf="isAdmin || isInstructor" class="btn btn-success flexbox-module-options" (click)="openUpdateSurvey(contentSurveyUpdate, surveyObject.name, surveyObject.url)">Edit Quiz/Exam</button>
+                            <!--END OF FORM CONTENT IN MODAL FOR QUIZ EDIT-->
+                        </div>
+                    </div>
                 </div>
-                <!--END OF QUIZZES CONTENT-->
+                <!--END OF QUIZZES LINKS CONTENT-->
 
             </div>  
             <div class="flexbox-item-module-actions" *ngIf="currentUser">

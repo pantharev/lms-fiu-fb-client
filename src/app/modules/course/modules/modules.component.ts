@@ -9,16 +9,16 @@ import {map} from 'rxjs/operators';
 
 import { PdfService } from '@app/core/services/pdf.service';
 import { VideoService } from '@app/core/services/video.service';
+import { SurveyService } from '@app/core/services/survey.service';
 import { AuthenticationService } from '@app/core/services/authentication.service';
 import { StudentCourseService } from '@app/core/services/student-course.service';
+import { ModuleService } from 'src/app/core/services/module.service';
+
 import { User } from '@app/core/models/user';
 import decode from 'jwt-decode';
 
-import { ModuleService } from 'src/app/core/services/module.service';
 import { throwToolbarMixedModesError } from '@angular/material';
 
-//import videojs from 'videojs-youtube';
-import videojs from 'video.js';
 import { analyzeAndValidateNgModules } from '@angular/compiler';
 
 @Component({
@@ -32,27 +32,41 @@ export class ModulesComponent implements OnInit {
   isAdmin: Boolean;
   isInstructor: Boolean;
   isStudent: Boolean;
+
   modules = [];
   todayDate;
   moduleLocked: Boolean[] = [];
+
   linksFromDB: string[] = new Array();
   links: string[] = new Array();
   safeLinks = new Map<number, Object[]>();
+
   pdfsFromDB: Blob[] = new Array();
   pdfs: any[] = new Array();
   safePdfs = new Map<number, Object[]>();
+
+  surveysFromDB: string[] = new Array();
+  surveys: string[] = new Array();
+  safeSurveys = new Map<number, Object[]>();
+
   resources = ['pdf1', 'pdf2', 'worddoc1'];
   quizzes = ['quiz1', 'quiz2', 'quiz3'];
+
   points: number;
   urlPath;
   courseId;
   toggleContent = [];
   moduleVideosFetched = [];
   modulePDFsFetched = [];
+  moduleSurveysFetched: Boolean[] = [];
+
   videoForm: FormGroup;
   pdfForm: FormGroup;
+  surveyForm: FormGroup;
   updateVideoForm: FormGroup;
   updatePdfForm: FormGroup;
+  updateSurveyForm: FormGroup;
+
   fileToUpload: File = null;
   contentObject = {
     course_id: 0,
@@ -68,6 +82,7 @@ export class ModulesComponent implements OnInit {
     private moduleService: ModuleService,
     private videoService: VideoService, 
     private pdfService: PdfService, 
+    private surveyService: SurveyService,
     private authenticationService: AuthenticationService, 
     private studentCourseService: StudentCourseService,
     private fb: FormBuilder, 
@@ -78,7 +93,7 @@ export class ModulesComponent implements OnInit {
     ) 
     {
       this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
-      this.makeVideoForms();
+      this.makeForms();
     }
 
   ngOnInit() {
@@ -109,7 +124,7 @@ export class ModulesComponent implements OnInit {
   }
 
   // BEGIN UTILITY FUNCTIONS
-  makeVideoForms() {
+  makeForms() {
     this.videoForm = this.fb.group({
       link: ['', Validators.required]
     });
@@ -122,23 +137,32 @@ export class ModulesComponent implements OnInit {
     this.updatePdfForm = this.fb.group({
       pdf: ['', Validators.required]
     });
-  }
-
-  pushLinksToArray(linksFromDB, links) {
-    linksFromDB.forEach((val, i, arr) => {
-      links.push({link: arr[i].link, module_id: arr[i].module_id, video_id: arr[i].video_id});
-      //console.log("Links array: " + JSON.stringify(links));
+    this.surveyForm = this.fb.group({
+      name: ['', Validators.required],
+      link: ['', Validators.required]
+    });
+    this.updateSurveyForm = this.fb.group({
+      name: ['', Validators.required],
+      link: ['', Validators.required]
     })
   }
 
-  updateVideoUrl(linksArr, moduleId) {
-    //console.log("updateVideoUrl");
-    //console.log("linksArr size: " + linksArr.length);
-    //this.moduleVideosFetched[moduleId] = true;
-    linksArr.forEach((val, i: number, arr: []) => {
-      if(val.module_id == moduleId){
+  pushLinksToArray(linksFromDB: any[], links: any[]) {
+    linksFromDB.forEach((video) => {
+      let videoObject = {
+        link: video.link, 
+        module_id: video.module_id, 
+        video_id: video.video_id
+      }
+      links.push(videoObject);
+    })
+  }
+
+  updateVideoUrl(linksArr: any[], moduleId: number) {
+    linksArr.forEach((val) => {
+      if(val.module_id === moduleId){
         this.moduleVideosFetched[moduleId] = true;
-        //console.log("val: " + i + " " + JSON.stringify(val));
+
         let id = val.link.substring(32, 43);
         let videoUrl: SafeResourceUrl;
         let url: string;
@@ -156,14 +180,12 @@ export class ModulesComponent implements OnInit {
         else {
           this.safeLinks.set(moduleId, [videoObject]);
         }
-        //console.log("safeLinks: " + JSON.stringify(this.safeLinks.get(moduleId)));
-        //console.log("safeLinks size: " + this.safeLinks.size);
       }
     })
   }
 
-  pushPDFsToArray(pdfsFromDB, pdfs) {
-    pdfsFromDB.forEach((val, i, arr) => {
+  pushPDFsToArray(pdfsFromDB: any[], pdfs: any[]) {
+    pdfsFromDB.forEach((val) => {
       //console.log("val : " + i + " " + JSON.stringify(val));
       let pdfData = val.pdf.data;
       //console.log(Array.isArray(pdfData));
@@ -174,23 +196,25 @@ export class ModulesComponent implements OnInit {
       let blob = new Blob([myBuffer.buffer], { type: 'application/pdf' }); //application/octet-stream
       //console.log(blob.size);
       //console.log(blob);
-      pdfs.push({ module_id: val.module_id, pdf_id: val.pdf_id, pdf: blob });
-      //console.log("pdfs: " + JSON.stringify(pdfs));
+      let pdfObject = {
+        module_id: val.module_id, 
+        pdf_id: val.pdf_id, 
+        pdf: blob
+      }
+      pdfs.push(pdfObject);
     })
   }
 
-  updatePdfData(pdfsArr, moduleId) {
-    //console.log("pdfsArr size: " + pdfsArr.length);
-    //this.modulePDFsFetched[moduleId] = true;
-    pdfsArr.forEach((val, i: number, arr) => {
-      if(val.module_id == moduleId) {
+  updatePdfData(pdfsArr: any[], moduleId: number) {
+    pdfsArr.forEach((val) => {
+      if(val.module_id === moduleId) {
         this.modulePDFsFetched[moduleId] = true;
-        //console.log("val: " + i + " " + JSON.stringify(val));
+        
         let pdfObject = {};
         let cleanPDF: SafeResourceUrl;
 
         let pdfURL = URL.createObjectURL(val.pdf);
-        //console.log(pdfURL);
+        
         cleanPDF = this.sanitizer.bypassSecurityTrustResourceUrl(pdfURL);
 
         pdfObject = {
@@ -204,8 +228,42 @@ export class ModulesComponent implements OnInit {
         else {
           this.safePdfs.set(moduleId, [pdfObject]);
         }
-        //console.log("safePdfs: " + JSON.stringify(this.safePdfs.get(moduleId)));
-        //console.log("safePdfs size: " + this.safePdfs.size);
+      }
+    })
+  }
+
+  pushSurveysToArray(surveysFromDB: any[], surveys: any[]){
+    surveysFromDB.forEach((survey) => {
+      let surveyObject = {
+        name: survey.survey_name, 
+        link: survey.link, 
+        module_id: survey.module_id, 
+        survey_id: survey.survey_id
+      }
+      surveys.push(surveyObject);
+    })
+  }
+
+  updateSurveyUrl(surveysArr: any[], moduleId: number) {
+    surveysArr.forEach((survey) => {
+      if(survey.module_id === moduleId){
+        this.moduleSurveysFetched[moduleId] = true;
+
+        let surveyUrl: SafeResourceUrl;
+        surveyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(survey.link);
+        let surveyObject = {
+          surveyUrl: surveyUrl,
+          survey_id: survey.survey_id,
+          name: survey.name,
+          url: survey.link
+        }
+
+        if(this.safeSurveys.get(moduleId)){
+          this.safeSurveys.get(moduleId).push(surveyObject);
+        }
+        else {
+          this.safeSurveys.set(moduleId, [surveyObject]);
+        }
       }
     })
   }
@@ -234,6 +292,12 @@ export class ModulesComponent implements OnInit {
     this.modalService.open(content, { size: 'lg', centered: true });
     this.updatePdfForm.get('pdf').setValue(pdf);
   }
+
+  openUpdateSurvey(content, surveyName, surveyUrl){
+    this.modalService.open(content, { size: 'lg', centered: true });
+    this.updateSurveyForm.get('name').setValue(surveyName);
+    this.updateSurveyForm.get('link').setValue(surveyUrl);
+  }
   // END UTILITY FUNCTIONS
 
   // BEGIN MODULES CRUD
@@ -257,6 +321,7 @@ export class ModulesComponent implements OnInit {
       //console.log(this.modules);
       this.fetchVideos(courseId, data);
       this.fetchPdfs(courseId, data);
+      this.fetchSurveys(courseId, data);
     })
   }
 
@@ -291,9 +356,9 @@ export class ModulesComponent implements OnInit {
     })
   }
 
-  deleteVideo(videoId) {
+  deleteVideo(videoId, videoNumber: number) {
     //console.log("Delete video: " + videoId);
-    let r = confirm("Delete video: are you sure?");
+    let r = confirm("Delete video " + (videoNumber + 1) + ": Are you sure?");
     if(r){
       this.videoService.deleteVideo(videoId).subscribe(() => {
         alert("Deleted video");
@@ -302,7 +367,7 @@ export class ModulesComponent implements OnInit {
   }
 
   fetchVideos(courseId, modules) {
-    console.log("Fetching content: " + courseId);
+    console.log("Fetching videos: " + courseId);
     this.videoService.fetchVideos(courseId).subscribe((data: any[]) => {
       this.linksFromDB = data;
       //console.log("linksFromDB: " + JSON.stringify(this.linksFromDB));
@@ -358,6 +423,7 @@ export class ModulesComponent implements OnInit {
   }
 
   fetchPdfs(courseId, modules) {
+    console.log("Fetching pdfs: " + courseId);
     this.pdfService.fetchPDFs(courseId).subscribe((data: any[]) => {
       //console.log(data);
       this.pdfsFromDB = data;
@@ -393,9 +459,9 @@ export class ModulesComponent implements OnInit {
     });
   }
 
-  deletePDF(pdfId) {
-    console.log("PDF ID: " + pdfId);
-    let r = confirm("Delete pdf: Are you sure?");
+  deletePDF(pdfId, pdfNumber: number) {
+    //console.log("PDF ID: " + pdfId);
+    let r = confirm("Delete PDF " + (pdfNumber + 1) + ": Are you sure?");
     if(r){
       this.pdfService.deletePDF(pdfId).subscribe(() => {
         alert("Deleted pdf");
@@ -404,5 +470,57 @@ export class ModulesComponent implements OnInit {
   }
 
   // END PDFS CRUD
+
+  // BEGIN SURVEYS CRUD (QUIZZES/EXAMS)
+  addSurvey(name, link, moduleId) {
+    this.surveyService.addSurvey(name, link, moduleId).subscribe(() => {
+      alert("Added survey");
+    })
+  }
+
+  fetchSurveys(courseId, modules: any[]) {
+    console.log("Fetching surveys: " + courseId);
+    this.surveyService.fetchSurveys(courseId).subscribe((data: any[]) => {
+      this.surveysFromDB = data;
+      //console.log("surveysFromDB: " + JSON.stringify(this.surveysFromDB));
+      this.pushSurveysToArray(data, this.surveys);
+
+      modules.forEach((val: any) => {
+        let moduleval = val;
+        for(let i = 0; i < data.length; i++) {
+          let val = data[i];
+          if(val.module_id == moduleval.module_id){
+            if(this.moduleSurveysFetched[val.module_id] == true){
+              console.log("Modules surveys fetched true");
+              break;
+            }
+            else{
+              //console.log(val.module_id);
+              this.updateSurveyUrl(this.surveys, val.module_id);
+            }
+          }
+        }
+      })
+
+    })
+  }
+
+  updateSurvey(name, link, surveyId) {
+    //console.log("link: " + link + " " + "videoId: " + videoId);
+    this.surveyService.updateSurvey(name, link, surveyId).subscribe(() => {
+      alert("Updated Quiz/Exam");
+    })
+  }
+
+  deleteSurvey(surveyId, surveyNumber: number) {
+    //console.log("Delete video: " + videoId);
+    let r = confirm("Delete Quiz/Exam " + (surveyNumber + 1) + ": Are you sure?");
+    if(r){
+      this.surveyService.deleteSurvey(surveyId).subscribe(() => {
+        alert("Deleted Quiz/Exam");
+      })
+    }
+  }
+  // END SURVEYS CRUD (QUIZZES/EXAMS)
 
 }

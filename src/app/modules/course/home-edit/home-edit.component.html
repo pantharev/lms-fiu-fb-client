@@ -1,0 +1,14 @@
+    <div class="flexbox-row">
+        <ng-container *ngIf="courseContent | async as content">
+            <ckeditor [editor]="Editor" [data]="editorData ? editorData : content.content" (change)="onChange($event)"></ckeditor>
+            <span>
+                <button (click)="onSubmit(content.id)" class="btn btn-primary" style="margin-right: 15px">Submit</button>
+                <button (click)="onClearButtonClicked(content.id)" class="btn btn-warning" style="margin-left: 15px">Clear and Submit</button>
+                <a routerLink="/courses/{{courseId}}" class="btn btn-secondary" style="margin-left: 15px"><i class="fas fa-arrow-circle-left"></i> Go back</a>
+            </span>
+            <hr>
+            <h2>Preview</h2>
+            <div [innerHTML]="editorData ? editorData : content.content" style="margin-top: 30px"></div>
+        </ng-container>
+        <!--<app-home-content [html]="editorData"></app-home-content>-->
+    </div>

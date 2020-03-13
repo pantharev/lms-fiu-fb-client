@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { HeaderComponent } from '@app/shared/header/header.component';
-import { userData } from 'server.js';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -25,8 +24,7 @@ export class HomeComponent implements OnInit {
     this.cookieService.delete('user');
     console.log("User: " + localStorage.getItem('currentUser'));
     //console.log("Localstorage is: " + localStorage.getItem('user'));
-    console.log("USER DATA FROM REQUEST");
-    console.log(userData);
+    console.log("userdata: " + localStorage.getItem("userData"));
   }
 
 }

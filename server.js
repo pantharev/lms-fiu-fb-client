@@ -7,7 +7,7 @@ const port = process.env.PORT || 8080;
 const _ = require("lodash");
 const base64url = require("base64-url");
 var userData;
-module.exports = userData;
+exports.userData = userData;
 
 app.use(express.static(__dirname + '/angular-build'));
 app.use(cors());
@@ -19,10 +19,10 @@ app.get('/*', function (req, res) {
 });
 
 app.post('/', function (req, res) {
-    userData = parse_signed_request(req.body.signed_request);
+    localStorage.setItem("userData", parse_signed_request(req.body.signed_request));
     res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
-    
-    
+
+
 
 });
 

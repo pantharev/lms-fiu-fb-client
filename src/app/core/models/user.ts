@@ -6,5 +6,6 @@ export class User {
     active: number;
     user_id: number;
     password: String;
+    role: String;
     token?: String;
 }

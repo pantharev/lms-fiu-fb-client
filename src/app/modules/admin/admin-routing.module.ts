@@ -1,16 +1,18 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes, RouterModule, CanActivate } from '@angular/router';
 
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CreateCourseComponent } from './create-course/create-course.component';
 import { EditCourseComponent } from './edit-course/edit-course.component';
 import { PendingEnrollmentComponent } from './pending-enrollment/pending-enrollment.component';
 
+import { AuthenticationService as AuthGuard } from '@app/core/services/authentication.service';
+
 const routes: Routes = [
-  { path: '', component: DashboardComponent },
-  { path: 'create-course', component: CreateCourseComponent },
-  { path: 'edit-course/:id', component: EditCourseComponent },
-  { path: 'pending-enrollment/:id', component: PendingEnrollmentComponent }
+  { path: '', component: DashboardComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin'} },
+  { path: 'create-course', component: CreateCourseComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin'} },
+  { path: 'edit-course/:id', component: EditCourseComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin'} },
+  { path: 'pending-enrollment/:id', component: PendingEnrollmentComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin'} }
 ]
 
 @NgModule({

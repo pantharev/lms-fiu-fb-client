@@ -20,5 +20,17 @@
     align-self: flex-start;
 }
 
+.center-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.trstyle:hover {
+    background-color: rgb(232, 248, 255);
+}
+
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

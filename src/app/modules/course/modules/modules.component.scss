@@ -1,21 +1,4 @@
 $base-color: #d9deff;
-/* Change all text and icon colors in the player. */
-.vjs-matrix.video-js {
-    color: $base-color;
-  }
-  
-  /* Change the border of the big play button. */
-  .vjs-matrix .vjs-big-play-button {
-    border-color: $base-color;
-  }
-  
-  /* Change the color of various "bars". */
-  .vjs-matrix .vjs-volume-level,
-  .vjs-matrix .vjs-play-progress,
-  .vjs-matrix .vjs-slider-bar {
-    background: $base-color;
-  }
-
 
 .flexbox-row {
     display: flex;
@@ -24,9 +7,6 @@ $base-color: #d9deff;
     justify-content: center;
     align-items: center;
 }
-
-
-
 
 .flexbox-container{
     display:flex;
@@ -44,22 +24,46 @@ $base-color: #d9deff;
 }
 
 .flexbox-options {
+    margin-bottom: 15px;
     align-self: flex-end;
 }
 
 .flexbox-item {
     align-self: stretch;
     background-color: transparent;
-    border: solid black 1px;
+    border: solid rgb(175, 175, 175) 1px;
+}
+
+.flexbox-top-container {
+    display:flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    /*height: 50px;*/
+    width: 600px;
+    padding: 20px;
+    justify-content: space-evenly;
+    align-items: center;
+    /*background-color: rgb(71, 253, 117);*/
+    
+    .flexbox-top-options {
+        margin-bottom: 15px;
+    }
+
+    .flexbox-progress-bar {
+        align-self: stretch;
+        background-color: rgb(219, 219, 219);
+    }
 }
 
 .flexbox-item-module-actions {
-    align-self: flex-start;
+    margin-top: 15px;
+    align-self: flex-end;
     background-color: transparent;
     border: solid black 1px;
 }
 
 .flexbox-subcontainer {
+    margin-top: 15px;
     align-self: flex-start;
     display: flex;
     flex-direction: column;
@@ -75,20 +79,28 @@ $base-color: #d9deff;
 
 .flexbox-links{
     align-self: stretch;
-    border: solid black 1px;
-}
 
-.flexbox-links:hover{
-    background-color: $base-color;
+    .flexbox-links-inner {
+        align-self: stretch;
+        border: solid black 1px;
+
+        &:hover {
+            background-color: $base-color;
+        }
+    }
 }
 
 .flexbox-resources {
     align-self: stretch;
-    border: solid black 1px;
-}
 
-.flexbox-resources:hover {
-    background-color: $base-color;
+    .flexbox-resources-inner {
+        align-self: stretch;
+        border: solid black 1px;
+
+        &:hover {
+            background-color: $base-color;
+        }
+    }
 }
 
 .flexbox-quizzes {

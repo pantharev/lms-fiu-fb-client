@@ -6,25 +6,27 @@ const bodyParser = require("body-parser");
 const port = process.env.PORT || 8080;
 const _ = require("lodash");
 const base64url = require("base64-url");
+var userData;
+module.exports = userData;
 app.use(express.static(__dirname + '/angular-build'));
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
 });
 
-app.use(bodyParser.json());
-
-app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.post('/', function (req, res) {
-    //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
+    res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
 
     if (_.isEmpty(req.body)) {
         res.send("ITS EMPTY BRO");
     }
     else {
-        res.send(parse_signed_request(req.body.signed_request));
+        userData = parse_signed_request(req.body.signed_request);
     }
 });
 
@@ -58,6 +60,9 @@ function parse_signed_request(signed_request) {
     */
 }
 
+app.get('/userdata', function(res, req) {
+    res.send(userData);
+})
 
 app.all(() => {
     res.header('Access-Control-Allow-Origin', '*'); // your website

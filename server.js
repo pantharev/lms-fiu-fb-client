@@ -8,6 +8,7 @@ const _ = require("lodash");
 const base64url = require("base64-url");
 var userData;
 module.exports = userData;
+
 app.use(express.static(__dirname + '/angular-build'));
 app.use(cors());
 app.use(bodyParser.json());
@@ -17,17 +18,16 @@ app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
 });
 
-
-
 app.post('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
-
+    /*
     if (_.isEmpty(req.body)) {
         res.send("ITS EMPTY BRO");
     }
     else {
         userData = parse_signed_request(req.body.signed_request);
     }
+    */
 });
 
 function parse_signed_request(signed_request) {
@@ -60,7 +60,7 @@ function parse_signed_request(signed_request) {
     */
 }
 
-app.get('/userdata', function(res, req) {
+app.get('/userdata', function (res, req) {
     res.send(userData);
 })
 
@@ -70,6 +70,7 @@ app.all(() => {
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
 })
+
 // Start the app by listening on the default Heroku port
 app.listen(port, () => {
     console.log("angular server started on port: " + port);

@@ -17,6 +17,10 @@ export class StudentCourseService {
     return this.http.get(`${environment.apiURL}/student-courses/s/${id}`);
   }
 
+  getAvgStudentPoints(courseId, studentId){
+    return this.http.get(`${environment.apiURL}/student-courses/p/${courseId}/${studentId}`);
+  }
+
   enrollStudentToCourse(student_id, course_id, enrollment_status) {
     const student_course = {
       student_id: student_id,

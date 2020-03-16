@@ -21,5 +21,9 @@
                 <div class="flexbox-cell right">{{student.points}}</div>
             </div>
         </div>
+
+        <div class="center-form" style="margin-top: 15px">
+            <span *ngIf="average">Class average: {{average.average}}</span>
+        </div>
     </div>
 </div>

@@ -20,6 +20,7 @@ import decode from 'jwt-decode';
 import { throwToolbarMixedModesError } from '@angular/material';
 
 import { analyzeAndValidateNgModules } from '@angular/compiler';
+import { resolve } from 'url';
 
 @Component({
   selector: 'app-modules',
@@ -53,6 +54,7 @@ export class ModulesComponent implements OnInit {
   quizzes = ['quiz1', 'quiz2', 'quiz3'];
 
   points: number;
+  averagePoints;
   urlPath;
   courseId;
   toggleContent = [];
@@ -110,7 +112,12 @@ export class ModulesComponent implements OnInit {
     this.isAdmin = (this.tokenPayload.role === "admin");
     this.isInstructor = (this.tokenPayload.role === "instructor");
     this.isStudent = (this.tokenPayload.role === "student");
+
     this.fetchModules(this.courseId);
+    this.getAvgStudentPoints(this.courseId, this.tokenPayload.id);
+
+    this.waitForProgressBar();
+
     this.studentCourseService.getStudentsByCourseId(this.courseId).subscribe((data: []) => {
       data.forEach((val: any, i, arr) => {
         if(val.student_id == this.tokenPayload.id) {
@@ -121,9 +128,23 @@ export class ModulesComponent implements OnInit {
         }
       })
     })
+
   }
 
   // BEGIN UTILITY FUNCTIONS
+
+  waitForProgressBar(){
+    console.log("waiting for progress bar");
+    if(document.getElementById('progressbarAvg')){
+      document.getElementById('progressbarAvg').style.width = this.averagePoints.average + "%";
+    }
+    else{
+      setTimeout(() => {
+        this.waitForProgressBar();
+      }, 1000)
+    }
+  }
+
   makeForms() {
     this.videoForm = this.fb.group({
       link: ['', Validators.required]
@@ -298,6 +319,21 @@ export class ModulesComponent implements OnInit {
     this.updateSurveyForm.get('name').setValue(surveyName);
     this.updateSurveyForm.get('link').setValue(surveyUrl);
   }
+
+  getAvgStudentPoints(courseId, studentId){
+    console.log("Called avgstudentpoints on student_id: " + studentId);
+    this.studentCourseService.getAvgStudentPoints(courseId, studentId).subscribe((data) => {
+      this.averagePoints = data;
+      console.log("avg: " + JSON.stringify(data));
+      this.averagePoints.average = this.toFixed(this.averagePoints.average, 2);
+    })
+  }
+
+  toFixed(value, precision) {
+    var power = Math.pow(10, precision || 0);
+    return String(Math.round(value * power) / power);
+  }
+
   // END UTILITY FUNCTIONS
 
   // BEGIN MODULES CRUD

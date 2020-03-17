@@ -5,7 +5,7 @@
 
 <div class="flexbox-row">
     <div class="flexbox-top-container">
-        
+
         <!-- Progress Bars -->
         <div class="align-self-stretch">
             <span>Your Points</span>
@@ -45,12 +45,29 @@
                     <div class="modal-body">
                         <form [formGroup]="videoForm" class="col-9">
 
+                            <div class="alert alert-info">
+                                <p>Valid youtube links are of the formats:<br> https://youtu.be/*********** <br>And <br>https://www.youtube.com/watch?v=***********</p>
+                            </div>
+
                             <div class="form-group">
-                                <label>Link</label>
-                                <input type="text" class="form-control"  formControlName="link" #link>
+                                <label for="link"><span style="color: red">*</span>Link</label>
+                                <input type="text" class="form-control" [ngClass]="{ 'is-invalid': submitted && v.link.errors, 'is-valid': validLink }" required formControlName="link" #link (keyup)="handleValidLink($event)">
+                                <div *ngIf="submitted && v.link.errors" class="invalid-feedback">
+                                    <div *ngIf="v.link.errors.required">Link is required</div>
+                                </div>
+                                <div *ngIf="validLink" class="valid-feedback">
+                                    Valid youtube link
+                                </div>
+                            </div>
+
+                            <div *ngIf="invalidLink && !validLink" class="alert alert-danger">
+                                Invalid Youtube Link
                             </div>
                         
+
+
                             <button *ngIf="isAdmin || isInstructor" type="submit" (click)="addVideo(link.value, module.module_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Video</button>
+                            <div *ngIf="error" class="alert alert-danger mt-3 mb-0">{{error}}</div>
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -73,9 +90,13 @@
                         <form [formGroup]="pdfForm" (ngSubmit)="addPdf(module.module_id)"class="col-9" method="POST" enctype="multipart/form-data">
 
                             <div class="form-group">
-                                <label>Select a PDF File</label>
-                                <input id="theFile" type="file" class="form-control" name="pdf" #file (change)="handleFileInput($event)">
+                                <label for="pdf"><span style="color: red">*</span>Select a PDF File</label>
+                                <input id="theFile" type="file" class="form-control" [ngClass]="{ 'is-invalid': submitted && p.pdf.errors }" name="pdf" #file (change)="handleFileInput($event)" required>
+                                <div *ngIf="submitted && p.pdf.errors" class="invalid-feedback">
+                                    <div *ngIf="p.pdf.errors.required">Pdf is required</div>
+                                </div>
                             </div>
+
                         
                             <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add PDF</button>
                         </form>
@@ -99,14 +120,32 @@
                     <div class="modal-body">
                         <form [formGroup]="surveyForm" class="col-9">
 
-                            <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" class="form-control"  formControlName="name" #name>
+                            <div class="alert alert-info">
+                                <p>Valid Qualtrics links are of the formats:<br> https://fiu.qualtrics.com/jfe/form/******************</p>
                             </div>
 
                             <div class="form-group">
-                                <label>Link</label>
-                                <input type="text" class="form-control"  formControlName="link" #link>
+                                <label for="name"><span style="color: red">*</span>Name</label>
+                                <input type="text" class="form-control"  formControlName="name" #name [ngClass]="{ 'is-invalid': submitted && s.name.errors }" required>
+                                <div *ngIf="submitted && s.name.errors" class="invalid-feedback">
+                                    <div *ngIf="s.name.errors.required">Name is required</div>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="link"><span style="color: red">*</span>Link</label>
+                                <input type="text" class="form-control"  formControlName="link" #link [ngClass]="{ 'is-invalid': submitted && s.link.errors, 'is-valid': validQuiz }" required (keyup)="handleValidQuiz($event)">
+                                <div *ngIf="submitted && s.link.errors" class="invalid-feedback">
+                                    <div *ngIf="s.link.errors.required">Link is required</div>
+                                </div>
+                                <div *ngIf="validQuiz" class="valid-feedback">
+                                    Valid Qualtrics link
+                                </div>
+                            </div>
+
+                            <div *ngIf="invalidQuiz && !validQuiz" class="alert alert-danger">
+                                Invalid Qualtrics Link
                             </div>
                         
                             <button *ngIf="isAdmin || isInstructor" type="submit" (click)="addSurvey(name.value, link.value, module.module_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Quiz/Exam</button>
@@ -169,8 +208,11 @@
                                 <form [formGroup]="updatePdfForm" (ngSubmit)="updatePDF(innerpdf.pdf_id, module.module_id)"class="col-9" method="POST" enctype="multipart/form-data">
 
                                     <div class="form-group">
-                                        <label>Select a PDF File</label>
-                                        <input id="theFile" type="file" class="form-control" name="pdf" #file (change)="handleFileInputUpdate($event)">
+                                        <label for="pdf"><span style="color: red">*</span>Select a PDF File</label>
+                                        <input id="theFile" type="file" class="form-control" name="pdf" #file (change)="handleFileInputUpdate($event)" [ngClass]="{ 'is-invalid': submitted && pu.pdf.errors }" required>
+                                        <div *ngIf="submitted && pu.pdf.errors" class="invalid-feedback">
+                                            <div *ngIf="pu.pdf.errors.required">Pdf is required</div>
+                                        </div>
                                     </div>
                                 
                                     <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Update PDF</button>
@@ -180,7 +222,7 @@
                                 <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
                             </div>
                         </ng-template>
-                        <button *ngIf="isAdmin || isInstructor" class="btn btn-success flexbox-module-options" (click)="openUpdatePDF(contentPdfUpdate, innerpdf.pdf)">Edit PDF</button>
+                        <button *ngIf="isAdmin || isInstructor" class="btn btn-success flexbox-module-options" (click)="openUpdatePDF(contentPdfUpdate, innerpdf.rawPdf)">Edit PDF</button>
                         <!--END OF FORM CONTENT IN MODAL FOR PDF EDIT-->
 
                         </div>
@@ -224,9 +266,23 @@
                                 <div class="modal-body">
                                     <form [formGroup]="updateVideoForm" class="col-9">
             
+                                        <div class="alert alert-info">
+                                            <p>Valid youtube links are of the formats:<br> https://youtu.be/*********** <br>And <br>https://www.youtube.com/watch?v=***********</p>
+                                        </div>
+
                                         <div class="form-group">
-                                            <label>New Link</label>
-                                            <input type="text" class="form-control form-control-lg" formControlName="linkInput" #linkInput>
+                                            <label for="linkInput"><span style="color: red">*</span>New Link</label>
+                                            <input type="text" class="form-control form-control-lg" formControlName="linkInput" #linkInput [ngClass]="{ 'is-invalid': submitted && vu.linkInput.errors, 'is-valid': validLink }" required (keyup)="handleValidLink($event)">
+                                            <div *ngIf="submitted && vu.linkInput.errors" class="invalid-feedback">
+                                                <div *ngIf="vu.linkInput.errors.required">Link is required</div>
+                                            </div>
+                                            <div *ngIf="validLink" class="valid-feedback">
+                                                Valid youtube link
+                                            </div>
+                                        </div>
+
+                                        <div *ngIf="invalidLink && !validLink" class="alert alert-danger">
+                                            Invalid Youtube Link
                                         </div>
                                     
                                         <button type="submit" (click)="updateVideo(linkInput.value, innerlink.video_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Update Video</button>
@@ -279,14 +335,31 @@
                                 <div class="modal-body">
                                     <form [formGroup]="updateSurveyForm" class="col-9">
             
+                                        <div class="alert alert-info">
+                                            <p>Valid Qualtrics links are of the formats:<br> https://fiu.qualtrics.com/jfe/form/******************</p>
+                                        </div>
+                                        
                                         <div class="form-group">
-                                            <label>New Name</label>
-                                            <input type="text" class="form-control form-control-lg" formControlName="name" #name>
+                                            <label for="name"><span style="color: red">*</span>New Name</label>
+                                            <input type="text" class="form-control form-control-lg" formControlName="name" #name [ngClass]="{ 'is-invalid': submitted && su.name.errors }" required>
+                                            <div *ngIf="submitted && su.name.errors" class="invalid-feedback">
+                                                <div *ngIf="su.name.errors.required">Name is required</div>
+                                            </div>
                                         </div>
 
                                         <div class="form-group">
-                                            <label>New Link</label>
-                                            <input type="text" class="form-control form-control-lg" formControlName="link" #link>
+                                            <label for="link"><span style="color: red">*</span>New Link</label>
+                                            <input type="text" class="form-control form-control-lg" formControlName="link" #link [ngClass]="{ 'is-invalid': submitted && su.link.errors, 'is-valid': validQuiz }" required (keyup)="handleValidQuiz($event)">
+                                            <div *ngIf="submitted && su.link.errors" class="invalid-feedback">
+                                                <div *ngIf="su.link.errors.required">Link is required</div>
+                                            </div>
+                                            <div *ngIf="validQuiz" class="valid-feedback">
+                                                Valid Qualtrics link
+                                            </div>
+                                        </div>
+
+                                        <div *ngIf="invalidQuiz && !validQuiz" class="alert alert-danger">
+                                            Invalid Qualtrics Link
                                         </div>
                                     
                                         <button type="submit" (click)="updateSurvey(name.value, link.value, surveyObject.survey_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Update Quiz/Exam</button>

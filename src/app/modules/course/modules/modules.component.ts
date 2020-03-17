@@ -68,6 +68,12 @@ export class ModulesComponent implements OnInit {
   updateVideoForm: FormGroup;
   updatePdfForm: FormGroup;
   updateSurveyForm: FormGroup;
+  submitted = false;
+  error = '';
+  invalidLink = false;
+  validLink = false;
+  invalidQuiz = false;
+  validQuiz = false;
 
   fileToUpload: File = null;
   contentObject = {
@@ -168,6 +174,19 @@ export class ModulesComponent implements OnInit {
     })
   }
 
+  // convenience gettera for easy access to form fields
+  get v() { return this.videoForm.controls; }
+
+  get p() { return this.pdfForm.controls; }
+
+  get s() { return this.surveyForm.controls; }
+
+  get vu() { return this.updateVideoForm.controls; }
+
+  get pu() { return this.updatePdfForm.controls; }
+
+  get su() { return this.updateSurveyForm.controls; }
+
   pushLinksToArray(linksFromDB: any[], links: any[]) {
     linksFromDB.forEach((video) => {
       let videoObject = {
@@ -184,7 +203,15 @@ export class ModulesComponent implements OnInit {
       if(val.module_id === moduleId){
         this.moduleVideosFetched[moduleId] = true;
 
-        let id = val.link.substring(32, 43);
+        console.log("link: " + val.link);
+        let len: number = val.link.length;
+        let id;
+        if(len >= 43){
+          id = val.link.substring(32, 43);
+        }
+        else if(len == 28){
+          id = val.link.substring(17, 28)
+        }
         let videoUrl: SafeResourceUrl;
         let url: string;
         let videoObject = {};
@@ -240,7 +267,8 @@ export class ModulesComponent implements OnInit {
 
         pdfObject = {
           pdf_id: val.pdf_id,
-          pdf: cleanPDF
+          pdf: cleanPDF,
+          rawPdf: val.pdf
         }
 
         if(this.safePdfs.get(moduleId)){
@@ -290,6 +318,11 @@ export class ModulesComponent implements OnInit {
   }
       
   open(content) {
+    this.submitted = false;
+    this.invalidLink = false;
+    this.invalidQuiz = false;
+    this.validLink = false;
+    this.invalidQuiz = false;
     this.modalService.open(content, { size: 'lg', centered: true });
   }
       
@@ -305,16 +338,24 @@ export class ModulesComponent implements OnInit {
   }
 
   openUpdateVideo(content, videoUrl) {
+    this.submitted = false;
+    this.invalidLink = false;
+    this.validLink = false;
     this.modalService.open(content, { size: 'lg', centered: true });
     this.updateVideoForm.get('linkInput').setValue(videoUrl);
   }
 
   openUpdatePDF(content, pdf){
+    this.submitted = false;
     this.modalService.open(content, { size: 'lg', centered: true });
-    this.updatePdfForm.get('pdf').setValue(pdf);
+    console.log("The updatePDF: " + pdf);
+    //this.updatePdfForm.get('pdf').setValue(pdf);
   }
 
   openUpdateSurvey(content, surveyName, surveyUrl){
+    this.submitted = false;
+    this.invalidQuiz = false;
+    this.validQuiz = false;
     this.modalService.open(content, { size: 'lg', centered: true });
     this.updateSurveyForm.get('name').setValue(surveyName);
     this.updateSurveyForm.get('link').setValue(surveyUrl);
@@ -379,13 +420,60 @@ export class ModulesComponent implements OnInit {
   // END MODULES CRUD
 
   // BEGIN VIDEOS CRUD
+
+  handleValidLink(event){
+    //console.log(event.target.value);
+    let input: String = event.target.value;
+    let isYoutubeLink: Boolean = false;
+    let len = input.length;
+
+    if(input.includes("https://www.youtube.com/watch?v=") || input.includes("https://youtu.be/")){
+      console.log("Includes youtube link");
+      isYoutubeLink = true;
+    } else{
+      isYoutubeLink = false;
+    }
+
+    if((len == 28 || len >= 43) && isYoutubeLink){
+      this.validLink = true;
+      this.invalidLink = false;
+    }
+    else{
+      this.validLink = false;
+    }
+  }
+
   addVideo(link, moduleId) {
-    this.videoService.addVideo(link, moduleId).subscribe(() => {
+    this.submitted = true;
+
+    if(this.videoForm.invalid){
+      return;
+    }
+
+    if(!this.validLink){
+      this.invalidLink = true;
+      return;
+    }
+
+    this.videoService.addVideo(link, moduleId).subscribe((data) => {
       alert("Added video");
+    }, (error) => {
+      this.error = error;
     })
   }
 
   updateVideo(link, videoId) {
+    this.submitted = true;
+
+    if(this.updateVideoForm.invalid){
+      return;
+    }
+
+    if(!this.validLink){
+      this.invalidLink = true;
+      return;
+    }
+
     //console.log("link: " + link + " " + "videoId: " + videoId);
     this.videoService.updateVideo(link, videoId).subscribe(() => {
       alert("Updated video");
@@ -447,14 +535,20 @@ export class ModulesComponent implements OnInit {
   }
 
   addPdf(moduleId) {
+    this.submitted = true;
+
+    if(this.pdfForm.invalid){
+      return;
+    }
+
     //console.log("fileName: " + this.pdfForm.get('pdf').value.name + " fileSize: " + this.pdfForm.get('pdf').value.size);
     const formData: FormData = new FormData();
     formData.append('fileKey', this.pdfForm.get('pdf').value);
     formData.append('fileKey', moduleId);
     //console.log(formData.getAll('fileKey'));
     this.pdfService.addPDF(formData).subscribe(
-      (res) => {console.log(res); alert("Added PDF!"); },
-      (err) => console.log(err)
+      (res) => { console.log(res); alert("Added PDF!"); },
+      (err) => { console.log(err); this.error = err; }
     );
   }
 
@@ -486,6 +580,12 @@ export class ModulesComponent implements OnInit {
   }
 
   updatePDF(pdfId, moduleId){
+    this.submitted = true;
+
+    if(this.updatePdfForm.invalid){
+      return;
+    }
+
     //console.log("updatePDF");
     const formData: FormData = new FormData();
     formData.append('fileKey', this.updatePdfForm.get('pdf').value);
@@ -508,7 +608,40 @@ export class ModulesComponent implements OnInit {
   // END PDFS CRUD
 
   // BEGIN SURVEYS CRUD (QUIZZES/EXAMS)
+
+  handleValidQuiz(event){
+    let input: String = event.target.value;
+    let len = input.length;
+    let isValidQuiz: Boolean = false;
+
+    if(input.includes("https://fiu.qualtrics.com/jfe/form/")){
+      isValidQuiz = true;
+    }
+    else{
+      isValidQuiz = false;
+    }
+
+    if((len == 53) && isValidQuiz){
+      this.validQuiz = true;
+      this.invalidQuiz = false;
+    }
+    else{
+      this.validQuiz = false;
+    }
+  }
+
   addSurvey(name, link, moduleId) {
+    this.submitted = true;
+
+    if(this.surveyForm.invalid){
+      return;
+    }
+
+    if(!this.validQuiz){
+      this.invalidQuiz = true;
+      return;
+    }
+
     this.surveyService.addSurvey(name, link, moduleId).subscribe(() => {
       alert("Added survey");
     })
@@ -542,6 +675,17 @@ export class ModulesComponent implements OnInit {
   }
 
   updateSurvey(name, link, surveyId) {
+    this.submitted = true;
+
+    if(this.updateSurveyForm.invalid){
+      return;
+    }
+
+    if(!this.validQuiz){
+      this.invalidQuiz = true;
+      return;
+    }
+
     //console.log("link: " + link + " " + "videoId: " + videoId);
     this.surveyService.updateSurvey(name, link, surveyId).subscribe(() => {
       alert("Updated Quiz/Exam");

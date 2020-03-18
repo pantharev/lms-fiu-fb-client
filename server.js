@@ -10,6 +10,9 @@ var LocalStorage = require('node-localstorage').LocalStorage;
 localStorage = new LocalStorage('./node_localStorage');
 var userData;
 
+//const https = require("https");
+const request = require('request-promise');
+
 app.use(express.static(__dirname + '/angular-build'));
 app.use(cors());
 app.use(bodyParser.json());
@@ -23,14 +26,25 @@ app.post('/', function (req, res) {
     // Get the stringified JSON object from the signed_request
     userData = parse_signed_request(req.body.signed_request);
     //Store the ID and the token
-    localStorage.setItem('userId', JSON.parse(userData).user_id);
-    localStorage.setItem('userToken', JSON.parse(userData).oauth_token);
+    //localStorage.setItem('userId', JSON.parse(userData).user_id);
+    //localStorage.setItem('userToken', JSON.parse(userData).oauth_token);
+    userId = JSON.parse(userData).user_id;
+    userToken = JSON.parse(userData).oauth_token;
+    tempToken = "EAAM1cdRWXxwBAHl9IG7UVJqm9xzhCburqdZBZB72uDWqfN2ror0OAL3vKYCqiQsaRykSE8nfeY8nwBQhWl6Myd4ZARmC5sNcVmJP2RjwmpeqkWAIvka8ToOdlea4NDXJoRCFQVw5B8mLJLnnhK3orvFF6vod0aXHKaVUf4kVBBwaHZBuZCABewkFLRklXUSaZCtwfbbCOGbw9Yhwm37u9iwBP3jsPO8OwSx8AWNHZBJSgZDZD";
+    const options = {
+        method: 'GET',
+        uri: `https://graph.facebook.com/v2.8/${userId}`,
+        qs: {
+          access_token: tempToken,
+          fields: 'name, email'
+        }
+      };
 
-    //window.localStorage.setItem("userData",JSON.stringify(userData))
-    res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
+    request(options).then(fbRes => {
+        res.send(JSON.parse(fbRes));
+    })   
     //res.send(localStorage.getItem('userToken'));
-
-
+    //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
 
 });
 

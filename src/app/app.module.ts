@@ -19,6 +19,11 @@ import { fromEventPattern } from 'rxjs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
+import { Local } from 'protractor/built/driverProviders';
+
+import { LocalStorage } from 'node-localstorage';
+
+
 
 
 
@@ -37,12 +42,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ReactiveFormsModule,
     NgbModule,
     BrowserModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    LocalStorage
   ],
   providers: [ 
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
-    CookieService ],
+    CookieService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

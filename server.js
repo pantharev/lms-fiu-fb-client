@@ -22,7 +22,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
+/*
 app.get('/userdata', function (req, res) {
     if (_.isEmpty(userData)){
         res.send("no user data to receive");
@@ -31,6 +31,7 @@ app.get('/userdata', function (req, res) {
         res.json(userData);
     }
 });
+*/
 app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
 });

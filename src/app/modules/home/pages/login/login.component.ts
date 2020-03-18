@@ -33,8 +33,7 @@ export class LoginComponent implements OnInit {
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     //console.log(this.returnUrl);
-    console.log("Hello login");
-    console.log("User info: " + this.authService.FBLogin2());
+   
   }
 
   // convenience getter for easy access to form fields

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { HeaderComponent } from '@app/shared/header/header.component';
+import {  AuthService } from '@app/core/services/auth.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -10,7 +11,7 @@ export class HomeComponent implements OnInit {
 
   @ViewChild('header', { static: false }) private myHeader: HeaderComponent;
 
-  constructor(private cookieService: CookieService) { }
+  constructor(private cookieService: CookieService, private authService: AuthService) { }
 
   getCookie(key: string) {
     return this.cookieService.get(key);
@@ -25,7 +26,8 @@ export class HomeComponent implements OnInit {
     console.log("User: " + localStorage.getItem('currentUser'));
     //console.log("Localstorage is: " + localStorage.getItem('user'));
 
-
+    console.log("Hello login");
+    console.log("User info: " + this.authService.FBLogin2());
 
   }
 

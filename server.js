@@ -1,6 +1,7 @@
 const path = require("path");
 const express = require("express");
 const cookieParser = require('cookie-parser');
+const cookie = require('cookie');
 const cors = require('cors');
 const app = express();
 const bodyParser = require("body-parser");
@@ -47,7 +48,13 @@ app.post('/', function (req, res) {
     request(options).then(fbRes => {
         userData = fbRes;
         //res.send(userData);
-        res.cookie("userData", fbRes);
+        let cookieOptions = {
+            SameSite: "none",
+            Secure: "true"
+        }
+
+        res.cookie("userData", fbRes, cookieOptions);
+
         console.log("userData parsed: " + JSON.parse(fbRes));
         console.log("fbRes: " + fbRes);
         res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));

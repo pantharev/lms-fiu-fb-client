@@ -10,7 +10,7 @@ const base64url = require("base64-url");
 var LocalStorage = require('node-localstorage').LocalStorage;
 localStorage = new LocalStorage('./node_localStorage');
 
-const cookie = require("ngx-cookie-service");
+const cookieParser = require('cookie-parser');
 var userData;
 
 
@@ -21,15 +21,11 @@ app.use(express.static(__dirname + '/angular-build'));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 
 app.get('/userdata', function (req, res) {
-    if (_.isEmpty(userData)){
-        res.send("no user data to receive");
-    }
-    else{
-        res.json(userData);
-    }
+    res.send(req.cookies);
 });
 
 app.get('/*', function (req, res) {
@@ -44,19 +40,20 @@ app.post('/', function (req, res) {
     //localStorage.setItem('userToken', JSON.parse(userData).oauth_token);
     userId = JSON.parse(userDataTemp).user_id;
     userToken = JSON.parse(userDataTemp).oauth_token;
-    //tempToken = "EAAM1cdRWXxwBAHl9IG7UVJqm9xzhCburqdZBZB72uDWqfN2ror0OAL3vKYCqiQsaRykSE8nfeY8nwBQhWl6Myd4ZARmC5sNcVmJP2RjwmpeqkWAIvka8ToOdlea4NDXJoRCFQVw5B8mLJLnnhK3orvFF6vod0aXHKaVUf4kVBBwaHZBuZCABewkFLRklXUSaZCtwfbbCOGbw9Yhwm37u9iwBP3jsPO8OwSx8AWNHZBJSgZDZD";
+    tempToken = "EAAM1cdRWXxwBAJdzVPQpuJxZBX29CZAplrckauoyLqKi5nfWEy4GDR8sgjZBLFXfYSFfaySSujqamZA0F3GcZB9khDAfexyUkSTupoTZAFOQTSjHvvjlpfwgMh6EJ8Q9ok2SefpDzHFOgqeQZC19PtQhIgWptc2efDLH9TCet06mmbneLbwb5NsHecgWzK9xJEAdO1t2JSJCiWQpC1cg21qOFrJK1txR4RhVZCgmCuRImgZDZD";
     const options = {
         method: 'GET',
         uri: `https://graph.facebook.com/v2.8/${userId}`,
         qs: {
-          access_token: userToken,
+          access_token: tempToken,
           fields: 'name, email'
         }
       };
     
     request(options).then(fbRes => {
-        userData = JSON.parse(fbRes);
-        //res.send(JSON.parse(fbRes));
+        userData = fbRes;
+        //res.send(userData);
+        res.cookie("userData",JSON.parse(userData));
         res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
         
     })   

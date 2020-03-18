@@ -40,7 +40,7 @@ app.post('/', function (req, res) {
         method: 'GET',
         uri: `https://graph.facebook.com/v2.8/${userId}`,
         qs: {
-            access_token: tempToken,
+            access_token: userToken,
             fields: 'name, email'
         }
     };

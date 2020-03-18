@@ -22,7 +22,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-/*
+
 app.get('/userdata', function (req, res) {
     if (_.isEmpty(userData)){
         res.send("no user data to receive");
@@ -31,19 +31,19 @@ app.get('/userdata', function (req, res) {
         res.json(userData);
     }
 });
-*/
+
 app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
 });
 
 app.post('/', function (req, res) {
     // Get the stringified JSON object from the signed_request
-    userData = parse_signed_request(req.body.signed_request);
+    var userDataTemp = parse_signed_request(req.body.signed_request);
     //Store the ID and the token
     //localStorage.setItem('userId', JSON.parse(userData).user_id);
     //localStorage.setItem('userToken', JSON.parse(userData).oauth_token);
-    userId = JSON.parse(userData).user_id;
-    userToken = JSON.parse(userData).oauth_token;
+    userId = JSON.parse(userDataTemp).user_id;
+    userToken = JSON.parse(userDataTemp).oauth_token;
     //tempToken = "EAAM1cdRWXxwBAHl9IG7UVJqm9xzhCburqdZBZB72uDWqfN2ror0OAL3vKYCqiQsaRykSE8nfeY8nwBQhWl6Myd4ZARmC5sNcVmJP2RjwmpeqkWAIvka8ToOdlea4NDXJoRCFQVw5B8mLJLnnhK3orvFF6vod0aXHKaVUf4kVBBwaHZBuZCABewkFLRklXUSaZCtwfbbCOGbw9Yhwm37u9iwBP3jsPO8OwSx8AWNHZBJSgZDZD";
     const options = {
         method: 'GET',

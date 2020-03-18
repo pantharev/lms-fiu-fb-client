@@ -41,6 +41,11 @@ yarn-error.log
 testem.log
 /typings
 
+
 # System Files
 .DS_Store
 Thumbs.db
+
+
+# User data
+/node_localStorage

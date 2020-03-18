@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { HeaderComponent } from '@app/shared/header/header.component';
+import { LocalStorage } from 'node-localstorage';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -24,7 +25,8 @@ export class HomeComponent implements OnInit {
     this.cookieService.delete('user');
     console.log("User: " + localStorage.getItem('currentUser'));
     //console.log("Localstorage is: " + localStorage.getItem('user'));
-    console.log("userdata: " + localStorage.getItem("userData"));
+    console.log("user ID " + LocalStorage.getItem('userId'));
+    console.log("user Token: " + LocalStorage.getItem('userToken'));
   }
 
 }

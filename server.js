@@ -6,6 +6,8 @@ const bodyParser = require("body-parser");
 const port = process.env.PORT || 8080;
 const _ = require("lodash");
 const base64url = require("base64-url");
+var LocalStorage = require('node-localstorage').LocalStorage;
+localStorage = new LocalStorage('./node_localStorage');
 var userData;
 
 app.use(express.static(__dirname + '/angular-build'));
@@ -18,9 +20,15 @@ app.get('/*', function (req, res) {
 });
 
 app.post('/', function (req, res) {
+    // Get the stringified JSON object from the signed_request
     userData = parse_signed_request(req.body.signed_request);
-
-    res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
+    //Store the ID and the token
+    localStorage.setItem('userId',JSON.parse(userData).user_id);
+    localStorage.setItem('userToken',JSON.parse(userData).oauth_token);
+    
+    //window.localStorage.setItem("userData",JSON.stringify(userData))
+    //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
+    res.send(localStorage.getItem('userToken'));
 
 
 
@@ -29,11 +37,8 @@ app.post('/', function (req, res) {
 function parse_signed_request(signed_request) {
     var encoded_data = signed_request.split('.', 2);
     // decode the data
-
     var sig = base64url.decode(encoded_data[0]);
     var payload = base64url.decode(encoded_data[1]);
-    console.log("sig: " + sig);
-    console.log("payload: " + payload);
     return payload;
     //var json = base64url.decode(encoded_data[1]);
     //var data2 = JSON.parse(json); // ERROR Occurs Here!

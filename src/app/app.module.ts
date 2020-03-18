@@ -21,7 +21,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { Local } from 'protractor/built/driverProviders';
 
-import { LocalStorage } from 'node-localstorage';
 
 
 
@@ -43,7 +42,6 @@ import { LocalStorage } from 'node-localstorage';
     NgbModule,
     BrowserModule,
     BrowserAnimationsModule,
-    LocalStorage
   ],
   providers: [ 
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

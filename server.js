@@ -6,9 +6,13 @@ const bodyParser = require("body-parser");
 const port = process.env.PORT || 8080;
 const _ = require("lodash");
 const base64url = require("base64-url");
+
 var LocalStorage = require('node-localstorage').LocalStorage;
 localStorage = new LocalStorage('./node_localStorage');
+
+const cookie = require("ngx-cookie-service");
 var userData;
+
 
 //const https = require("https");
 const request = require('request-promise');
@@ -18,6 +22,15 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+
+app.get('/userdata', function (req, res) {
+    if (_.isEmpty(userData)){
+        res.send("no user data to receive");
+    }
+    else{
+        res.json(userData);
+    }
+});
 app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
 });
@@ -39,11 +52,13 @@ app.post('/', function (req, res) {
           fields: 'name, email'
         }
       };
-
+    
     request(options).then(fbRes => {
-        res.send(JSON.parse(fbRes));
+        userData = JSON.parse(fbRes);
+        //res.send(JSON.parse(fbRes));
+        res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
+        
     })   
-    //res.send(localStorage.getItem('userToken'));
     //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
 
 });
@@ -73,18 +88,14 @@ function parse_signed_request(signed_request) {
     }
     return data;
     */
-}
-
-app.get('/userdata', function (res, req) {
-    res.send(userData);
-})
+};
 
 app.all(() => {
     res.header('Access-Control-Allow-Origin', '*'); // your website
     res.header('Access-Control-Allow-Credentials', 'false');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
-})
+});
 
 // Start the app by listening on the default Heroku port
 app.listen(port, () => {

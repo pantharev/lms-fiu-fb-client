@@ -24,6 +24,9 @@ export class HomeComponent implements OnInit {
     this.cookieService.delete('user');
     console.log("User: " + localStorage.getItem('currentUser'));
     //console.log("Localstorage is: " + localStorage.getItem('user'));
+
+
+
   }
 
 }

@@ -16,6 +16,7 @@ import { SocialLoginModule, AuthServiceConfig, FacebookLoginProvider } from 'ang
 import {MatIconModule, MatButtonModule, MatCardModule, MatOptionModule, MatAutocompleteModule, MatInputModule} from '@angular/material';
 import { ProfileComponent } from './pages/profile/profile.component';
 
+
 const config = new AuthServiceConfig([
   {
     id: FacebookLoginProvider.PROVIDER_ID,
@@ -42,7 +43,7 @@ export function provideConfig(){
     MatButtonModule,
     MatCardModule,
     MatOptionModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
   ],
   providers: [
     CourseService,

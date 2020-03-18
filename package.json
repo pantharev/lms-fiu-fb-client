@@ -35,7 +35,6 @@
     "lodash": "^4.17.15",
     "ngx-cookie": "^4.1.2",
     "ngx-cookie-service": "^2.3.0",
-    "node-localstorage": "^2.1.5",
     "nodemon": "^2.0.2",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",

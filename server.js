@@ -1,5 +1,6 @@
 const path = require("path");
 const express = require("express");
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const app = express();
 const bodyParser = require("body-parser");
@@ -7,10 +8,6 @@ const port = process.env.PORT || 8080;
 const _ = require("lodash");
 const base64url = require("base64-url");
 
-var LocalStorage = require('node-localstorage').LocalStorage;
-localStorage = new LocalStorage('./node_localStorage');
-
-const cookieParser = require('cookie-parser');
 var userData;
 
 
@@ -23,13 +20,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-
 app.get('/userdata', function (req, res) {
-    res.send(req.cookies);
-});
-
-app.get('/*', function (req, res) {
-    res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
+    res.send(req.cookies.userData);
 });
 
 app.post('/', function (req, res) {
@@ -45,7 +37,7 @@ app.post('/', function (req, res) {
         method: 'GET',
         uri: `https://graph.facebook.com/v2.8/${userId}`,
         qs: {
-          access_token: tempToken,
+          access_token: userToken,
           fields: 'name, email'
         }
       };
@@ -54,12 +46,19 @@ app.post('/', function (req, res) {
         userData = fbRes;
         //res.send(userData);
         res.cookie("userData",JSON.parse(userData));
+        console.log("userData: " + JSON.parse(fbRes));
         res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
         
     })   
     //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
 
 });
+
+app.get('/*', function (req, res) {
+    res.sendFile(path.join(__dirname, 'angular-build', 'index.html'))
+});
+
+
 
 function parse_signed_request(signed_request) {
     var encoded_data = signed_request.split('.', 2);

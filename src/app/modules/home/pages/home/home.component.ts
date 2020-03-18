@@ -31,9 +31,13 @@ export class HomeComponent implements OnInit {
     console.log("Hello login");
     console.log("User info: " + this.authService.FBLogin2());
     this.authService.FBLogin2().subscribe((data) => {
+      if(!data){
+        console.log("Hey, you didn't access us from the tab!! Go ahead and type your email:");
+        return;
+      }
       this.userData = data;
       console.log(this.userData);
-      console.log("The user data is: " + JSON.stringify(data));
+      console.log("The user data is: " + data);
     })
 
   }

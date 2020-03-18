@@ -23,12 +23,12 @@ app.post('/', function (req, res) {
     // Get the stringified JSON object from the signed_request
     userData = parse_signed_request(req.body.signed_request);
     //Store the ID and the token
-    localStorage.setItem('userId',JSON.parse(userData).user_id);
-    localStorage.setItem('userToken',JSON.parse(userData).oauth_token);
-    
+    localStorage.setItem('userId', JSON.parse(userData).user_id);
+    localStorage.setItem('userToken', JSON.parse(userData).oauth_token);
+
     //window.localStorage.setItem("userData",JSON.stringify(userData))
-    //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
-    res.send(localStorage.getItem('userToken'));
+    res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
+    //res.send(localStorage.getItem('userToken'));
 
 
 

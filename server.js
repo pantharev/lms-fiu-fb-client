@@ -48,12 +48,8 @@ app.post('/', function (req, res) {
     request(options).then(fbRes => {
         userData = fbRes;
         //res.send(userData);
-        let cookieOptions = {
-            SameSite: "none",
-            Secure: "true"
-        }
 
-        res.cookie("userData", fbRes, cookieOptions);
+        res.cookie("userData", fbRes, { sameSite: "none", secure: "true" });
 
         console.log("userData parsed: " + JSON.parse(fbRes));
         console.log("fbRes: " + fbRes);

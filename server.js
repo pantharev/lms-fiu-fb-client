@@ -47,8 +47,9 @@ app.post('/', function (req, res) {
     request(options).then(fbRes => {
         userData = fbRes;
         //res.send(userData);
-        res.cookie("userData", JSON.parse(userData));
-        console.log("userData: " + JSON.parse(fbRes));
+        res.cookie("userData", fbRes);
+        console.log("userData parsed: " + JSON.parse(fbRes));
+        console.log("fbRes: " + fbRes);
         res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
 
     })

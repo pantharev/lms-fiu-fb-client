@@ -13,6 +13,7 @@ export class CreateModuleComponent implements OnInit {
   moduleForm: FormGroup;
   labels = ['number', 'title', 'lockedUntil'];
   courseId: number;
+  submitted = false;
 
   constructor(private router: Router, private route: ActivatedRoute, private moduleService: ModuleService, private fb: FormBuilder) {
     this.moduleForm = this.fb.group({
@@ -29,13 +30,21 @@ export class CreateModuleComponent implements OnInit {
     })
   }
 
+  get m() { return this.moduleForm.controls; }
+
   addModule(number, title, lockedUntil) {
-    if(this.moduleForm.valid)
+    this.submitted = true;
+
+    if(!this.moduleForm.valid){
+      //alert('Missing required fields!');
+      //this.submitted = false;
+      return;
+    }
+
     this.moduleService.addModule(this.courseId, number, title, lockedUntil).subscribe(() => {
       //this.router.navigate(['/admin']);
       alert("Added module successfully!");
     });
-    else alert('Missing required fields!');
   }
 
 }

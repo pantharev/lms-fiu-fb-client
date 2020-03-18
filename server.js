@@ -31,25 +31,27 @@ app.post('/', function (req, res) {
     //localStorage.setItem('userId', JSON.parse(userData).user_id);
     //localStorage.setItem('userToken', JSON.parse(userData).oauth_token);
     userId = JSON.parse(userDataTemp).user_id;
+    console.log("userId: " + userId);
     userToken = JSON.parse(userDataTemp).oauth_token;
-    tempToken = "EAAM1cdRWXxwBAJdzVPQpuJxZBX29CZAplrckauoyLqKi5nfWEy4GDR8sgjZBLFXfYSFfaySSujqamZA0F3GcZB9khDAfexyUkSTupoTZAFOQTSjHvvjlpfwgMh6EJ8Q9ok2SefpDzHFOgqeQZC19PtQhIgWptc2efDLH9TCet06mmbneLbwb5NsHecgWzK9xJEAdO1t2JSJCiWQpC1cg21qOFrJK1txR4RhVZCgmCuRImgZDZD";
+    console.log("userToken: " + userToken);
+    tempToken = "EAAM1cdRWXxwBAPLDs1HyVdoZC8IZB4bKDhSfLx9frob7WLTUNR48X7zZB8FC0QJR0K6MrEyKW4EQPWSE01NpL0LroaqFH0ms4t7SKAc0jsGlIn1QvNjEsIOKRccUcQUXaZAsBxVJtG36FdbgOa7CI9cjElxHMQnSXDI2CyzZBbf32Vz1kKZCA6ZAa3vfcTOSZAxkccc7uRQI5UZCT6z5QpUX9R97QiqLSzBEwNnxYwZByaPAZDZD";
     const options = {
         method: 'GET',
         uri: `https://graph.facebook.com/v2.8/${userId}`,
         qs: {
-          access_token: userToken,
-          fields: 'name, email'
+            access_token: tempToken,
+            fields: 'name, email'
         }
-      };
-    
+    };
+
     request(options).then(fbRes => {
         userData = fbRes;
         //res.send(userData);
-        res.cookie("userData",JSON.parse(userData));
+        res.cookie("userData", JSON.parse(userData));
         console.log("userData: " + JSON.parse(fbRes));
         res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
-        
-    })   
+
+    })
     //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
 
 });

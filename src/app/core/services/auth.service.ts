@@ -13,6 +13,10 @@ export class AuthService {
     return this.http.get(`${environment.apiURL}/auth/login`);
   }
 
+  FBLogin2(){
+    return this.http.get(`${environment.frontendURL}/userdata`);
+  }
+
   FBLogOut(){
     return this.http.get(`${environment.apiURL}/auth/logout`);
   }

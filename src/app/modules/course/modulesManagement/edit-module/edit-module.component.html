@@ -3,22 +3,31 @@
     <form [formGroup]="updateForm" class="col-sm-4">
     
         <div class="form-group">
-            <label>Number</label>
-            <input type="text" class="form-control"  formControlName="number" #number>
+            <label for="number">Number</label>
+            <input type="text" class="form-control"  formControlName="number" #number [ngClass]="{ 'is-invalid': submitted && mu.number.errors }" required>
+            <div *ngIf="submitted && mu.number.errors" class="invalid-feedback">
+                <div *ngIf="mu.number.errors.required">Number is required</div>
+            </div>
         </div>
     
         <div class="form-group">
-            <label>Title</label>
-            <textarea class="form-control"  formControlName="title" #title></textarea>
+            <label for="title">Title</label>
+            <textarea class="form-control"  formControlName="title" #title [ngClass]="{ 'is-invalid': submitted && mu.title.errors }" required></textarea>
+            <div *ngIf="submitted && mu.title.errors" class="invalid-feedback">
+                <div *ngIf="mu.title.errors.required">Title is required</div>
+            </div>
         </div>
     
         <div class="form-group">
-            <label>Locked Until</label>
+            <label for="lockedUntil">Locked Until</label>
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="yyyy-mm-dd"
-                       name="dp" ngbDatepicker #d="ngbDatepicker" formControlName="lockedUntil" #lockedUntil>
+                       name="dp" ngbDatepicker (dateSelect)="onDateSelect($event)" #d="ngbDatepicker" readonly [value]="givenDate" formControlName="lockedUntil" #lockedUntil [ngClass]="{ 'is-invalid': submitted && mu.lockedUntil.errors }" required>
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary far fa-calendar-alt" (click)="d.toggle()" type="button"></button>
+                </div>
+                <div *ngIf="submitted && mu.lockedUntil.errors" class="invalid-feedback">
+                    <div *ngIf="mu.lockedUntil.errors.required">Locked Until is required</div>
                 </div>
             </div>
         </div>

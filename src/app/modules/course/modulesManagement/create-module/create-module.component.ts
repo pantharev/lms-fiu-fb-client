@@ -14,6 +14,7 @@ export class CreateModuleComponent implements OnInit {
   labels = ['number', 'title', 'lockedUntil'];
   courseId: number;
   submitted = false;
+  todayDate;
 
   constructor(private router: Router, private route: ActivatedRoute, private moduleService: ModuleService, private fb: FormBuilder) {
     this.moduleForm = this.fb.group({
@@ -23,11 +24,20 @@ export class CreateModuleComponent implements OnInit {
     });
    }
 
+
+  get m() { return this.moduleForm.controls; }
+
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.courseId = params.id;
       console.log("params id create: " + params.id);
     })
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    let yyyy = today.getFullYear();
+
+    this.todayDate = mm + '/' + dd + '/' + yyyy;
   }
 
   get m() { return this.moduleForm.controls; }
@@ -35,9 +45,15 @@ export class CreateModuleComponent implements OnInit {
   addModule(number, title, lockedUntil) {
     this.submitted = true;
 
+    let today = new Date(lockedUntil);
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    let yyyy = today.getFullYear();
+
+    lockedUntil = yyyy + '-' + mm + '-' + dd;
+
+    //console.log("going to submit lockedUntil: " + lockedUntil);
     if(!this.moduleForm.valid){
-      //alert('Missing required fields!');
-      //this.submitted = false;
       return;
     }
 
@@ -45,6 +61,10 @@ export class CreateModuleComponent implements OnInit {
       //this.router.navigate(['/admin']);
       alert("Added module successfully!");
     });
+  }
+
+  onDateSelect(event){
+    this.todayDate = String(event.month).padStart(2, '0') + '/' + String(event.day).padStart(2, '0') + '/' + event.year;
   }
 
 }

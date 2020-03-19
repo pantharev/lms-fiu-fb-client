@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
 
 import io from "socket.io-client";
 import decode from 'jwt-decode';
-import { throwToolbarMixedModesError } from '@angular/material';
+import { throwToolbarMixedModesError } from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-course-browser',

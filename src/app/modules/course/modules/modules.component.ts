@@ -17,8 +17,6 @@ import { ModuleService } from 'src/app/core/services/module.service';
 import { User } from '@app/core/models/user';
 import decode from 'jwt-decode';
 
-import { throwToolbarMixedModesError } from '@angular/material';
-
 import { analyzeAndValidateNgModules } from '@angular/compiler';
 import { resolve } from 'url';
 

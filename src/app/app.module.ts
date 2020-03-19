@@ -21,11 +21,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { Local } from 'protractor/built/driverProviders';
 
-
-
-
-
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -40,7 +35,6 @@ import { Local } from 'protractor/built/driverProviders';
     FormsModule,
     ReactiveFormsModule,
     NgbModule,
-    BrowserModule,
     BrowserAnimationsModule,
   ],
   providers: [ 

@@ -3,38 +3,53 @@
     <form [formGroup]="updateForm" class="col-sm-4">
     
         <div class="form-group">
-            <label>Name</label>
-            <input type="text" class="form-control"  formControlName="name" #name>
+            <label for="name"><span style="color: red">*</span>Name</label>
+            <input type="text" class="form-control"  formControlName="name" #name [ngClass]="{ 'is-invalid': submitted && cu.name.errors }" required>
+            <div *ngIf="submitted && cu.name.errors" class="invalid-feedback">
+                <div *ngIf="cu.name.errors.required">Name is required</div>
+            </div>
         </div>
     
         <div class="form-group">
-            <label>Description</label>
-            <textarea class="form-control"  formControlName="description" #description></textarea>
+            <label for="description"><span style="color: red">*</span>Description</label>
+            <textarea class="form-control"  formControlName="description" #description [ngClass]="{ 'is-invalid': submitted && cu.description.errors }" required></textarea>
+            <div *ngIf="submitted && cu.description.errors" class="invalid-feedback">
+                <div *ngIf="cu.description.errors.required">Description is required</div>
+            </div>
         </div>
     
         <div class="form-group">
-            <label>Seats</label>
-            <input type="text" class="form-control"  formControlName="seats" #seats>
+            <label for="seats"><span style="color: red">*</span>Number of Seats</label>
+            <input type="text" class="form-control"  formControlName="seats" #seats [ngClass]="{ 'is-invalid': submitted && cu.seats.errors }" required>
+            <div *ngIf="submitted && cu.seats.errors" class="invalid-feedback">
+                <div *ngIf="cu.seats.errors.required">Seats is required</div>
+            </div>
         </div>
     
         <div class="form-group">
-            <label>Start Date</label>
+            <label for="start_date"><span style="color: red">*</span>Start Date</label>
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="yyyy-mm-dd"
-                       name="dp" ngbDatepicker #d="ngbDatepicker" formControlName="start_date" #start_date>
+                       name="dp" ngbDatepicker (dateSelect)="onStartDateSelect($event)" #d="ngbDatepicker" formControlName="start_date" #start_date readonly [value]="startDateSelected ? (startDateEvent | async) : (startDate | async)" [ngClass]="{ 'is-invalid': submitted && cu.start_date.errors }" required>
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary far fa-calendar-alt" (click)="d.toggle()" type="button"></button>
+                </div>
+                <div *ngIf="submitted && cu.start_date.errors" class="invalid-feedback">
+                    <div *ngIf="cu.start_date.errors.required">Start Date is required</div>
                 </div>
             </div>
         </div>
     
         <div class="form-group">
-            <label>End Date</label>
+            <label for="end_date"><span style="color: red">*</span>End Date</label>
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="yyyy-mm-dd"
-                       name="dp" ngbDatepicker #d2="ngbDatepicker" formControlName="end_date" #end_date>
+                       name="dp" ngbDatepicker (dateSelect)="onEndDateSelect($event)" #d2="ngbDatepicker" formControlName="end_date" #end_date readonly [value]="endDateSelected ? (endDateEvent | async) : (endDate | async)" [ngClass]="{ 'is-invalid': submitted && cu.end_date.errors }" required>
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary far fa-calendar-alt" (click)="d2.toggle()" type="button"></button>
+                </div>
+                <div *ngIf="submitted && cu.end_date.errors" class="invalid-feedback">
+                    <div *ngIf="cu.end_date.errors.required">End Date is required</div>
                 </div>
             </div>
         </div>

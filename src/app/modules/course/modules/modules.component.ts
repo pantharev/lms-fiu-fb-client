@@ -203,7 +203,7 @@ export class ModulesComponent implements OnInit {
       if(val.module_id === moduleId){
         this.moduleVideosFetched[moduleId] = true;
 
-        console.log("link: " + val.link);
+        //console.log("link: " + val.link);
         let len: number = val.link.length;
         let id;
         if(len >= 43){
@@ -384,15 +384,20 @@ export class ModulesComponent implements OnInit {
 
   fetchModules(courseId) {
     this.moduleService.getModulesByCourseId(courseId).subscribe((data: []) => {
-      
       data.forEach((moduleO: any, i, arr) => {
-        let lockedUntil = new Date(moduleO.lockedUntil.toString());
+        //let lockedUntil = new Date(moduleO.lockedUntil.toString());
+        let lockedUntil = new Date(moduleO.lockedUntil);
+        let dd = String(lockedUntil.getDate() + 1).padStart(2, '0');
+        let mm = String(lockedUntil.getMonth() + 1).padStart(2, '0'); //January is 0!
+        let yyyy = lockedUntil.getFullYear();
+
+        let givenDate = mm + '/' + dd + '/' + yyyy;
         this.moduleLocked[i] = false;
         if(this.todayDate < lockedUntil){
           //console.log(this.todayDate.toLocaleDateString() + " < " + JSON.stringify(moduleO));
           this.moduleLocked[i] = true;
         }
-        moduleO.lockedUntil = lockedUntil.toLocaleDateString();
+        moduleO.lockedUntil = givenDate;
       })
       this.modules = data;
       //console.log(this.modules);

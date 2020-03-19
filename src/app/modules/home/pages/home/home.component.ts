@@ -10,7 +10,7 @@ import { AuthService } from '@app/core/services/auth.service';
 export class HomeComponent implements OnInit {
 
   private userData;
-  @ViewChild('header', { static: false }) private myHeader: HeaderComponent;
+  @ViewChild('header') private myHeader: HeaderComponent;
 
   constructor(private cookieService: CookieService, private authService: AuthService) { }
 

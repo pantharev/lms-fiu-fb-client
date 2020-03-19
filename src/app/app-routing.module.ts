@@ -4,9 +4,9 @@ import { AuthGuard } from './core/helpers/auth.guard';
 
 
 const routes: Routes = [
-  { path: 'home', loadChildren: './modules/home/home.module#HomeModule', canActivate: [AuthGuard] },
-  { path: 'admin', loadChildren: './modules/admin/admin.module#AdminModule'},
-  { path: 'courses', loadChildren: './modules/course/course.module#CourseModule'}
+  { path: 'home', loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule), canActivate: [AuthGuard] },
+  { path: 'admin', loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule)},
+  { path: 'courses', loadChildren: () => import('./modules/course/course.module').then(m => m.CourseModule)}
 ];
 
 @NgModule({

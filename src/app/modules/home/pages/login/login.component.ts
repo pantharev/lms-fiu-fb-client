@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   FB_email: string;
   FB_settings = {
     appId: '903187940138780',
-    version: '6.0'
+    version: 'v6.0'
   };
 
   constructor(private formBuilder: FormBuilder, private route: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService, private FB: FacebookService, private authFB: AuthService) {

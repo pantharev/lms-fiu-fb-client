@@ -10,6 +10,10 @@ import { AuthService } from '@app/core/services/auth.service';
 export class HomeComponent implements OnInit {
 
   private userData;
+  private FB_id = localStorage.getItem("FB_id");
+  private FB_name = localStorage.getItem("FB_name");
+  private FB_email = localStorage.getItem("FB_email");
+
   @ViewChild('header') private myHeader: HeaderComponent;
 
   constructor(private cookieService: CookieService, private authService: AuthService) { }

@@ -13,7 +13,6 @@ import { CourseBrowserComponent } from './pages/course-browser/course-browser.co
 
 import { CourseService } from '../../core/services/course.service';
 import { LoginComponent } from './pages/login/login.component';
-import { SocialLoginModule, AuthServiceConfig, FacebookLoginProvider } from 'angularx-social-login';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -21,6 +20,9 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ProfileComponent } from './pages/profile/profile.component';
+
+import { FacebookModule } from '@greg-md/ng-facebook';
+import { SocialLoginModule, AuthServiceConfig, FacebookLoginProvider } from 'angularx-social-login';
 
 const config = new AuthServiceConfig([
   {
@@ -50,6 +52,7 @@ export function provideConfig(){
     MatCardModule,
     MatOptionModule,
     MatAutocompleteModule,
+    FacebookModule
   ],
   providers: [
     CourseService,

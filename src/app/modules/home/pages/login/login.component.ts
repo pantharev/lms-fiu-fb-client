@@ -3,7 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AuthenticationService } from '@app/core/services/authentication.service';
-
+import { FacebookService } from '@greg-md/ng-facebook';
+import { FacebookLoginProvider, AuthService } from "angularx-social-login";
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -16,11 +17,19 @@ export class LoginComponent implements OnInit {
   returnUrl: string;
   error = '';
 
-  constructor(private formBuilder: FormBuilder, private route: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService) {
+  FB_id: string;
+  FB_email: string;
+  FB_settings = {
+    appId: '903187940138780',
+    version: '2.7'
+  };
+
+  constructor(private formBuilder: FormBuilder, private route: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService, private FB: FacebookService, private authFB: AuthService) {
     // redirect to home if already logged in
     if (this.authenticationService.currentUserValue) {
       this.router.navigate(['/']);
     }
+
   }
 
   ngOnInit() {
@@ -32,7 +41,9 @@ export class LoginComponent implements OnInit {
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     //console.log(this.returnUrl);
-   
+    
+    this.FB.init(this.FB_settings).subscribe();
+    console.log("fb initiated");
   }
 
   // convenience getter for easy access to form fields
@@ -59,6 +70,24 @@ export class LoginComponent implements OnInit {
           this.error = error;
         }
       );
+  }
+
+  FBLogin() {
+    
+    console.log("FBlogin");
+    console.log(this.FB_id);
+    /*
+    this.FB.login({scope: 'email'}).subscribe(auth => {
+      this.FB_id = auth.userID;
+    });
+    */
+
+    this.authFB.signIn(FacebookLoginProvider.PROVIDER_ID);
+    this.authFB.authState.subscribe((user) => {
+      this.FB_id = user.id;
+      this.FB_email = user.email;
+    })
+    console.log(this.FB_id);
   }
 }
 

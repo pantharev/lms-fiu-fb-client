@@ -10,9 +10,9 @@ import { AuthService } from '@app/core/services/auth.service';
 export class HomeComponent implements OnInit {
 
   private userData;
-  private FB_id = localStorage.getItem("FB_id");
-  private FB_name = localStorage.getItem("FB_name");
-  private FB_email = localStorage.getItem("FB_email");
+  FB_id;
+  FB_name;
+  FB_email;
 
   @ViewChild('header') private myHeader: HeaderComponent;
 
@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit {
     console.log("Hello login");
     console.log("User info: " + this.authService.FBLogin2());
     this.authService.FBLogin2().subscribe((data) => {
-      if(!data){
+      if (!data) {
         console.log("Hey, you didn't access us from the tab!! Go ahead and type your email:");
         //return;
       }
@@ -44,6 +44,11 @@ export class HomeComponent implements OnInit {
       console.log(this.userData);
       console.log("The user data is: " + data);
     })
+    this.FB_id = localStorage.getItem("FB_id");
+    this.FB_email = localStorage.getItem("FB_email");
+    this.FB_name = localStorage.getItem("FB_name");
+
+
 
   }
 

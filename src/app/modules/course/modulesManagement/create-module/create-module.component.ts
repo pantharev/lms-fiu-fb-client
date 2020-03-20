@@ -14,7 +14,7 @@ export class CreateModuleComponent implements OnInit {
   labels = ['number', 'title', 'lockedUntil'];
   courseId: number;
   submitted = false;
-  todayDate;
+  todayDate: Promise<string>|null = null;
 
   constructor(private router: Router, private route: ActivatedRoute, private moduleService: ModuleService, private fb: FormBuilder) {
     this.moduleForm = this.fb.group({
@@ -37,7 +37,7 @@ export class CreateModuleComponent implements OnInit {
     let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     let yyyy = today.getFullYear();
 
-    this.todayDate = mm + '/' + dd + '/' + yyyy;
+    this.todayDate = new Promise((resolve, reject) => { resolve(mm + '/' + dd + '/' + yyyy)});
   }
 
   addModule(number, title, lockedUntil) {
@@ -50,7 +50,7 @@ export class CreateModuleComponent implements OnInit {
 
     lockedUntil = yyyy + '-' + mm + '-' + dd;
 
-    //console.log("going to submit lockedUntil: " + lockedUntil);
+    console.log("going to submit lockedUntil: " + lockedUntil);
     if(!this.moduleForm.valid){
       return;
     }
@@ -62,7 +62,7 @@ export class CreateModuleComponent implements OnInit {
   }
 
   onDateSelect(event){
-    this.todayDate = String(event.month).padStart(2, '0') + '/' + String(event.day).padStart(2, '0') + '/' + event.year;
+    this.todayDate = new Promise((resolve, reject) => { resolve(String(event.month).padStart(2, '0') + '/' + String(event.day).padStart(2, '0') + '/' + event.year); });
   }
 
 }

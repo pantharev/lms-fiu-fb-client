@@ -17,7 +17,7 @@ export class EditModuleComponent implements OnInit {
   updateForm: FormGroup;
   submitted = false;
   startDate;
-  givenDate;
+  givenDate: Promise<string>|null = null;
 
   constructor(private moduleService: ModuleService, private router: Router, private route: ActivatedRoute, private fb: FormBuilder) {
     this.CreateForm();
@@ -52,7 +52,7 @@ export class EditModuleComponent implements OnInit {
         let mm = String(newDate.getMonth() + 1).padStart(2, '0'); //January is 0!
         let yyyy = newDate.getFullYear();
 
-        this.givenDate = mm + '/' + dd + '/' + yyyy;
+        this.givenDate = new Promise((resolve, reject) => { resolve(mm + '/' + dd + '/' + yyyy); });
         this.startDate = (""+this.module.lockedUntil).split("-");
         //console.log(this.startDate);
       })
@@ -79,7 +79,7 @@ export class EditModuleComponent implements OnInit {
   }
 
   onDateSelect(event){
-    this.givenDate = String(event.month).padStart(2, '0') + '/' + String(event.day).padStart(2, '0') + '/' + event.year;
+    this.givenDate = new Promise((resolve, reject) => { resolve(String(event.month).padStart(2, '0') + '/' + String(event.day).padStart(2, '0') + '/' + event.year); });
   }
 
 }

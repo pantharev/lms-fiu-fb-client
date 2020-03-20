@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   FB_email: string;
   FB_settings = {
     appId: '903187940138780',
-    version: '2.7'
+    version: '6.0'
   };
 
   constructor(private formBuilder: FormBuilder, private route: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService, private FB: FacebookService, private authFB: AuthService) {
@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     //console.log(this.returnUrl);
-    
+
     this.FB.init(this.FB_settings).subscribe();
     console.log("fb initiated");
   }
@@ -73,7 +73,7 @@ export class LoginComponent implements OnInit {
   }
 
   FBLogin() {
-    
+
     console.log("FBlogin");
     console.log(this.FB_id);
     /*

@@ -40,8 +40,6 @@ export class CreateModuleComponent implements OnInit {
     this.todayDate = mm + '/' + dd + '/' + yyyy;
   }
 
-  get m() { return this.moduleForm.controls; }
-
   addModule(number, title, lockedUntil) {
     this.submitted = true;
 

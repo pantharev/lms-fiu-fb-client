@@ -19,6 +19,7 @@ export class LoginComponent implements OnInit {
 
   FB_id: string;
   FB_email: string;
+  FB_name: string;
   FB_settings = {
     appId: '903187940138780',
     version: 'v6.0'
@@ -86,8 +87,13 @@ export class LoginComponent implements OnInit {
     this.authFB.authState.subscribe((user) => {
       this.FB_id = user.id;
       this.FB_email = user.email;
+      this.FB_name = user.name;
     })
     console.log(this.FB_id);
+    console.log(this.FB_email);
+    localStorage.setItem("FB_email", this.FB_email);
+    localStorage.setItem("FB_id", this.FB_id);
+    localStorage.setItem("FB_name", this.FB_name);
   }
 }
 

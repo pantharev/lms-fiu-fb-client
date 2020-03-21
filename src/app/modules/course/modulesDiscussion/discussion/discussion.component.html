@@ -9,7 +9,7 @@
             <p class="flex-item">
                 {{post.user}} | {{post.created >= post.changed ? (post.created | date:'short') : (post.changed | date:'short')}}<br>
                 {{post.post}}<br>
-                <app-edit-post *ngIf="post.user_id == userPayload.id" [discussionData]="post" (messageEvent)="receiveMessage($event)"></app-edit-post>
+                <app-edit-post *ngIf="post.user_id == userPayload.id" [discussionData]="post"></app-edit-post>
                 <button *ngIf="post.user_id == userPayload.id" type="button" (click)="deletePost(post.discussion_id)" class="btn btn-danger">Delete Post</button>
             </p>
         </div>

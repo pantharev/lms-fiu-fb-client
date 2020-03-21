@@ -8,6 +8,7 @@ import { LeaderboardComponent } from './leaderboard/leaderboard.component';
 import { CreateModuleComponent } from './modulesManagement/create-module/create-module.component';
 import { EditModuleComponent } from './modulesManagement/edit-module/edit-module.component';
 import { HomeEditComponent } from './home-edit/home-edit.component';
+import { DiscussionComponent } from './modulesDiscussion/discussion/discussion.component';
 
 import { AuthenticationService as AuthGuard } from '@app/core/services/authentication.service';
 
@@ -18,7 +19,8 @@ const routes: Routes = [
   { path: ':id/leaderboard', component: LeaderboardComponent, canActivate: [AuthGuard] },
   { path: ':id/create-module', component: CreateModuleComponent, canActivate: [AuthGuard], data: { expectedRole: 'instructor'} },
   { path: ':id/edit-module/:moduleId', component: EditModuleComponent, canActivate: [AuthGuard], data: { expectedRole: 'instructor'} },
-  { path: ':id/edit-home', component: HomeEditComponent, canActivate: [AuthGuard], data: { expectedRole: 'instructor'} }
+  { path: ':id/edit-home', component: HomeEditComponent, canActivate: [AuthGuard], data: { expectedRole: 'instructor'} },
+  { path: ':id/discussion/:moduleId', component: DiscussionComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

@@ -380,6 +380,7 @@
             <div class="flexbox-item-module-actions" *ngIf="currentUser">
                 <button *ngIf="isAdmin || isInstructor" type="button" (click)="editModule(module.course_id, module.module_id)" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</button>
                 <button *ngIf="isAdmin || isInstructor" type="button" (click)="deleteModule(module.module_id, module.module_number)" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Delete</button>
+                <button type="button" (click)="viewDiscussion(module.course_id, module.module_id)" class="btn btn-primary"><i class="fas fa-comments"></i> View Discussion</button>
             </div>
             <!--END OF CONTENT IN EACH MODULE-->
         </ng-container>

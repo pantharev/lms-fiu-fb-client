@@ -15,10 +15,12 @@ import { CreateModuleComponent } from './modulesManagement/create-module/create-
 import { EditModuleComponent } from './modulesManagement/edit-module/edit-module.component';
 import { HomeComponent } from './home/home.component';
 import { HomeEditComponent } from './home-edit/home-edit.component';
- 
+import { CreatePostComponent } from './modulesDiscussion/create-post/create-post.component';
+import { DiscussionComponent } from './modulesDiscussion/discussion/discussion.component';
+import { EditPostComponent } from './modulesDiscussion/edit-post/edit-post.component';
  
 @NgModule({
-  declarations: [ DashboardComponent, ModulesComponent, CreateModuleComponent, EditModuleComponent, SidebarComponent, SidebarButtonComponent, LeaderboardComponent, HomeComponent, HomeEditComponent ],
+  declarations: [ DashboardComponent, ModulesComponent, CreateModuleComponent, EditModuleComponent, SidebarComponent, SidebarButtonComponent, LeaderboardComponent, HomeComponent, HomeEditComponent, DiscussionComponent, CreatePostComponent, EditPostComponent],
   imports: [
     CommonModule,
     CourseRoutingModule,

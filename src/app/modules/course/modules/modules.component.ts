@@ -373,6 +373,9 @@ export class ModulesComponent implements OnInit {
     return String(Math.round(value * power) / power);
   }
 
+  viewDiscussion(courseId, moduleId){
+    this.router.navigate([`courses/${courseId}/discussion/${moduleId}`]);
+  }
   // END UTILITY FUNCTIONS
 
   // BEGIN MODULES CRUD

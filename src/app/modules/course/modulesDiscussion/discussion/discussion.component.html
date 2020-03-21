@@ -1,0 +1,16 @@
+<div class="center-form">
+    <div *ngIf="moduleDetails as md">
+        <h1 style="text-align: center;">Discussion</h1>
+        <h2 style="text-align: center;">Module {{md.number}}</h2>
+        <h3>{{md.title}}</h3>
+    </div>
+    <app-create-post></app-create-post>
+        <div *ngFor="let post of discussions" class="flex-row">
+            <p class="flex-item">
+                {{post.user}} | {{post.created >= post.changed ? (post.created | date:'short') : (post.changed | date:'short')}}<br>
+                {{post.post}}<br>
+                <app-edit-post *ngIf="post.user_id == userPayload.id" [discussionData]="post" (messageEvent)="receiveMessage($event)"></app-edit-post>
+                <button *ngIf="post.user_id == userPayload.id" type="button" (click)="deletePost(post.discussion_id)" class="btn btn-danger">Delete Post</button>
+            </p>
+        </div>
+</div>

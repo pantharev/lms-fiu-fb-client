@@ -14,7 +14,6 @@ import { CourseBrowserComponent } from './pages/course-browser/course-browser.co
 
 import { CourseService } from '../../core/services/course.service';
 import { LoginComponent } from './pages/login/login.component';
-import { SocialLoginModule, AuthServiceConfig, FacebookLoginProvider } from 'angularx-social-login';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -24,6 +23,9 @@ import { MatInputModule } from '@angular/material/input';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { CreateAnnouncementComponent } from './pages/announcementsManager/create-announcement/create-announcement.component';
 import { EditAnnouncementComponent } from './pages/announcementsManager/edit-announcement/edit-announcement.component';
+
+import { FacebookModule } from '@greg-md/ng-facebook';
+import { SocialLoginModule, AuthServiceConfig, FacebookLoginProvider } from 'angularx-social-login';
 
 const config = new AuthServiceConfig([
   {
@@ -54,6 +56,7 @@ export function provideConfig(){
     MatOptionModule,
     MatAutocompleteModule,
     CKEditorModule
+    FacebookModule
   ],
   providers: [
     CourseService,

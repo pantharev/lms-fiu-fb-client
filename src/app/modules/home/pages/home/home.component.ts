@@ -19,6 +19,11 @@ export class HomeComponent implements OnInit {
   globalAnnouncements = [];
   currentUser;
   userPayload: User;
+  FB_id;
+  FB_name;
+  FB_email;
+
+  @ViewChild('header') private myHeader: HeaderComponent;
 
   constructor(private cookieService: CookieService, private authService: AuthService, private globalAnnouncementService: GlobalAnnouncementService, private authenticationService: AuthenticationService) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
@@ -48,7 +53,7 @@ export class HomeComponent implements OnInit {
     console.log("Hello login");
     console.log("User info: " + this.authService.FBLogin2());
     this.authService.FBLogin2().subscribe((data) => {
-      if(!data){
+      if (!data) {
         console.log("Hey, you didn't access us from the tab!! Go ahead and type your email:");
         //return;
       }
@@ -57,6 +62,11 @@ export class HomeComponent implements OnInit {
       console.log(this.userData);
       console.log("The user data is: " + data);
     })
+    this.FB_id = localStorage.getItem("FB_id");
+    this.FB_email = localStorage.getItem("FB_email");
+    this.FB_name = localStorage.getItem("FB_name");
+
+
 
   }
 

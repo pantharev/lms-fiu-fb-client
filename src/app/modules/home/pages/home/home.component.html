@@ -6,4 +6,20 @@
             <a routerLink="/course-library" class="btn btn-primary">Browse Courses</a>
         </div>
     </div>
+    <div class="row justify-content-center">
+        <div class="col-4 center-form">
+            <ng-container *ngIf="userPayload">
+                <a *ngIf="userPayload.role == 'admin'" routerLink="/create-announcement" class="btn btn-primary" style="margin-top:30px">Create Announcement</a>
+            </ng-container>
+            <h2>Announcements:</h2>
+            <div *ngFor="let announcement of globalAnnouncements" style="background-color: rgb(240, 240, 240); margin-top:15px">
+                <p>{{announcement.user}} | {{announcement.created >= announcement.changed ? (announcement.created | date:'short') : (announcement.changed | date:'short')}}</p>
+                <div [innerHTML]="announcement.content" class="custom-font"></div>
+                <div *ngIf="userPayload.role == 'admin'">
+                    <a routerLink="/edit-announcement/{{announcement.id}}" class="btn btn-success">Edit</a>
+                    <button type="button" (click)="deleteAnnouncement(announcement.id)" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

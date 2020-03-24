@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 import { HomeComponent } from './pages/home/home.component';
 import { HomeRoutingModule } from './home-routing.module';
@@ -21,6 +22,8 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { CreateAnnouncementComponent } from './pages/announcementsManager/create-announcement/create-announcement.component';
+import { EditAnnouncementComponent } from './pages/announcementsManager/edit-announcement/edit-announcement.component';
 
 const config = new AuthServiceConfig([
   {
@@ -35,7 +38,7 @@ export function provideConfig(){
 }
 
 @NgModule({
-  declarations: [HomeComponent, CourseBrowserComponent, LoginComponent, ProfileComponent],
+  declarations: [HomeComponent, CourseBrowserComponent, LoginComponent, ProfileComponent, CreateAnnouncementComponent, EditAnnouncementComponent],
   imports: [
     CommonModule,
     HomeRoutingModule,
@@ -50,6 +53,7 @@ export function provideConfig(){
     MatCardModule,
     MatOptionModule,
     MatAutocompleteModule,
+    CKEditorModule
   ],
   providers: [
     CourseService,

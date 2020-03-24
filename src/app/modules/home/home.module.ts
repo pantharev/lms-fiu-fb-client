@@ -55,7 +55,7 @@ export function provideConfig(){
     MatCardModule,
     MatOptionModule,
     MatAutocompleteModule,
-    CKEditorModule
+    CKEditorModule,
     FacebookModule
   ],
   providers: [

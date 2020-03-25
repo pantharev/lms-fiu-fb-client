@@ -63,22 +63,25 @@ export class LoginComponent implements OnInit {
           console.log(this.FB_id);
           console.log(this.FB_fname);
           console.log(this.FB_lname);
+
+          var userData = {
+            "email": this.FB_email,
+            "f_name": this.FB_fname,
+            "l_name": this.FB_lname,
+            "user_id": this.FB_id,
+          };
+
           // Database functions
-          this.studentService.getStudentById(this.FB_id).subscribe()
-          if () {
+
+          let temp = this.studentService.getStudentById(this.FB_id);
+          console.log(temp);
+          if (temp != null) {
             console.log("successfully found student with ID " + this.FB_id + ". Updating info...");
-            this.studentService.updateStudent(this.FB_id);
+            this.studentService.updateStudent(this.FB_id, userData);
           }
           else {
             console.log("No student found with ID: " + this.FB_id + ". Creating student...");
-            this.studentService.addStudent(
-              {
-                "email": this.FB_email,
-                "f_name": this.FB_fname,
-                "l_name": this.FB_lname,
-                "user_id": this.FB_id,
-              }
-            );
+            this.studentService.addStudent(userData);
           }
         }
         else {

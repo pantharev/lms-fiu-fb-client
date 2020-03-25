@@ -21,7 +21,7 @@ export class StudentService {
     return this.http.post(`${environment.apiURL}/students`, student);
   }
 
-  updateStudent(user_id) {
-    return this.http.get(`${environment.apiURL}/students/${user_id}`);
+  updateStudent(user_id, student) {
+    return this.http.put(`${environment.apiURL}/students/${user_id}`, student);
   }
 }

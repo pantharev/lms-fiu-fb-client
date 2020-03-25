@@ -70,12 +70,12 @@ export class LoginComponent implements OnInit {
             "l_name": this.FB_lname,
             "user_id": this.FB_id,
           };
-
+          console.log(userData);
           // Database functions
           // Student is added (returns error if email already exists, code continues)
           this.studentService.addStudent(userData);
           // Data is updated (in case email already existed but user data is different)
-          this.studentService.updateStudent(this.FB_id, userData).subscribe;
+          this.studentService.updateStudent(this.FB_id, userData);
         }
       }, 1000);
     }

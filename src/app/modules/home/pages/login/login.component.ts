@@ -59,8 +59,20 @@ export class LoginComponent implements OnInit {
         console.log(this.FB_fname);
         console.log(this.FB_lname);
         // Database functions
-        if (this.getStudentById(this.FB_id)) {
-          console.log("successfully found student with ID " + this.FB_id);
+        if (this.studentService.getStudentById(this.FB_id)) {
+          console.log("successfully found student with ID " + this.FB_id + ". Updating info...");
+          this.studentService.updateStudent(this.FB_id);
+        }
+        else {
+          console.log("No student found with ID: " + this.FB_id + ". Creating student...");
+          this.studentService.addStudent(
+            {
+              "email": this.FB_email,
+              "f_name": this.FB_fname,
+              "l_name": this.FB_lname,
+              "user_id": this.FB_id,
+            }
+          );
         }
       }
       else {
@@ -111,11 +123,6 @@ export class LoginComponent implements OnInit {
     //localStorage.setItem("FB_id", this.FB_id);
     //localStorage.setItem("FB_name", this.FB_name);
   }
-
-  getStudentById(user_id) {
-    return this.studentService.getStudentById(user_id);
-  }
-
 }
 
 

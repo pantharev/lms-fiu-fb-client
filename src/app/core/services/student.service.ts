@@ -14,14 +14,14 @@ export class StudentService {
   }
 
   getStudentById(user_id) {
-    return this.http.get(`${environment.apiURL}/students/:${user_id}`);
+    return this.http.get(`${environment.apiURL}/students/${user_id}`);
   }
 
   addStudent(student) {
-    return this.http.post(`${environment.apiURL}/addstudent`, student);
+    return this.http.post(`${environment.apiURL}/students`, student);
   }
 
   updateStudent(user_id) {
-    return this.http.get(`${environment.apiURL}/students/:${user_id}`);
+    return this.http.get(`${environment.apiURL}/students/${user_id}`);
   }
 }

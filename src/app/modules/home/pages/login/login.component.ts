@@ -64,7 +64,8 @@ export class LoginComponent implements OnInit {
           console.log(this.FB_fname);
           console.log(this.FB_lname);
           // Database functions
-          if (this.studentService.getStudentById(this.FB_id)) {
+          this.studentService.getStudentById(this.FB_id).subscribe()
+          if () {
             console.log("successfully found student with ID " + this.FB_id + ". Updating info...");
             this.studentService.updateStudent(this.FB_id);
           }

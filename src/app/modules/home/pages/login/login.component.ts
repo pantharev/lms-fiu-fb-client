@@ -23,7 +23,8 @@ export class LoginComponent implements OnInit {
   FB_fname: string;
   FB_lname: string;
   FB_email: string;
-  loggedIn: boolean;
+  loggedIn = false;
+  fbInitiated = false;
   FB_settings = {
     appId: '903187940138780',
     version: 'v6.0'
@@ -46,39 +47,44 @@ export class LoginComponent implements OnInit {
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     //console.log(this.returnUrl);
+    if (!this.fbInitiated) {
+      this.FB.init(this.FB_settings).subscribe();
+      console.log("fb initiated");
+      this.fbInitiated = true;
+    }
 
-    this.FB.init(this.FB_settings).subscribe();
-    console.log("fb initiated");
-    this.FBLogin();
-    setTimeout(() => {
-      console.log("loggedIn: " + this.loggedIn);
-      if (this.loggedIn) {
-        console.log("login successful. Info:");
-        console.log(this.FB_email);
-        console.log(this.FB_id);
-        console.log(this.FB_fname);
-        console.log(this.FB_lname);
-        // Database functions
-        if (this.studentService.getStudentById(this.FB_id)) {
-          console.log("successfully found student with ID " + this.FB_id + ". Updating info...");
-          this.studentService.updateStudent(this.FB_id);
+    if (!this.loggedIn) {
+      this.FBLogin();
+      setTimeout(() => {
+        console.log("loggedIn: " + this.loggedIn);
+        if (this.loggedIn) {
+          console.log("login successful. Info:");
+          console.log(this.FB_email);
+          console.log(this.FB_id);
+          console.log(this.FB_fname);
+          console.log(this.FB_lname);
+          // Database functions
+          if (this.studentService.getStudentById(this.FB_id)) {
+            console.log("successfully found student with ID " + this.FB_id + ". Updating info...");
+            this.studentService.updateStudent(this.FB_id);
+          }
+          else {
+            console.log("No student found with ID: " + this.FB_id + ". Creating student...");
+            this.studentService.addStudent(
+              {
+                "email": this.FB_email,
+                "f_name": this.FB_fname,
+                "l_name": this.FB_lname,
+                "user_id": this.FB_id,
+              }
+            );
+          }
         }
         else {
-          console.log("No student found with ID: " + this.FB_id + ". Creating student...");
-          this.studentService.addStudent(
-            {
-              "email": this.FB_email,
-              "f_name": this.FB_fname,
-              "l_name": this.FB_lname,
-              "user_id": this.FB_id,
-            }
-          );
+          console.log("login failed");
         }
-      }
-      else {
-        console.log("login failed");
-      }
-    }, 1000);
+      }, 1000);
+    }
   }
 
   // convenience getter for easy access to form fields

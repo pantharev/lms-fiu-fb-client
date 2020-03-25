@@ -72,20 +72,10 @@ export class LoginComponent implements OnInit {
           };
 
           // Database functions
-
-          let temp = this.studentService.getStudentById(this.FB_id);
-          console.log(temp);
-          if (temp != null) {
-            console.log("successfully found student with ID " + this.FB_id + ". Updating info...");
-            this.studentService.updateStudent(this.FB_id, userData);
-          }
-          else {
-            console.log("No student found with ID: " + this.FB_id + ". Creating student...");
-            this.studentService.addStudent(userData);
-          }
-        }
-        else {
-          console.log("login failed");
+          // Student is added (returns error if email already exists, code continues)
+          this.studentService.addStudent(userData);
+          // Data is updated (in case email already existed but user data is different)
+          this.studentService.updateStudent(this.FB_id, userData).subscribe;
         }
       }, 1000);
     }

@@ -35,7 +35,7 @@ import { Local } from 'protractor/built/driverProviders';
     FormsModule,
     ReactiveFormsModule,
     NgbModule,
-    BrowserAnimationsModule,
+    BrowserAnimationsModule
   ],
   providers: [ 
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

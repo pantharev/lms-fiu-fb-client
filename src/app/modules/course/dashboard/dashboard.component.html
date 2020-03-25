@@ -9,11 +9,12 @@
                 <ng-container *ngIf="course.enrollment_status == 'enrolled'">
                     <button *ngIf="index == 0" type="button" (click)="toggleDropCourse()" class="btn btn-danger btn-sm center-form" style="position: absolute; top: 5px; left: 20px;">Toggle Course Drop</button>
                     <button *ngIf="index == 0 && isAdmin" type="button" (click)="createAnnouncement()" [disabled]="checkedCourses.length <= 0" class="btn btn-success btn-sm center-form" style="position: absolute; top: 5px; left: 170px;">Create Announcement</button>
+                    <a *ngIf="index == 0 && isAdmin" routerLink="/courses/view-created-announcements" class="btn btn-info btn-sm center-form" style="position: absolute; top: 5px; left: 335px;">Manage Announcements</a>
                     <div class="col">
-                        <div class="card" style="max-width: 18rem;">
+                        <div class="card" style="max-width: 18rem;" (click)="checkBox(index, course.course_id)" [class]="{'checked-color': isChecked[index]}">
                             <!--<img class="card-img-top" src="..." alt="Card image cap">-->
                             <div class="card-body">
-                                <input *ngIf="isAdmin" type="checkbox" (change)="checkedCourse(course.course_id, $event)">
+                                <input *ngIf="isAdmin" type="checkbox" [checked]="isChecked[index]">
                                 <h5 class="card-title text-wrap" style="word-wrap: break-word">{{course.name}}</h5>
                                 <p class="card-text text-wrap" style="word-wrap: break-word">{{course.description}}</p>
                                 <div class="flex-container">

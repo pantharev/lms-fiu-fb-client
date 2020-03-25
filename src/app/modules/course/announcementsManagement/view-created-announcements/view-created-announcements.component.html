@@ -1,0 +1,12 @@
+<div class="flexbox-row">
+    <h2>Manage Announcements</h2>
+    <div *ngFor="let announcement of announcements; let i = index">
+        <div *ngFor="let id of announcementSet">
+            <div *ngIf="id == announcement.announcement_id" style="background-color: lightgray">
+                <p>Equal {{id}}</p>
+                <p>{{i}} | {{announcement.announcement_id}} | {{announcement.course_name}}</p>
+                <div [innerHTML]="announcement.content"></div>
+            </div>
+        </div>
+    </div>
+</div>

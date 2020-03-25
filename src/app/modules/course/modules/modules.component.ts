@@ -84,6 +84,8 @@ export class ModulesComponent implements OnInit {
     link: ""
   }
 
+  waitForProgressBarTimeout;
+
   constructor(
     private moduleService: ModuleService,
     private videoService: VideoService, 
@@ -135,6 +137,10 @@ export class ModulesComponent implements OnInit {
 
   }
 
+  ngOnDestroy() {
+    clearTimeout(this.waitForProgressBarTimeout);
+  }
+
   // BEGIN UTILITY FUNCTIONS
 
   waitForProgressBar(){
@@ -143,7 +149,7 @@ export class ModulesComponent implements OnInit {
       document.getElementById('progressbarAvg').style.width = this.averagePoints.average + "%";
     }
     else{
-      setTimeout(() => {
+      this.waitForProgressBarTimeout = setTimeout(() => {
         this.waitForProgressBar();
       }, 1000)
     }

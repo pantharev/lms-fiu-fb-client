@@ -1,6 +1,20 @@
-<div class="center-form" style="margin-top: 30px;">
-    <h3>Create announcement for courses:</h3>
-    <p>{{checkedCourses}}</p>
-    <textarea rows="3"></textarea>
-    <button type="button" class="btn btn-primary">Submit</button>
+<div class="flexbox-row" style="margin-top: 30px;">
+    <!--<ng-container *ngIf="courseContent | async as content">-->
+        <h3>Create announcement for courses:</h3>
+        <div class="row">
+            <div *ngFor="let course of courses" class="col-md-4">
+                <p *ngIf="course">{{course.name}}</p>
+            </div>
+        </div>
+        <!--<p>{{checkedCourses}}</p>-->
+        <ckeditor [editor]="Editor" [data]="editorData" (change)="onChange($event)" class="clamp-words"></ckeditor>
+        <span>
+            <button (click)="createAnnouncement()" class="btn btn-primary" style="margin-right: 15px">Submit</button>
+            <a routerLink="/courses" class="btn btn-secondary" style="margin-left: 15px"><i class="fas fa-arrow-circle-left"></i> Go back</a>
+        </span>
+        <hr>
+        <h2>Announcement Preview</h2>
+        <div [innerHTML]="editorData" style="margin-top: 30px;" class="custom-font clamp-words"></div>
+    <!--</ng-container>-->
+    <!--<app-home-content [html]="editorData"></app-home-content>-->
 </div>

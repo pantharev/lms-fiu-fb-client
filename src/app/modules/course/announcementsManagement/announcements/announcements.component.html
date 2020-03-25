@@ -1,0 +1,10 @@
+<app-sidebar></app-sidebar>
+<div id="main">
+    <app-sidebar-button></app-sidebar-button>
+
+    <div class="flexbox-row">
+        <div *ngFor="let announcement of announcements | async">
+            <div [innerHTML]="announcement.content" style="background-color: lightgray"></div>          
+        </div>
+    </div>
+</div>

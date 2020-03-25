@@ -9,6 +9,11 @@
     font-size: larger;
 }
 
+.clamp-words {
+    max-width: 625.5px; 
+    word-wrap:break-word;
+}
+
 .flexbox-row {
     display: flex;
     flex-direction: column;

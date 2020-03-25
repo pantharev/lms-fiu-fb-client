@@ -26,6 +26,7 @@ export class DashboardComponent implements OnInit {
   studentId;
   courseDrop: Boolean = false;
   checkedCourses: number[] = [];
+  isChecked: Boolean[] = [];
 
   constructor(private studentCourseService: StudentCourseService, private courseService: CourseService, private authService: AuthenticationService, private router: Router, private announcementService: AnnouncementService) { }
 
@@ -112,12 +113,19 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  checkedCourse(courseId, event){
-    console.log(event.target.checked);
-    if(event.target.checked){
-      console.log(courseId + " has been checked");
-      this.checkedCourses.push(courseId);
-    } else {
+  createAnnouncement(){
+    //console.log(this.checkedCourses);
+    this.announcementService.nextCheckedCourses(this.checkedCourses);
+    this.router.navigate(['/courses/create-announcement']);
+  }
+
+  checkBox(i, courseId){
+    if(this.tokenPayload.role != 'admin'){
+      return;
+    }
+    if(this.isChecked[i]){
+      this.isChecked[i] = false;
+      // remove course from array
       this.checkedCourses.forEach((value, index, arr) => {
         if(value == courseId){
           console.log(courseId + " " + index);
@@ -125,11 +133,12 @@ export class DashboardComponent implements OnInit {
         }
       })
     }
-  }
-
-  createAnnouncement(){
-    //console.log(this.checkedCourses);
-    this.announcementService.nextCheckedCourses(this.checkedCourses);
-    this.router.navigate(['/courses/create-announcement']);
+    else{
+      this.isChecked[i] = true;
+      console.log("courseId: " + courseId + " has been checked");
+      // add course to array
+      this.checkedCourses.push(courseId);
+    }
+    console.log(this.isChecked[i]);
   }
 }

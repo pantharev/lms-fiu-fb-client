@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
   FB_id;
   FB_name;
   FB_email;
-  private loggedIn: boolean;
+  loggedIn: boolean;
 
   @ViewChild('header') private myHeader: HeaderComponent;
 
@@ -73,6 +73,7 @@ export class HomeComponent implements OnInit {
     setTimeout(() => {
       this.FBLogin();
     }, 3000);
+    console.log("loggedIn: " + this.loggedIn);
 
   }
 

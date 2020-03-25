@@ -49,24 +49,24 @@ export class LoginComponent implements OnInit {
 
     this.FB.init(this.FB_settings).subscribe();
     console.log("fb initiated");
+    this.FBLogin();
     setTimeout(() => {
-      this.FBLogin();
-    }, 3000);
-    console.log("loggedIn: " + this.loggedIn);
-    if (this.loggedIn) {
-      console.log("login successful. Info:");
-      console.log(this.FB_email);
-      console.log(this.FB_id);
-      console.log(this.FB_fname);
-      console.log(this.FB_lname);
-      // Database functions
-      if (this.getStudentById(this.FB_id)) {
-        console.log("successfully found student with ID " + this.FB_id);
+      console.log("loggedIn: " + this.loggedIn);
+      if (this.loggedIn) {
+        console.log("login successful. Info:");
+        console.log(this.FB_email);
+        console.log(this.FB_id);
+        console.log(this.FB_fname);
+        console.log(this.FB_lname);
+        // Database functions
+        if (this.getStudentById(this.FB_id)) {
+          console.log("successfully found student with ID " + this.FB_id);
+        }
       }
-    }
-    else {
-      console.log("login failed");
-    }
+      else {
+        console.log("login failed");
+      }
+    }, 1000);
   }
 
   // convenience getter for easy access to form fields
@@ -97,7 +97,6 @@ export class LoginComponent implements OnInit {
 
   FBLogin() {
     console.log("FBlogin");
-    console.log(this.FB_id);
     this.authFB.signIn(FacebookLoginProvider.PROVIDER_ID);
     this.authFB.authState.subscribe((user) => {
       this.FB_id = user.id;

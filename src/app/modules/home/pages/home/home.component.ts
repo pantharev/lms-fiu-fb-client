@@ -21,7 +21,8 @@ export class HomeComponent implements OnInit {
   currentUser;
   userPayload: User;
   FB_id;
-  FB_name;
+  FB_fname;
+  FB_lname;
   FB_email;
   loggedIn: boolean;
 
@@ -70,11 +71,6 @@ export class HomeComponent implements OnInit {
     this.FB_email = localStorage.getItem("FB_email");
     this.FB_name = localStorage.getItem("FB_name");
     */
-    setTimeout(() => {
-      this.FBLogin();
-    }, 3000);
-    console.log("loggedIn: " + this.loggedIn);
-
   }
 
   deleteAnnouncement(id) {
@@ -87,21 +83,5 @@ export class HomeComponent implements OnInit {
   }
 
 
-  FBLogin() {
-    console.log("FBlogin");
-    console.log(this.FB_id);
-    this.authFB.signIn(FacebookLoginProvider.PROVIDER_ID);
-    this.authFB.authState.subscribe((user) => {
-      this.FB_id = user.id;
-      this.FB_email = user.email;
-      this.FB_name = user.name;
-      this.loggedIn = (user != null);
-    });
-    console.log(this.FB_id);
-    console.log(this.FB_email);
-    localStorage.setItem("FB_email", this.FB_email);
-    localStorage.setItem("FB_id", this.FB_id);
-    localStorage.setItem("FB_name", this.FB_name);
-  }
 
 }

@@ -64,7 +64,7 @@ export class LoginComponent implements OnInit {
           console.log(this.FB_fname);
           console.log(this.FB_lname);
 
-          var userData = {
+          var userData: JSON = <JSON><any>{
             "email": this.FB_email,
             "f_name": this.FB_fname,
             "l_name": this.FB_lname,

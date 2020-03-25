@@ -24,6 +24,7 @@
     "@angular/router": "~9.0.7",
     "@ckeditor/ckeditor5-angular": "^1.2.2",
     "@ckeditor/ckeditor5-build-classic": "^17.0.0",
+    "@greg-md/ng-facebook": "^1.2.5",
     "@ng-bootstrap/ng-bootstrap": "^5.2.1",
     "angularx-social-login": "^2.2.1",
     "b64url": "^1.0.3",

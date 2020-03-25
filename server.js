@@ -26,6 +26,8 @@ app.get('/userdata', function (req, res) {
 });
 
 app.post('/', function (req, res) {
+    /*
+    
     // Get the stringified JSON object from the signed_request
     var userDataTemp = parse_signed_request(req.body.signed_request);
     //Store the ID and the token
@@ -56,7 +58,8 @@ app.post('/', function (req, res) {
         res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
 
     })
-    //res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
+    */
+    res.sendFile(path.join(__dirname, 'angular-build', 'index.html'));
 
 });
 

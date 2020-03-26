@@ -18,9 +18,13 @@ import { HomeEditComponent } from './home-edit/home-edit.component';
 import { CreatePostComponent } from './modulesDiscussion/create-post/create-post.component';
 import { DiscussionComponent } from './modulesDiscussion/discussion/discussion.component';
 import { EditPostComponent } from './modulesDiscussion/edit-post/edit-post.component';
+import { CreateAnnouncementComponent } from './announcementsManagement/create-announcement/create-announcement.component';
+import { AnnouncementsComponent } from './announcementsManagement/announcements/announcements.component';
+import { EditAnnouncementComponent } from './announcementsManagement/edit-announcement/edit-announcement.component';
+import { ViewCreatedAnnouncementsComponent } from './announcementsManagement/view-created-announcements/view-created-announcements.component';
  
 @NgModule({
-  declarations: [ DashboardComponent, ModulesComponent, CreateModuleComponent, EditModuleComponent, SidebarComponent, SidebarButtonComponent, LeaderboardComponent, HomeComponent, HomeEditComponent, DiscussionComponent, CreatePostComponent, EditPostComponent],
+  declarations: [ DashboardComponent, ModulesComponent, CreateModuleComponent, EditModuleComponent, SidebarComponent, SidebarButtonComponent, LeaderboardComponent, HomeComponent, HomeEditComponent, DiscussionComponent, CreatePostComponent, EditPostComponent, CreateAnnouncementComponent, AnnouncementsComponent, EditAnnouncementComponent, ViewCreatedAnnouncementsComponent],
   imports: [
     CommonModule,
     CourseRoutingModule,

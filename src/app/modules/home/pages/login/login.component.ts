@@ -23,6 +23,7 @@ export class LoginComponent implements OnInit {
   FB_fname: string;
   FB_lname: string;
   FB_email: string;
+  FB_role: string;
   loggedIn = false;
   fbInitiated = false;
   FB_settings = {
@@ -69,9 +70,10 @@ export class LoginComponent implements OnInit {
             "f_name": this.FB_fname,
             "l_name": this.FB_lname,
             "user_id": this.FB_id,
+            "role": this.FB_role
           };
           console.log(JSON.stringify(userData));
-          //localStorage.setItem("currentUser", JSON.stringify(userData));  // Load data into 'currentUser' so that AuthenticationService can use it
+          localStorage.setItem("currentUser", JSON.stringify(userData));  // Load data into 'currentUser' so that AuthenticationService can use it
           // Database functions
           // Student is added (returns error if email already exists, code continues)
           this.studentService.addStudent(userData).subscribe();

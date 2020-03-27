@@ -47,7 +47,6 @@ export class HomeComponent implements OnInit {
       this.courseDetails = data;
       //console.log(data);
     })
-
   }
 
   public onReady(editor){

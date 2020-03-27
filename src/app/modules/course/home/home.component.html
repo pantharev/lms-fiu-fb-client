@@ -1,7 +1,5 @@
 <app-sidebar></app-sidebar>
 <div id="main">
-    <app-sidebar-button></app-sidebar-button>
-
     <div class="flexbox-row">
         <a *ngIf="isAdmin || isInstructor" routerLink="/courses/{{courseId}}/edit-home" class="btn btn-primary">Edit</a>
         <ng-container *ngIf="courseContent | async as content">

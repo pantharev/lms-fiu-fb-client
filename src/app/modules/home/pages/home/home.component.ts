@@ -105,39 +105,40 @@ export class HomeComponent implements OnInit {
 
   FBLogin() {
     console.log("FBlogin");
-    this.authFB.signIn(FacebookLoginProvider.PROVIDER_ID);
-    this.authFB.authState.subscribe((user) => {
-      this.FB_id = user.id;
-      this.FB_email = user.email;
-      this.FB_fname = user.firstName;
-      this.FB_lname = user.lastName;
-      this.loggedIn = (user != null);
-
-      console.log(this.FB_id);
-      console.log(this.FB_email);
-      console.log("loggedIn: " + this.loggedIn);
-      if (this.loggedIn) {
-        console.log("login successful. Info:");
-        console.log(this.FB_email);
+    this.authFB.signIn(FacebookLoginProvider.PROVIDER_ID).then(() => {
+      this.authFB.authState.subscribe((user) => {
+        this.FB_id = user.id;
+        this.FB_email = user.email;
+        this.FB_fname = user.firstName;
+        this.FB_lname = user.lastName;
+        this.loggedIn = (user != null);
+  
         console.log(this.FB_id);
-        console.log(this.FB_fname);
-        console.log(this.FB_lname);
-
-        var userData: JSON = <JSON><any>{
-          "email": this.FB_email,
-          "f_name": this.FB_fname,
-          "l_name": this.FB_lname,
-          "user_id": this.FB_id,
-          "role": this.FB_role
-        };
-        console.log(JSON.stringify(userData));
-        localStorage.setItem("currentUser", JSON.stringify(userData));  // Load data into 'currentUser' so that AuthenticationService can use it
-        // Database functions
-        // Student is added (returns error if email already exists, code continues)
-        this.studentService.addStudent(userData).subscribe();
-        // Data is updated (in case email already existed but user data is different)
-        this.studentService.updateStudent(this.FB_email, userData).subscribe();
-      }
+        console.log(this.FB_email);
+        console.log("loggedIn: " + this.loggedIn);
+        if (this.loggedIn) {
+          console.log("login successful. Info:");
+          console.log(this.FB_email);
+          console.log(this.FB_id);
+          console.log(this.FB_fname);
+          console.log(this.FB_lname);
+  
+          var userData: JSON = <JSON><any>{
+            "email": this.FB_email,
+            "f_name": this.FB_fname,
+            "l_name": this.FB_lname,
+            "user_id": this.FB_id,
+            "role": this.FB_role
+          };
+          console.log(JSON.stringify(userData));
+          localStorage.setItem("currentUser", JSON.stringify(userData));  // Load data into 'currentUser' so that AuthenticationService can use it
+          // Database functions
+          // Student is added (returns error if email already exists, code continues)
+          this.studentService.addStudent(userData).subscribe();
+          // Data is updated (in case email already existed but user data is different)
+          this.studentService.updateStudent(this.FB_email, userData).subscribe();
+        }
+      });
     });
   }
 }

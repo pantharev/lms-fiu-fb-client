@@ -70,8 +70,8 @@ export class LoginComponent implements OnInit {
             "l_name": this.FB_lname,
             "user_id": this.FB_id,
           };
-          console.log(userData);
           console.log(JSON.stringify(userData));
+          //localStorage.setItem("currentUser", JSON.stringify(userData));  // Load data into 'currentUser' so that AuthenticationService can use it
           // Database functions
           // Student is added (returns error if email already exists, code continues)
           this.studentService.addStudent(userData).subscribe();
@@ -125,51 +125,3 @@ export class LoginComponent implements OnInit {
     //localStorage.setItem("FB_name", this.FB_name);
   }
 }
-
-
-
-
-
-
-
-
-
-
-/*import { Component, OnInit } from '@angular/core';
-import { AuthService} from 'src/app/core/services/auth.service';
-import { Router } from '@angular/router';
-
-@Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
-})
-export class LoginComponent implements OnInit {
-
-
-  constructor(private authService: AuthService) { }
-
-  signInWithFB(): void {
-
-    this.authService.FBFacebook().subscribe((data) => {
-      console.log(data);
-    });
-
-  }
-
-  signOut(): void {
-    this.authService.FBLogOut();
-    //sessionStorage.clear();
-  }
-  // FBFacebook
-
-  ngOnInit() {
-
-    this.authService.authState.subscribe((user) => {
-      this.user = user;
-      this.loggedIn = (user != null);
-      console.log(this.user);
-    });
-
-  }
-}*/

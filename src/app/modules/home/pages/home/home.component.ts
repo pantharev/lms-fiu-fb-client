@@ -48,6 +48,8 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
+    
+    /*
     Promise.resolve(decode(this.currentUser.token)).then((user) => {
       this.userPayload = user;
     });
@@ -61,7 +63,7 @@ export class HomeComponent implements OnInit {
     if (localStorage.getItem('user') == '')
       localStorage.setItem('user', userCookie);
     this.cookieService.delete('user');
-
+    */
     this.waitingForFBLogin();
   }
 

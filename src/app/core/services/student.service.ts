@@ -18,6 +18,6 @@ export class StudentService {
   }
 
   updateStudent(email, student) {
-    return this.http.put(`${environment.apiURL}/students/${email}`, student);
+    return this.http.put(`${environment.apiURL}/students/`, student);
   }
 }

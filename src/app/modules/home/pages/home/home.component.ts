@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { HeaderComponent } from '@app/shared/header/header.component';
-import { AuthService } from '@app/core/services/auth.service';
+//import { AuthService } from '@app/core/services/auth.service';
 import { GlobalAnnouncementService } from '@app/core/services/global-announcement.service';
 import { AuthenticationService } from '@app/core/services/authentication.service';
+import { FacebookLoginProvider, AuthService } from "angularx-social-login";
 
 import { User } from '@app/core/models/user';
 import decode from 'jwt-decode';
@@ -20,21 +21,23 @@ export class HomeComponent implements OnInit {
   currentUser;
   userPayload: User;
   FB_id;
-  FB_name;
+  FB_fname;
+  FB_lname;
   FB_email;
+  loggedIn: boolean;
 
   @ViewChild('header') private myHeader: HeaderComponent;
 
-  constructor(private cookieService: CookieService, private authService: AuthService, private globalAnnouncementService: GlobalAnnouncementService, private authenticationService: AuthenticationService) {
+  constructor(private cookieService: CookieService, private authFB: AuthService, private globalAnnouncementService: GlobalAnnouncementService, private authenticationService: AuthenticationService) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
-   }
+  }
 
   getCookie(key: string) {
     return this.cookieService.get(key);
   }
 
   ngOnInit() {
-    Promise.resolve(decode(this.currentUser.token)).then((user) =>{
+    Promise.resolve(decode(this.currentUser.token)).then((user) => {
       this.userPayload = user;
     });
 
@@ -43,13 +46,15 @@ export class HomeComponent implements OnInit {
       this.globalAnnouncements = globalAnnouncementsData;
     })
     //console.log("The user cookie is: " + this.getCookie('user'));
+
     if (localStorage.getItem('user') == '')
       localStorage.setItem('user', userCookie);
     this.cookieService.delete('user');
+
     //console.log("User: " + localStorage.getItem('currentUser'));
     //console.log("Localstorage is: " + localStorage.getItem('user'));
 
-
+    /*
     console.log("Hello login");
     console.log("User info: " + this.authService.FBLogin2());
     this.authService.FBLogin2().subscribe((data) => {
@@ -65,18 +70,18 @@ export class HomeComponent implements OnInit {
     this.FB_id = localStorage.getItem("FB_id");
     this.FB_email = localStorage.getItem("FB_email");
     this.FB_name = localStorage.getItem("FB_name");
-
-
-
+    */
   }
 
-  deleteAnnouncement(id){
+  deleteAnnouncement(id) {
     let r = confirm("Delete announcement: Are you sure?");
-    if(r){
+    if (r) {
       this.globalAnnouncementService.deleteGlobalAnnouncement(id).subscribe(() => {
         alert("Deleted announcement");
       })
     }
   }
+
+
 
 }

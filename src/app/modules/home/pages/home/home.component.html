@@ -2,11 +2,6 @@
     <div class="row justify-content-center">
         <div class="col-4 center-form">
             <h2>Welcome to LMS FIU</h2>
-            <div *ngIf="FB_id">
-                <h3>Hello, {{FB_name}}!</h3>
-                <h3>Your email: {{FB_email}}!</h3>
-                <h3>Your ID: {{FB_id}}</h3>
-            </div>
             <img src="../../../../../assets/images/FIU_Panther_Logo.png" alt="FIU_Panther_Logo" width="400"
                 height="400">
             <a routerLink="/course-library" class="btn btn-primary">Browse Courses</a>
@@ -15,7 +10,8 @@
     <div class="row justify-content-center">
         <div class="col-4 center-form">
             <ng-container *ngIf="userPayload">
-                <a *ngIf="userPayload.role == 'admin'" routerLink="/create-announcement" class="btn btn-primary" style="margin-top:30px">Create Announcement</a>
+                <a *ngIf="userPayload.role == 'admin'" routerLink="/create-announcement" class="btn btn-primary"
+                    style="margin-top:30px">Create Announcement</a>
             </ng-container>
             <h2>Announcements:</h2>
             <div *ngFor="let announcement of globalAnnouncements" class="announcement">
@@ -23,7 +19,8 @@
                 <div [innerHTML]="announcement.content" class="custom-font"></div>
                 <div *ngIf="userPayload.role == 'admin'">
                     <a routerLink="/edit-announcement/{{announcement.id}}" class="btn btn-success">Edit</a>
-                    <button type="button" (click)="deleteAnnouncement(announcement.id)" class="btn btn-danger">Delete</button>
+                    <button type="button" (click)="deleteAnnouncement(announcement.id)"
+                        class="btn btn-danger">Delete</button>
                 </div>
             </div>
         </div>

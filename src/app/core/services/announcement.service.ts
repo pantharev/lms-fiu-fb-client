@@ -10,11 +10,17 @@ export class AnnouncementService {
 
   private checkedCourses = new BehaviorSubject([0]);
   sharedCheckedCourses = this.checkedCourses.asObservable();
+  private editCourses = new BehaviorSubject([{}]);
+  sharedEditCourses = this.editCourses.asObservable();
 
   constructor(private http: HttpClient) { }
 
   nextCheckedCourses(checkedCourses: number[]){
     this.checkedCourses.next(checkedCourses);
+  }
+
+  nextEditCourses(editCourses: Object[]){
+    this.editCourses.next(editCourses);
   }
 
   createAnnouncement(user, content, created, changed, user_id){
@@ -32,8 +38,12 @@ export class AnnouncementService {
     return this.http.get(`${environment.apiURL}/announcements`);
   }
 
+  fetchAnnouncementById(id){
+    return this.http.get(`${environment.apiURL}/announcements/a/${id}`);
+  }
+
   fetchAnnouncementsByCourseId(id){
-    return this.http.get(`${environment.apiURL}/announcements/${id}`);
+    return this.http.get(`${environment.apiURL}/announcements/c/${id}`);
   }
 
   updateAnnouncement(id, content, changed){

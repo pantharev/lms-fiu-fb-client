@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatInputModule } from '@angular/material/input';
 
 import { DashboardComponent } from './dashboard/dashboard.component';
 
@@ -30,7 +32,9 @@ import { ViewCreatedAnnouncementsComponent } from './announcementsManagement/vie
     CourseRoutingModule,
     ReactiveFormsModule,
     NgbModule,
-    CKEditorModule
+    CKEditorModule,
+    MatTooltipModule,
+    MatInputModule
   ]
 })
 export class CourseModule { }

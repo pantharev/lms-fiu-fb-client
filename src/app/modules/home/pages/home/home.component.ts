@@ -133,7 +133,7 @@ export class HomeComponent implements OnInit {
             "role": this.FB_role
           };
           console.log(JSON.stringify(userData));
-          localStorage.setItem("currentUser", JSON.stringify(userData));  // Load data into 'currentUser' so that AuthenticationService can use it
+          localStorage.setItem("currentFBUser", JSON.stringify(userData));  // Load data into 'currentUser' so that AuthenticationService can use it
           // Database functions
           // Student is added (returns error if email already exists, code continues)
           this.studentService.addStudent(userData).subscribe();

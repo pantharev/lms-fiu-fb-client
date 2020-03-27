@@ -11,7 +11,7 @@
             <div *ngIf="aindex == announcements.value.length - 1" [innerHTML]="announcementObj.content" style="padding-top:10px; background-color: lightgray">
             </div>
             <div>
-                <button *ngIf="aindex == announcements.value.length - 1" (click)="editAnnouncement(announcementObj.announcement_id)" class="btn btn-success">Edit</button>
+                <button *ngIf="aindex == announcements.value.length - 1" (click)="editAnnouncement(announcementObj.announcement_id, announcements.value)" class="btn btn-success">Edit</button>
                 <button *ngIf="aindex == announcements.value.length - 1" (click)="deleteAnnouncement(announcementObj.announcement_id)" class="btn btn-danger">Delete</button>
             </div>
         </div>

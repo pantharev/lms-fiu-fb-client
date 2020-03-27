@@ -1,7 +1,20 @@
-<div class="center-form">
-    <h2>Edit Announcement</h2>
-    <div>{{announcementId | async}}</div>
-    <div>{{(announcement | async) | json}}</div>
-    <textarea></textarea>
-    <div [innerHTML]="(announcement | async)?.content"></div>
+<div class="flexbox-row" style="margin-top: 30px;" *ngIf="announcement | async as an">
+    <!--<ng-container *ngIf="courseContent | async as content">-->
+        <h2>Edit announcement <span>{{announcementId | async}}</span> for courses:</h2>
+        <div class="row">
+            <div *ngFor="let announcement of announcements | async" class="col-md-4">
+                <p *ngIf="announcement">{{announcement.course_name}}</p>
+            </div>
+        </div>
+        <!--<p>{{checkedCourses}}</p>-->
+        <ckeditor [editor]="Editor" [data]="editorData ? editorData : an.content" (change)="onChange($event)" class="clamp-words"></ckeditor>
+        <span>
+            <button (click)="editAnnouncement()" class="btn btn-primary" style="margin-right: 15px">Submit</button>
+            <a routerLink="/courses/view-created-announcements" class="btn btn-secondary" style="margin-left: 15px"><i class="fas fa-arrow-circle-left"></i> Go back</a>
+        </span>
+        <hr>
+        <h2>Announcement Preview</h2>
+        <div [innerHTML]="editorData ? editorData : an.content" style="margin-top: 30px;" class="custom-font clamp-words"></div>
+    <!--</ng-container>-->
+    <!--<app-home-content [html]="editorData"></app-home-content>-->
 </div>

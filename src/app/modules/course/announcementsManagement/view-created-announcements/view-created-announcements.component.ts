@@ -46,8 +46,11 @@ export class ViewCreatedAnnouncementsComponent implements OnInit {
     });
   }
 
-  editAnnouncement(announcementId){
+  editAnnouncement(announcementId, announcements){
     console.log(announcementId);
+    console.log("announcements: \n");
+    console.log(announcements);
+    this.announcementService.nextEditCourses(announcements);
     this.router.navigate(['../edit-announcement', announcementId], { relativeTo: this.route })
   }
 

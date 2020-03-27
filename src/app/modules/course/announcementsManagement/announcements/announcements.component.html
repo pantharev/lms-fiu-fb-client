@@ -5,7 +5,7 @@
     <div class="flexbox-row">
         <h2>Announcements</h2>
         <div *ngFor="let announcement of announcements | async">
-            <div [innerHTML]="announcement.content" style="background-color: lightgray"></div>          
+            <div [innerHTML]="announcement.content" class="announcement"></div>          
         </div>
     </div>
 </div>

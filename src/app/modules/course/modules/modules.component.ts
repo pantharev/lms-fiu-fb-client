@@ -122,7 +122,7 @@ export class ModulesComponent implements OnInit {
     this.fetchModules(this.courseId);
     this.getAvgStudentPoints(this.courseId, this.tokenPayload.id);
 
-    this.waitForProgressBar();
+    //this.waitForProgressBar();
 
     this.studentCourseService.getStudentsByCourseId(this.courseId).subscribe((data: []) => {
       data.forEach((val: any, i, arr) => {
@@ -130,7 +130,7 @@ export class ModulesComponent implements OnInit {
           //console.log("Got student: " + JSON.stringify(val));
           this.points = val.points;
           console.log("Points: " + this.points);
-          document.getElementById('progressbar').style.width = this.points + "%";
+          //document.getElementById('progressbar').style.width = this.points + "%";
         }
       })
     })
@@ -138,7 +138,7 @@ export class ModulesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    clearTimeout(this.waitForProgressBarTimeout);
+    //clearTimeout(this.waitForProgressBarTimeout);
   }
 
   // BEGIN UTILITY FUNCTIONS

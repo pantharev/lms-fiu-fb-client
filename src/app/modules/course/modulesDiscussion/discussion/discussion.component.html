@@ -5,8 +5,8 @@
         <h3>{{md.title}}</h3>
     </div>
     <app-create-post></app-create-post>
-        <div *ngFor="let post of discussions" class="flex-row">
-            <p class="flex-item">
+        <div *ngFor="let post of discussions" class="announcement">
+            <p>
                 {{post.user}} | {{post.created >= post.changed ? (post.created | date:'short') : (post.changed | date:'short')}}<br>
                 {{post.post}}<br>
                 <app-edit-post *ngIf="post.user_id == userPayload.id" [discussionData]="post"></app-edit-post>

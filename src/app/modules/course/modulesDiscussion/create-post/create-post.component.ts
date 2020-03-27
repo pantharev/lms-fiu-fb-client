@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -22,6 +22,8 @@ export class CreatePostComponent implements OnInit {
   userPayload: User;
   submitted = false;
 
+  @ViewChild('textArea', { read: ElementRef }) textArea: ElementRef;
+  
   constructor(private fb: FormBuilder, private discussionService: DiscussionService, private moduleService: ModuleService, private authenticationService: AuthenticationService, private route: ActivatedRoute) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
    }
@@ -63,4 +65,11 @@ export class CreatePostComponent implements OnInit {
     })
   }
 
+  public autoGrow() {
+    const textArea = this.textArea.nativeElement;
+    textArea.style.overflow = 'hidden';
+    textArea.style.height = '0px';
+    textArea.style.height = textArea.scrollHeight + 'px';
+   }
+   
 }

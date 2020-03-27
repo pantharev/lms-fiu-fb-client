@@ -28,3 +28,8 @@ input.larger {
 .checked-color {
     background-color: lightgreen;
 }
+
+.hideInfo{
+    display: none;
+    z-index: -1;
+}

@@ -7,7 +7,7 @@
     <div class="flexbox-top-container">
 
         <!-- Progress Bars -->
-        <div class="align-self-stretch">
+        <!--<div class="align-self-stretch">
             <span>Your Points</span>
             <div class="progress flexbox-progress-bar flexbox-top-options" style="height: 30px;">
                 <div class="progress-bar progress-bar-striped" id="progressbar" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">{{points}}%</div>
@@ -19,7 +19,18 @@
             <div class="progress flexbox-progress-bar flexbox-top-options" style="height: 30px;">
                 <div *ngIf="averagePoints" class="progress-bar progress-bar-striped bg-info" id="progressbarAvg" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">{{averagePoints.average}}%</div>
             </div>
+        </div>-->
+
+        <div class="align-self-stretch">
+            <span>Class Average Points</span>
+            <p><ngb-progressbar type="info" textType="white" [value]="averagePoints ? averagePoints.average : 0" [showValue]="true" [striped]="true" height="30px"></ngb-progressbar></p>
         </div>
+
+        <div class="align-self-stretch">
+            <span>Your points</span>
+            <p><ngb-progressbar type="primary" textType="white" [value]="points ? points : 0" [showValue]="true" [striped]="true" height="30px"></ngb-progressbar></p>
+        </div>
+
         <!-- End Progress Bars -->
 
         <div *ngIf="currentUser && (isAdmin || isInstructor)">

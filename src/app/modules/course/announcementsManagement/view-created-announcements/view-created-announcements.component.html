@@ -1,11 +1,18 @@
 <div class="flexbox-row">
     <h2>Manage Announcements</h2>
-    <div *ngFor="let announcement of announcements; let i = index">
-        <div *ngFor="let id of announcementSet">
-            <div *ngIf="id == announcement.announcement_id" style="background-color: lightgray">
-                <p>Equal {{id}}</p>
-                <p>{{i}} | {{announcement.announcement_id}} | {{announcement.course_name}}</p>
-                <div [innerHTML]="announcement.content"></div>
+
+    <div *ngFor="let announcements of groupedAnnouncements | keyvalue; let gindex = index" class="announcement">
+        <div *ngIf="gindex == 0" style="background-color:white; padding-bottom: 10px">Total announcements: {{groupedAnnouncements.size}}</div>
+        <span>Id: {{announcements.key}}</span>
+        <h4>Courses: </h4>
+        <div *ngFor="let announcementObj of announcements.value; let aindex = index">
+            <span>{{announcementObj.course_name}}<span *ngIf="aindex != announcements.value.length - 1">,</span></span>
+            <h4 *ngIf="aindex == announcements.value.length - 1"><hr>Announcement: </h4>
+            <div *ngIf="aindex == announcements.value.length - 1" [innerHTML]="announcementObj.content" style="padding-top:10px; background-color: lightgray">
+            </div>
+            <div>
+                <button *ngIf="aindex == announcements.value.length - 1" (click)="editAnnouncement(announcementObj.announcement_id)" class="btn btn-success">Edit</button>
+                <button *ngIf="aindex == announcements.value.length - 1" (click)="deleteAnnouncement(announcementObj.announcement_id)" class="btn btn-danger">Delete</button>
             </div>
         </div>
     </div>

@@ -1,1 +1,7 @@
-<p>edit-announcement works!</p>
+<div class="center-form">
+    <h2>Edit Announcement</h2>
+    <div>{{announcementId | async}}</div>
+    <div>{{(announcement | async) | json}}</div>
+    <textarea></textarea>
+    <div [innerHTML]="(announcement | async)?.content"></div>
+</div>

@@ -32,6 +32,10 @@ export class AnnouncementService {
     return this.http.get(`${environment.apiURL}/announcements`);
   }
 
+  fetchAnnouncementById(id){
+    return this.http.get(`${environment.apiURL}/announcements/${id}`);
+  }
+
   fetchAnnouncementsByCourseId(id){
     return this.http.get(`${environment.apiURL}/announcements/${id}`);
   }

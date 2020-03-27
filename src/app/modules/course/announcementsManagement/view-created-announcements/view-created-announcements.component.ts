@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { AnnouncementService } from '@app/core/services/announcement.service';
 
@@ -11,8 +12,9 @@ export class ViewCreatedAnnouncementsComponent implements OnInit {
 
   announcements;
   announcementSet: Set<number> = new Set<number>();
+  groupedAnnouncements: Map<number, Object[]> = new Map<number, Object[]>();
 
-  constructor(private announcementService: AnnouncementService) { }
+  constructor(private announcementService: AnnouncementService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
 
@@ -23,12 +25,40 @@ export class ViewCreatedAnnouncementsComponent implements OnInit {
         let trimmedContent = value.content.substring(0, 25);
         value.content = trimmedContent;
       })
-      this.announcementSet.forEach((value) => {
-        console.log(value);
-      })
       this.announcements = announcements; 
       console.log(announcements);
+      this.announcementSet.forEach((announcementId) => {
+        console.log(announcementId);
+        this.announcements.forEach((announcementObj, i) => {
+          if(announcementId == announcementObj.announcement_id){
+            console.log("grouped");
+            console.log(announcementObj);
+            if(this.groupedAnnouncements.get(announcementId)){
+              this.groupedAnnouncements.get(announcementId).push(announcementObj);
+            }
+            else {
+              this.groupedAnnouncements.set(announcementId, [announcementObj]);
+            }
+            console.log(this.groupedAnnouncements.get(announcementId));
+          }
+        })
+      })
     });
+  }
+
+  editAnnouncement(announcementId){
+    console.log(announcementId);
+    this.router.navigate(['../edit-announcement', announcementId], { relativeTo: this.route })
+  }
+
+  deleteAnnouncement(announcementId){
+    let r = confirm("Delete announcement: " + announcementId + "\nAre you sure?");
+    if(r){
+      console.log("deleted: " + announcementId);
+      this.announcementService.deleteAnnouncement(announcementId).subscribe(() => {
+        alert("Deleted announcement: " + announcementId);
+      })
+    }
   }
 
 }

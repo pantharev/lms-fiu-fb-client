@@ -75,10 +75,8 @@ export class LoginComponent implements OnInit {
           // Database functions
           // Student is added (returns error if email already exists, code continues)
           this.studentService.addStudent(userData).subscribe();
-          console.log("attempted to add");
           // Data is updated (in case email already existed but user data is different)
-          this.studentService.updateStudent(this.FB_id, userData).subscribe();
-          console.log("attempted to update");
+          this.studentService.updateStudent(this.FB_email, userData).subscribe();
         }
       }, 1000);
     }

@@ -13,15 +13,11 @@ export class StudentService {
     return this.http.get(`${environment.apiURL}/students`);
   }
 
-  getStudentById(user_id) {
-    return this.http.get(`${environment.apiURL}/students/${user_id}`);
-  }
-
   addStudent(student) {
     return this.http.post(`${environment.apiURL}/students`, student);
   }
 
-  updateStudent(user_id, student) {
-    return this.http.put(`${environment.apiURL}/students/${user_id}`, student);
+  updateStudent(email, student) {
+    return this.http.put(`${environment.apiURL}/students/${email}`, student);
   }
 }

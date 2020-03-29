@@ -13,22 +13,25 @@ import { identifierModuleUrl } from '@angular/compiler';
 export class HeaderComponent implements OnInit {
 
   currentUser: User;
+  FB_user: any;
   tokenPayload: Promise<void | User>;
 
-  constructor(private router: Router, private authenticationService: AuthenticationService) {   
+  constructor(private router: Router, private authenticationService: AuthenticationService) {
     //this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
-   }
+  }
 
   ngOnInit() {
     this.authenticationService.currentUser.subscribe(x => {
       this.currentUser = x;
     })
-      /*this.tokenPayload = Promise.resolve(decode(this.currentUser.then((val)=>{
-        val.token;
-      }))).then(() => {
-        console.log("Got token");
-      });
-    });*/
+
+    this.FB_user = JSON.parse(localStorage.getItem("FB_user"));
+    /*this.tokenPayload = Promise.resolve(decode(this.currentUser.then((val)=>{
+      val.token;
+    }))).then(() => {
+      console.log("Got token");
+    });
+  });*/
     //console.log("CurrentUser: " + JSON.stringify(this.currentUser));
     /*if(this.currentUser)
       var myInterval = setTimeout(() => {
@@ -51,7 +54,7 @@ export class HeaderComponent implements OnInit {
     });*/
     //this.currentUser = this.authenticationService.currentUserValue;
     //this.tokenPayload = decode(this.currentUser.token);
-      //console.log(this.tokenPayload.f_name);
+    //console.log(this.tokenPayload.f_name);
   }
 
   /*reInit(){

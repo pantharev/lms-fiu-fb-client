@@ -48,7 +48,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    
+
     /*
     Promise.resolve(decode(this.currentUser.token)).then((user) => {
       this.userPayload = user;
@@ -114,7 +114,7 @@ export class HomeComponent implements OnInit {
         this.FB_fname = user.firstName;
         this.FB_lname = user.lastName;
         this.loggedIn = (user != null);
-  
+
         console.log(this.FB_id);
         console.log(this.FB_email);
         console.log("loggedIn: " + this.loggedIn);
@@ -124,7 +124,7 @@ export class HomeComponent implements OnInit {
           console.log(this.FB_id);
           console.log(this.FB_fname);
           console.log(this.FB_lname);
-  
+
           var userData: JSON = <JSON><any>{
             "email": this.FB_email,
             "f_name": this.FB_fname,
@@ -133,7 +133,10 @@ export class HomeComponent implements OnInit {
             "role": this.FB_role
           };
           console.log(JSON.stringify(userData));
-          localStorage.setItem("currentFBUser", JSON.stringify(userData));  // Load data into 'currentUser' so that AuthenticationService can use it
+          localStorage.setItem("FB_user", JSON.stringify(userData));
+          console.log("user data stored. Info:")
+          console.log("full: " + JSON.parse(localStorage.getItem("FB_user")));
+          console.log("name: " + JSON.parse(localStorage.getItem("FB_user")).f_name + " " + JSON.parse(localStorage.getItem("FB_user")).l_name);
           // Database functions
           // Student is added (returns error if email already exists, code continues)
           this.studentService.addStudent(userData).subscribe();

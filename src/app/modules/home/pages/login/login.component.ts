@@ -59,12 +59,7 @@ export class LoginComponent implements OnInit {
       setTimeout(() => {
         console.log("loggedIn: " + this.loggedIn);
         if (this.loggedIn) {
-          console.log("login successful. Info:");
-          console.log(this.FB_email);
-          console.log(this.FB_id);
-          console.log(this.FB_fname);
-          console.log(this.FB_lname);
-
+          console.log("login successful.");
           var userData: JSON = <JSON><any>{
             "email": this.FB_email,
             "f_name": this.FB_fname,
@@ -73,7 +68,10 @@ export class LoginComponent implements OnInit {
             "role": this.FB_role
           };
           console.log(JSON.stringify(userData));
-          localStorage.setItem("currentUser", JSON.stringify(userData));  // Load data into 'currentUser' so that AuthenticationService can use it
+          localStorage.setItem("FB_user", JSON.stringify(userData));
+          console.log("user data stored. Info:")
+          console.log("full: " + JSON.parse(localStorage.getItem("FB_user")));
+          console.log("name: " + JSON.parse(localStorage.getItem("FB_user")).f_name + " " + JSON.parse(localStorage.getItem("FB_user")).l_name);
           // Database functions
           // Student is added (returns error if email already exists, code continues)
           this.studentService.addStudent(userData).subscribe();

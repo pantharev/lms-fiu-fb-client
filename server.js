@@ -12,7 +12,14 @@ const base64url = require("base64-url");
 var userData;
 
 
-//const https = require("https");
+const fs = require('fs');
+const privateKey = fs.readFileSync('ssl/server.key', 'utf8');
+const certificate = fs.readFileSync('ssl/server.crt', 'utf8');
+
+const credentials = { key: privateKey, cert: certificate };
+
+const https = require("https");
+const httpsServer = https.createServer(credentials, app);
 const request = require('request-promise');
 
 app.use(express.static(__dirname + '/angular-build'));
@@ -104,7 +111,12 @@ app.all(() => {
 });
 
 // Start the app by listening on the default Heroku port
-app.listen(port, () => {
+/*app.listen(port, () => {
     console.log("angular server started on port: " + port);
-});
+});*/
+
+httpsServer.listen(port , () => {
+    console.log("https server running at port : " + port);
+    console.log("https://localhost:8080");
+})
 

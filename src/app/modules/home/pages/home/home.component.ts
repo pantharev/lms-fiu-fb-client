@@ -71,6 +71,7 @@ export class HomeComponent implements OnInit {
 
   ngOnDestroy() {
     clearTimeout(this.timeoutVar);
+    localStorage.clear();
   }
 
   deleteAnnouncement(id) {

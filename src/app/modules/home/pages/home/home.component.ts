@@ -153,8 +153,9 @@ export class HomeComponent implements OnInit {
       "email": FBUser.email,
       "f_name": FBUser.f_name,
       "l_name": FBUser.l_name,
+      "role": FBUser.role,
       "user_id": FBUser.user_id,
-      "role": FBUser.role
+      "id": FBUser.id
     };
 
     this.authenticationService.loginWithFB(userData);
@@ -173,6 +174,7 @@ export class HomeComponent implements OnInit {
       "f_name": FBUser.f_name,
       "l_name": FBUser.l_name,
       "user_id": FBUser.user_id,
+      "id": FBUser.id,
       "role": FBUser.role
     };
 

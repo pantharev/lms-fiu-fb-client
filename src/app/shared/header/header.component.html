@@ -21,7 +21,7 @@
       </li>
     </ul>
   </div>
-  <ul class="navbar-nav" *ngIf="FB_user;else elseBlock">
+  <ul class="navbar-nav" *ngIf="FB_user">
     <li class="nav-item">
       <span class="nav-welcome">Hello, {{FB_user.f_name}} {{FB_user.l_name}}!</span>
     </li>

@@ -119,6 +119,17 @@ export class HomeComponent implements OnInit {
         this.loggedIn = (user != null);
         if (this.loggedIn) {
           console.log("login successful.");
+          // Get student
+          let student = this.studentService.getStudentByEmail(this.FB_email);
+          console.log("STUDENT RETRIEVED W/ EMAIL: ");
+          console.log(JSON.stringify(student));
+          console.log(student);
+          console.log("STUDENT[0] RETRIEVED W/ EMAIL: ");
+          console.log(JSON.stringify(student[0]));
+          console.log(student[0]);
+
+          // User data created
+          console.log("Student role:" + student[0].role);
           var userData: JSON = <JSON><any>{
             "email": this.FB_email,
             "f_name": this.FB_fname,
@@ -126,12 +137,9 @@ export class HomeComponent implements OnInit {
             "user_id": this.FB_id,
             "role": this.FB_role
           };
+
           console.log(JSON.stringify(userData));
           localStorage.setItem("FB_user", JSON.stringify(userData));
-          console.log("name: " + JSON.parse(localStorage.getItem("FB_user")).f_name + " " + JSON.parse(localStorage.getItem("FB_user")).l_name);
-          // Database functions
-          // Get student
-          this.studentService.getStudents
           // Student is added (returns error if email already exists, code continues)
           this.studentService.addStudent(userData).subscribe();
           // Data is updated (in case email already existed but user data is different)

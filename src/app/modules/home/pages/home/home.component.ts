@@ -120,16 +120,20 @@ export class HomeComponent implements OnInit {
         if (this.loggedIn) {
           console.log("login successful.");
           // Get student
-          let student = this.studentService.getStudentByEmail(this.FB_email);
-          console.log("STUDENT RETRIEVED W/ EMAIL: ");
-          console.log(JSON.stringify(student));
-          console.log(student);
-          console.log("STUDENT[0] RETRIEVED W/ EMAIL: ");
-          console.log(JSON.stringify(student[0]));
-          console.log(student[0]);
+          this.studentService.getStudentByEmail(this.FB_email).subscribe((data: any = {}) => {
+            let student = data;
+            console.log("STUDENT RETRIEVED W/ EMAIL: ");
+            console.log(JSON.stringify(student));
+            console.log(student);
+            console.log("STUDENT[0] RETRIEVED W/ EMAIL: ");
+            console.log(JSON.stringify(student[0]));
+            console.log(student[0]);
+            console.log("Student role:" + student[0].role);
+          });
+
 
           // User data created
-          console.log("Student role:" + student[0].role);
+
           var userData: JSON = <JSON><any>{
             "email": this.FB_email,
             "f_name": this.FB_fname,

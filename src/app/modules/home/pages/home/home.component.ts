@@ -64,7 +64,9 @@ export class HomeComponent implements OnInit {
       localStorage.setItem('user', userCookie);
     this.cookieService.delete('user');
     */
-    this.waitingForFBLogin();
+    if (!this.loggedIn) {
+      this.waitingForFBLogin();
+    }
   }
 
   ngOnDestroy() {

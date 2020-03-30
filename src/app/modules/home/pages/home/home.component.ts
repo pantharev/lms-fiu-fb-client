@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit {
       localStorage.setItem('user', userCookie);
     this.cookieService.delete('user');
     */
-    if (!localStorage.getItem("FB_user")) {
+    if (!this.loggedIn) {
       this.waitingForFBLogin();
     }
   }
@@ -130,6 +130,8 @@ export class HomeComponent implements OnInit {
           localStorage.setItem("FB_user", JSON.stringify(userData));
           console.log("name: " + JSON.parse(localStorage.getItem("FB_user")).f_name + " " + JSON.parse(localStorage.getItem("FB_user")).l_name);
           // Database functions
+          // Get student
+          this.studentService.getStudents
           // Student is added (returns error if email already exists, code continues)
           this.studentService.addStudent(userData).subscribe();
           // Data is updated (in case email already existed but user data is different)

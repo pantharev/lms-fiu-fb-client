@@ -22,6 +22,8 @@ export class StudentService {
   }
 
   getStudentByEmail(studentEmail){
+    console.log("Called getStudentByEmail");
+    console.log(studentEmail);
     return this.http.get(`${environment.apiURL}/students/${studentEmail}`);
   }
 }

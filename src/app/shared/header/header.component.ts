@@ -7,6 +7,7 @@ import { FacebookLoginProvider, AuthService } from "angularx-social-login";
 import { User } from '@app/core/models/user';
 import decode from 'jwt-decode';
 import { identifierModuleUrl } from '@angular/compiler';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -14,23 +15,37 @@ import { identifierModuleUrl } from '@angular/compiler';
 })
 export class HeaderComponent implements OnInit {
 
-  currentUser: User;
+  currentUser: Promise<User>;
+  currentUserAsync;
   FB_user: any;
   isAdmin: boolean;
   tokenPayload: Promise<void | User>;
 
   constructor(private router: Router, private authenticationService: AuthenticationService, private FB: FacebookService, private authFB: AuthService) {
-    //this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+    this.authenticationService.currentUser.subscribe(x => this.currentUser = Promise.resolve(x));
   }
 
   ngOnInit() {
     console.log("header OnInit");
-    this.authenticationService.currentUser.subscribe(x => {
-      this.currentUser = x;
+    this.currentUser.then((user) => {
+      console.log("ngOnInit");
+      console.log(user);
+      this.isAdmin = true;
     })
+    this.currentUserAsync = this.authenticationService.currentUser.subscribe();
   }
 
-  ngAfterViewChecked() {
+  ngOnChanges(){
+    this.authenticationService.currentUser.subscribe(x => this.currentUser = Promise.resolve(x));
+    this.currentUser.then((user) => {
+      console.log("ngOnChanges");
+      console.log(user);
+      this.isAdmin = true;
+    })
+    this.currentUserAsync = this.authenticationService.currentUser.subscribe();
+  }
+
+  ngAfterViewInit() {
     this.FB_user = JSON.parse(localStorage.getItem("FB_user"));
     if (this.FB_user) {
       if (this.FB_user.role == "admin") {

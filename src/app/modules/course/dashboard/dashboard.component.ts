@@ -33,9 +33,11 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {  
     this.currentStudent = this.authService.currentUserValue;
     if(this.currentStudent){
-      this.tokenPayload = decode(this.currentStudent.token);
-      this.isAdmin = (this.tokenPayload.role == 'admin');      
-      this.studentId = this.tokenPayload.id;
+      //this.tokenPayload = decode(this.currentStudent.token);
+      this.isAdmin = (this.currentStudent.role == 'admin');
+      this.studentId = this.currentStudent.id;
+      //this.isAdmin = (this.tokenPayload.role == 'admin');      
+      //this.studentId = this.tokenPayload.id;
       //this.hasCourses = this.asyncFetchStudentCourses(this.studentId);
       this.listCourses = this.studentCourseService.getCoursesByStudentId(this.studentId);
       console.log(this.studentId);

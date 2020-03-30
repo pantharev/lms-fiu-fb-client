@@ -28,7 +28,15 @@ export class HomeComponent implements OnInit {
   FB_fname: string;
   FB_lname: string;
   FB_email: string;
-  FB_role: Promise<string>|null = null;
+  FB_role: string;
+  FB_User = {
+    f_name: '',
+    l_name: '',
+    email: '',
+    role: '',
+    user_id: '',
+    id: 0
+  }
   loggedIn = false;
   fbInitiated = false;
   FB_settings = {
@@ -49,6 +57,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
 
+    console.log(this.currentUser);
     /*
     Promise.resolve(decode(this.currentUser.token)).then((user) => {
       this.userPayload = user;
@@ -64,8 +73,10 @@ export class HomeComponent implements OnInit {
       localStorage.setItem('user', userCookie);
     this.cookieService.delete('user');
     */
-    if (!this.loggedIn) {
+    if (!this.currentUser) {
       this.waitingForFBLogin();
+    } else{
+      return;
     }
   }
 
@@ -109,49 +120,69 @@ export class HomeComponent implements OnInit {
     console.log("FBlogin");
     this.authFB.signIn(FacebookLoginProvider.PROVIDER_ID).then(() => {
       this.authFB.authState.subscribe((user) => {
-        this.FB_id = user.id;
-        this.FB_email = user.email;
-        this.FB_fname = user.firstName;
-        this.FB_lname = user.lastName;
+        this.FB_User.user_id = user.id;
+        this.FB_User.email = user.email;
+        this.FB_User.f_name = user.firstName;
+        this.FB_User.l_name = user.lastName;
+
         this.loggedIn = (user != null);
         if (this.loggedIn) {
           console.log("login successful.");
           // Check if user is in DB
+          console.log(this.FB_User.email);
           let isNewStudent: Promise<Boolean>|null = null;
-          this.studentService.getStudentByEmail(this.FB_email).subscribe((data: any = {}) => {
-            console.log(data);
-            this.FB_role = Promise.resolve(data.role); // Update role
-            isNewStudent = Promise.resolve(false);
+          this.studentService.getStudentByEmail(this.FB_User.email).subscribe((user: any) => {
+            // In DB
+            console.log(user);
+            this.FB_User.role = user.role;
+            this.FB_User.id = user.id;
+            console.log(this.FB_User);
+            this.inStudentDB(this.FB_User);
           }, (error) => {
-            isNewStudent = Promise.resolve(true); // Not in DB
-            console.error(error);
+            // Not in DB
+            this.FB_User.role = 'student';
+            this.notInStudentDB(this.FB_User);
           });
-          this.FB_role.then((role) => {
-          const userData: JSON = <JSON><any>{
-            "email": this.FB_email,
-            "f_name": this.FB_fname,
-            "l_name": this.FB_lname,
-            "user_id": this.FB_id,
-            "role": role
-          };
-          isNewStudent.then((newStudent) => {
-            if(newStudent){ // Student not found in DB, so student is added 
-              console.log("Student not found in DB, adding");
-              this.studentService.addStudent(userData).subscribe();
-              localStorage.setItem("FB_user", JSON.stringify(userData));
-              console.log(JSON.stringify(userData));
-
-            } else { // Student found in DB, so their info is updated
-
-              console.log("Student found in DB, updating info");
-              this.studentService.updateStudent(this.FB_email, userData).subscribe();
-              localStorage.setItem("FB_user", JSON.stringify(userData));
-              console.log(JSON.stringify(userData));
-            }
-          }).catch((reason) => { console.log(reason); });
-          })
         }
       });
     });
+  }
+
+  inStudentDB(FBUser: any) {
+    const userData: JSON = <JSON><any>{
+      "email": FBUser.email,
+      "f_name": FBUser.f_name,
+      "l_name": FBUser.l_name,
+      "user_id": FBUser.user_id,
+      "role": FBUser.role
+    };
+
+    this.authenticationService.loginWithFB(userData);
+
+    console.log("Student found in DB, updating info");
+    this.studentService.updateStudent(this.FB_email, userData).subscribe(() => {
+      console.log("updated student");
+    });
+    localStorage.setItem("FB_user", JSON.stringify(userData));
+    console.log(JSON.stringify(userData));
+  }
+
+  notInStudentDB(FBUser: any){
+    const userData: JSON = <JSON><any>{
+      "email": FBUser.email,
+      "f_name": FBUser.f_name,
+      "l_name": FBUser.l_name,
+      "user_id": FBUser.user_id,
+      "role": FBUser.role
+    };
+
+    this.authenticationService.loginWithFB(userData);
+
+    console.log("Student not found in DB, adding");
+    this.studentService.addStudent(userData).subscribe(() => {
+      console.log("added to db");
+    });
+    localStorage.setItem("FB_user", JSON.stringify(userData));
+    console.log(JSON.stringify(userData));
   }
 }

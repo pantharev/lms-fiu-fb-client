@@ -21,12 +21,12 @@
       </li>
     </ul>
   </div>
-  <ul class="navbar-nav" *ngIf="FB_user">
+  <ul class="navbar-nav" *ngIf="currentUserAsync | async as cu">
     <li class="nav-item">
-      <span class="nav-welcome">Hello, {{FB_user.f_name}} {{FB_user.l_name}}!</span>
+      <span class="nav-welcome">Hello, {{cu.f_name}} {{cu.l_name}}!</span>
     </li>
     <li class="nav-item">
-      <span class="nav-welcome">Role: {{FB_user.role}}</span>
+      <span class="nav-welcome">Role: {{cu.role}}</span>
     </li>
   </ul>
   <!---

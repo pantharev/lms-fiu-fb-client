@@ -16,7 +16,7 @@ export class AuthenticationService implements CanActivate {
   public currentUser: Observable<User>;
 
   constructor(private http: HttpClient, public router: Router) {
-    this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
+    this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('FB_user')));
     this.currentUser = this.currentUserSubject.asObservable();
    }
 
@@ -34,6 +34,10 @@ export class AuthenticationService implements CanActivate {
             }));
    }
 
+   loginWithFB(user){
+     this.currentUserSubject.next(user);
+   }
+
    logout() {
      // remove user from local storage to log user out
      return this.http.get(`${environment.apiURL}/auth/logout`).pipe(map(user => {
@@ -41,6 +45,11 @@ export class AuthenticationService implements CanActivate {
       this.currentUserSubject.next(null);
      }));
      localStorage.removeItem('currentUser');
+     this.currentUserSubject.next(null);
+   }
+
+   logoutFromFB(){
+     localStorage.removeItem('FB_user');
      this.currentUserSubject.next(null);
    }
 
@@ -55,17 +64,27 @@ export class AuthenticationService implements CanActivate {
       return true;
     }
 
-    const tokenPayload: User = decode(this.currentUserValue.token);
+    //const tokenPayload: User = decode(this.currentUserValue.token);
 
-    if(tokenPayload.role === "admin"){
+    /*if(tokenPayload.role === "admin"){
+      return true;
+    }*/
+
+    if(this.currentUserValue.role === "admin"){
       return true;
     }
 
-    if (tokenPayload.role !== expectedRole) {
+    if(this.currentUserValue.role !== expectedRole){
       console.log("Not " + expectedRole);
       this.router.navigate(['/']);
       return false;
     }
+
+    /*if (tokenPayload.role !== expectedRole) {
+      console.log("Not " + expectedRole);
+      this.router.navigate(['/']);
+      return false;
+    }*/
     
     return true;
   }

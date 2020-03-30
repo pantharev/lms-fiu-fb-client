@@ -23,44 +23,31 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("header init");
+    console.log("header OnInit");
     this.authenticationService.currentUser.subscribe(x => {
       this.currentUser = x;
     })
 
     this.FB_user = JSON.parse(localStorage.getItem("FB_user"));
-
     console.log(this.FB_user.role);
-    /*this.tokenPayload = Promise.resolve(decode(this.currentUser.then((val)=>{
-      val.token;
-    }))).then(() => {
-      console.log("Got token");
-    });
-  });*/
-    //console.log("CurrentUser: " + JSON.stringify(this.currentUser));
-    /*if(this.currentUser)
-      var myInterval = setTimeout(() => {
-        console.log("User Header0: " + this.currentUser.token);
-      //console.log("User Header: " + localStorage.getItem('currentUser'));
-      if(this.authenticationService.currentUserValue){
-        this.tokenPayload = decode(this.currentUser.token);
-      }
-      }, 1000);*/
-    //const currentUserValue = this.authenticationService.currentUserValue;
-    //console.log("User Header0: " + this.currentUser.token);
-    //console.log("User Header: " + localStorage.getItem('currentUser'));
-    /*if(this.authenticationService.currentUserValue){
-      this.userExists = true;
-      this.tokenPayload = decode(this.currentUser.token);
-    }*/
-    /*this.authenticationService.currentUser.subscribe(x => {
-      this.currentUser = x;
-      this.tokenPayload = decode(this.currentUser.token);
-    });*/
-    //this.currentUser = this.authenticationService.currentUserValue;
-    //this.tokenPayload = decode(this.currentUser.token);
-    //console.log(this.tokenPayload.f_name);
   }
+
+  ngOnChanges() {
+    console.log("header OnChanges");
+  }
+
+  ngDoCheck() {
+    console.log("header DoCheck");
+  }
+
+  ngAfterViewInit() {
+    console.log("header AfterViewInit");
+  }
+
+  ngAfterViewChecked() {
+    console.log("header AfterViewChecked");
+  }
+
 
   /*reInit(){
     this.authenticationService.currentUser.subscribe(x => {

@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit {
       localStorage.setItem('user', userCookie);
     this.cookieService.delete('user');
     */
-    if (!this.loggedIn) {
+    if (!localStorage.getItem("FB_user")) {
       this.waitingForFBLogin();
     }
   }

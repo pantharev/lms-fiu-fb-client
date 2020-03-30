@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit {
   FB_fname: string;
   FB_lname: string;
   FB_email: string;
-  FB_role: string;
+  FB_role = "student";
   loggedIn = false;
   fbInitiated = false;
   FB_settings = {

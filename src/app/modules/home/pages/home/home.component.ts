@@ -120,34 +120,37 @@ export class HomeComponent implements OnInit {
         if (this.loggedIn) {
           console.log("login successful.");
           // Check if user is in DB
+          let isNewStudent = true;
           this.studentService.getStudentByEmail(this.FB_email).subscribe((data: any = {}) => {
             console.log(data);
             if (typeof data[0].role !== undefined) {
               this.FB_role = data[0].role; // Update role
-            }
-            var userData: JSON = <JSON><any>{
-              "email": this.FB_email,
-              "f_name": this.FB_fname,
-              "l_name": this.FB_lname,
-              "user_id": this.FB_id,
-              "role": this.FB_role
-            };
-
-            if (data) {
-              // Student found in DB, so their info is updated
-              console.log("Student found in DB, updating info");
-              this.studentService.updateStudent(this.FB_email, userData).subscribe();
-              localStorage.setItem("FB_user", JSON.stringify(userData));
-              console.log(JSON.stringify(userData));
-            }
-            else {
-              // Student not found in DB, so student is added 
-              console.log("Student not found in DB, adding");
-              this.studentService.addStudent(userData).subscribe();
-              localStorage.setItem("FB_user", JSON.stringify(userData));
-              console.log(JSON.stringify(userData));
+              isNewStudent = false;
             }
           });
+          var userData: JSON = <JSON><any>{
+            "email": this.FB_email,
+            "f_name": this.FB_fname,
+            "l_name": this.FB_lname,
+            "user_id": this.FB_id,
+            "role": this.FB_role
+          };
+
+          if (isNewStudent) {
+            // Student not found in DB, so student is added 
+            console.log("Student not found in DB, adding");
+            this.studentService.addStudent(userData).subscribe();
+            localStorage.setItem("FB_user", JSON.stringify(userData));
+            console.log(JSON.stringify(userData));
+          }
+          else {
+            // Student found in DB, so their info is updated
+            console.log("Student found in DB, updating info");
+            this.studentService.updateStudent(this.FB_email, userData).subscribe();
+            localStorage.setItem("FB_user", JSON.stringify(userData));
+            console.log(JSON.stringify(userData));
+
+          }
 
 
 

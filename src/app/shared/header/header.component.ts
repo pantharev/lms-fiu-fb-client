@@ -16,6 +16,7 @@ export class HeaderComponent implements OnInit {
 
   currentUser: User;
   FB_user: any;
+  isAdmin: boolean;
   tokenPayload: Promise<void | User>;
 
   constructor(private router: Router, private authenticationService: AuthenticationService, private FB: FacebookService, private authFB: AuthService) {
@@ -29,23 +30,15 @@ export class HeaderComponent implements OnInit {
     })
 
     this.FB_user = JSON.parse(localStorage.getItem("FB_user"));
-    console.log(this.FB_user.role);
-  }
+    console.log("Role: " + this.FB_user.role);
+    if (this.FB_user.role == "admin") {
+      this.isAdmin = true;
+      console.log("ADMIN");
+    }
+    else {
+      console.log("NOT AN ADMIN");
+    }
 
-  ngOnChanges() {
-    console.log("header OnChanges");
-  }
-
-  ngDoCheck() {
-    console.log("header DoCheck");
-  }
-
-  ngAfterViewInit() {
-    console.log("header AfterViewInit");
-  }
-
-  ngAfterViewChecked() {
-    console.log("header AfterViewChecked");
   }
 
 

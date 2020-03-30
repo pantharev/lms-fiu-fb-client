@@ -7,6 +7,7 @@ import { AuthenticationService } from '@app/core/services/authentication.service
 import { FacebookService } from '@greg-md/ng-facebook';
 import { FacebookLoginProvider, AuthService } from "angularx-social-login";
 import { StudentService } from '@app/core/services/student.service';
+import { isEmpty } from 'lodash';
 
 import { User } from '@app/core/models/user';
 import decode from 'jwt-decode';
@@ -120,7 +121,8 @@ export class HomeComponent implements OnInit {
           console.log("login successful.");
           // Check if user is in DB
           this.studentService.getStudentByEmail(this.FB_email).subscribe((data: any = {}) => {
-            if (data) {
+            console.log(data);
+            if (typeof data[0].role !== undefined) {
               this.FB_role = data[0].role; // Update role
             }
             var userData: JSON = <JSON><any>{

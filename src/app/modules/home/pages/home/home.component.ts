@@ -11,7 +11,6 @@ import { StudentService } from '@app/core/services/student.service';
 import { User } from '@app/core/models/user';
 import decode from 'jwt-decode';
 import { timeout } from 'rxjs/operators';
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -119,35 +118,35 @@ export class HomeComponent implements OnInit {
         this.loggedIn = (user != null);
         if (this.loggedIn) {
           console.log("login successful.");
-          // Get student
+          // Check if user is in DB
           this.studentService.getStudentByEmail(this.FB_email).subscribe((data: any = {}) => {
-            let student = data;
-            console.log("STUDENT RETRIEVED W/ EMAIL: ");
-            console.log(JSON.stringify(student));
-            console.log(student);
-            console.log("STUDENT[0] RETRIEVED W/ EMAIL: ");
-            console.log(JSON.stringify(student[0]));
-            console.log(student[0]);
-            console.log("Student role:" + student[0].role);
+            this.FB_role = data[0].role; // Update role
+            var userData: JSON = <JSON><any>{
+              "email": this.FB_email,
+              "f_name": this.FB_fname,
+              "l_name": this.FB_lname,
+              "user_id": this.FB_id,
+              "role": this.FB_role
+            };
+
+            if (data) {
+              // Student found in DB, so their info is updated
+              this.studentService.updateStudent(this.FB_email, userData).subscribe();
+              localStorage.setItem("FB_user", JSON.stringify(userData));
+              console.log(JSON.stringify(userData));
+            }
+            else {
+              // Student not found in DB, so student is added 
+              this.studentService.addStudent(userData).subscribe();
+              localStorage.setItem("FB_user", JSON.stringify(userData));
+              console.log(JSON.stringify(userData));
+            }
           });
 
 
-          // User data created
 
-          var userData: JSON = <JSON><any>{
-            "email": this.FB_email,
-            "f_name": this.FB_fname,
-            "l_name": this.FB_lname,
-            "user_id": this.FB_id,
-            "role": this.FB_role
-          };
 
-          console.log(JSON.stringify(userData));
-          localStorage.setItem("FB_user", JSON.stringify(userData));
-          // Student is added (returns error if email already exists, code continues)
-          this.studentService.addStudent(userData).subscribe();
-          // Data is updated (in case email already existed but user data is different)
-          this.studentService.updateStudent(this.FB_email, userData).subscribe();
+
         }
       });
     });

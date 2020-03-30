@@ -16,16 +16,16 @@ export class EditCourseComponent implements OnInit {
   course: Course;
   updateForm: FormGroup;
   submitted = false;
-  startDate: Promise<string>|null = null;
+  startDate: Promise<string> | null = null;
   startDateSelected = false;
-  startDateEvent: Promise<String>|null = null;
-  endDate: Promise<string>|null = null;
+  startDateEvent: Promise<String> | null = null;
+  endDate: Promise<string> | null = null;
   endDateSelected = false;
-  endDateEvent: Promise<String>|null = null;
+  endDateEvent: Promise<String> | null = null;
 
   constructor(private courseService: CourseService, private router: Router, private route: ActivatedRoute, private fb: FormBuilder) {
-      this.CreateForm();
-   }
+    this.CreateForm();
+  }
 
   CreateForm() {
     this.updateForm = this.fb.group({
@@ -83,13 +83,13 @@ export class EditCourseComponent implements OnInit {
     end_date = this.formatDate(end_date);
     console.log("going to submit end_date: " + end_date);
 
-    if(!this.updateForm.valid){
+    if (!this.updateForm.valid) {
       return;
     }
 
-      this.courseService.updateCourse(this.id, name, description, seats, start_date, end_date).subscribe(res => {
-        this.router.navigate(['/admin']);
-      });
+    this.courseService.updateCourse(this.id, name, description, seats, start_date, end_date).subscribe(res => {
+      this.router.navigate(['/admin']);
+    });
   }
 
   hDateFormat(course: Course) {
@@ -100,7 +100,7 @@ export class EditCourseComponent implements OnInit {
     course.end_date = end_date.toLocaleDateString();
   }
 
-  formatDate(date){
+  formatDate(date) {
     let newDate = new Date(date);
     let dd = String(newDate.getDate()).padStart(2, '0');
     let mm = String(newDate.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -110,14 +110,14 @@ export class EditCourseComponent implements OnInit {
     return dateRes;
   }
 
-  onStartDateSelect(event){
+  onStartDateSelect(event) {
     this.startDateSelected = true;
     this.startDateEvent = new Promise<String>((resolve, reject) => {
       resolve(String(event.month).padStart(2, '0') + '/' + String(event.day).padStart(2, '0') + '/' + event.year);
     });
   }
 
-  onEndDateSelect(event){
+  onEndDateSelect(event) {
     this.endDateSelected = true;
     this.endDateEvent = new Promise<String>((resolve, reject) => {
       resolve(String(event.month).padStart(2, '0') + '/' + String(event.day).padStart(2, '0') + '/' + event.year);

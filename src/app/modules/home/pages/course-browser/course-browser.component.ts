@@ -45,6 +45,7 @@ export class CourseBrowserComponent implements OnInit {
   currentUser: User;
   tokenUser: User;
   studentId;
+  studentEmail
 
   constructor(private courseService: CourseService, private studentCourseService: StudentCourseService, private authService: AuthenticationService, private router: Router, private route: ActivatedRoute) { }
 
@@ -52,12 +53,15 @@ export class CourseBrowserComponent implements OnInit {
     let page = this.route.snapshot.paramMap.get('page') || this.page;
     this.fetchCourses(page);
     this.socket = io.connect(environment.apiURL);
+    this.studentEmail = JSON.parse(localStorage.getItem("FB_user")).email;
+    /*
     if(this.authService.currentUserValue){
       this.currentUser = this.authService.currentUserValue;
       this.tokenUser = decode(this.currentUser.token);
       if(this.currentUser)
         this.studentId = this.tokenUser.id;
     }
+    */
     //console.log("Init page: " + page);
   }
 
@@ -119,14 +123,14 @@ export class CourseBrowserComponent implements OnInit {
       });
   }
 
-  studentEnroll(studentId, courseId, course_name, enrollment_status) {
+  studentEnroll(studentEmail, courseId, course_name, enrollment_status) {
     // Add student to students_courses table with pending enrollment
     this.courseService.getCourseById(courseId).subscribe((course: Course) => {
       if(course.seats > 0){
-        this.studentCourseService.enrollStudentToCourse(studentId, courseId, enrollment_status).subscribe(() => {
+        this.studentCourseService.enrollStudentToCourse(studentEmail, courseId, enrollment_status).subscribe(() => {
           alert("Enrolled for course: " + course_name);
         });
-        console.log("StudentId: " + studentId);
+        console.log("StudentEmail: " + studentEmail);
         console.log(`Enrollment pending for courseId: ${courseId}`);
       }
     })

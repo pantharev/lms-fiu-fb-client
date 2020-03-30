@@ -36,6 +36,9 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     let page = this.route.snapshot.paramMap.get('page') || this.page;
     this.fetchCourses(page);
+    this.isAdmin = (JSON.parse(localStorage.getItem("FB_user")).role == 'admin');
+    
+    /*
     this.currentUser = this.authenticationService.currentUserValue;
     if(this.currentUser){
       this.tokenPayload = decode(this.currentUser.token);
@@ -43,6 +46,7 @@ export class DashboardComponent implements OnInit {
       console.log("Current user in Admin: " + JSON.stringify(this.currentUser));
       console.log("tokenPayload: " + JSON.stringify(this.tokenPayload));
     }
+    */
   }
 
   pendingEnrollmentsNotification(courses: []){

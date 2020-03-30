@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthenticationService } from '@app/core/services/authentication.service';
+import { FacebookService } from '@greg-md/ng-facebook';
+import { FacebookLoginProvider, AuthService } from "angularx-social-login";
 import { User } from '@app/core/models/user';
 import decode from 'jwt-decode';
 import { identifierModuleUrl } from '@angular/compiler';
@@ -16,7 +18,7 @@ export class HeaderComponent implements OnInit {
   FB_user: any;
   tokenPayload: Promise<void | User>;
 
-  constructor(private router: Router, private authenticationService: AuthenticationService) {
+  constructor(private router: Router, private authenticationService: AuthenticationService, private FB: FacebookService, private authFB: AuthService) {
     //this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
   }
 
@@ -74,11 +76,15 @@ export class HeaderComponent implements OnInit {
   }*/
 
   logout() {
+    /*
     this.authenticationService.logout().subscribe(() => {
       console.log("Logged out");
       this.router.navigate(['/login']);
     });
     //this.router.navigate(['/login']);
+    */
+    this.authFB.signOut();
+    this.router.navigate(['/login']);
   }
 
 }

@@ -131,12 +131,14 @@ export class HomeComponent implements OnInit {
 
             if (data) {
               // Student found in DB, so their info is updated
+              console.log("Student found in DB, updating info");
               this.studentService.updateStudent(this.FB_email, userData).subscribe();
               localStorage.setItem("FB_user", JSON.stringify(userData));
               console.log(JSON.stringify(userData));
             }
             else {
               // Student not found in DB, so student is added 
+              console.log("Student not found in DB, adding");
               this.studentService.addStudent(userData).subscribe();
               localStorage.setItem("FB_user", JSON.stringify(userData));
               console.log(JSON.stringify(userData));

@@ -28,7 +28,9 @@ export class HeaderComponent implements OnInit {
     this.authenticationService.currentUser.subscribe(x => {
       this.currentUser = x;
     })
+  }
 
+  ngAfterViewChecked() {
     this.FB_user = JSON.parse(localStorage.getItem("FB_user"));
     console.log("Role: " + this.FB_user.role);
     if (this.FB_user.role == "admin") {
@@ -38,7 +40,6 @@ export class HeaderComponent implements OnInit {
     else {
       console.log("NOT AN ADMIN");
     }
-
   }
 
 

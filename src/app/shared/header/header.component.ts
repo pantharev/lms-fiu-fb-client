@@ -33,13 +33,8 @@ export class HeaderComponent implements OnInit {
   ngAfterViewChecked() {
     this.FB_user = JSON.parse(localStorage.getItem("FB_user"));
     if (this.FB_user) {
-      console.log("Role: " + this.FB_user.role);
       if (this.FB_user.role == "admin") {
         this.isAdmin = true;
-        console.log("ADMIN");
-      }
-      else {
-        console.log("NOT AN ADMIN");
       }
     }
   }

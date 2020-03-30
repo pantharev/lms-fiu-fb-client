@@ -102,9 +102,6 @@ export class HomeComponent implements OnInit {
       clearTimeout(this.timeoutVar);
       return;
     }
-
-
-
   }
 
 
@@ -123,8 +120,8 @@ export class HomeComponent implements OnInit {
           let isNewStudent = true;
           this.studentService.getStudentByEmail(this.FB_email).subscribe((data: any = {}) => {
             console.log(data);
-            if (typeof data[0].role !== undefined) {
-              this.FB_role = data[0].role; // Update role
+            if (typeof data.role !== undefined) {
+              this.FB_role = data.role; // Update role
               isNewStudent = false;
             }
           });

@@ -23,11 +23,14 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log("header init");
     this.authenticationService.currentUser.subscribe(x => {
       this.currentUser = x;
     })
 
     this.FB_user = JSON.parse(localStorage.getItem("FB_user"));
+
+    console.log(this.FB_user.role);
     /*this.tokenPayload = Promise.resolve(decode(this.currentUser.then((val)=>{
       val.token;
     }))).then(() => {

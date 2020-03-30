@@ -120,7 +120,9 @@ export class HomeComponent implements OnInit {
           console.log("login successful.");
           // Check if user is in DB
           this.studentService.getStudentByEmail(this.FB_email).subscribe((data: any = {}) => {
-            this.FB_role = data[0].role; // Update role
+            if (data) {
+              this.FB_role = data[0].role; // Update role
+            }
             var userData: JSON = <JSON><any>{
               "email": this.FB_email,
               "f_name": this.FB_fname,

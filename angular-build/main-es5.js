@@ -219,6 +219,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.authenticationService.logout();
           this.router.navigate(['/login']);
         }
+      }, {
+        key: "ngOnDestroy",
+        value: function ngOnDestroy() {
+          this.authenticationService.logoutFromFB();
+        }
       }]);
 
       return AppComponent;
@@ -1867,37 +1872,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony import */
 
 
-    var jwt_decode__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
-    /*! jwt-decode */
-    "./node_modules/jwt-decode/lib/index.js");
-    /* harmony import */
-
-
-    var jwt_decode__WEBPACK_IMPORTED_MODULE_2___default =
-    /*#__PURE__*/
-    __webpack_require__.n(jwt_decode__WEBPACK_IMPORTED_MODULE_2__);
-    /* harmony import */
-
-
-    var _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
+    var _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
     /*! @app/core/services/global-announcement.service */
     "./src/app/core/services/global-announcement.service.ts");
     /* harmony import */
 
 
-    var _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+    var _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
     /*! @app/core/services/authentication.service */
     "./src/app/core/services/authentication.service.ts");
     /* harmony import */
 
 
-    var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
+    var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
     /*! @angular/router */
     "./node_modules/@angular/router/__ivy_ngcc__/fesm2015/router.js");
     /* harmony import */
 
 
-    var _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
+    var _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
     /*! @ckeditor/ckeditor5-angular */
     "./node_modules/@ckeditor/ckeditor5-angular/__ivy_ngcc__/fesm2015/ckeditor-ckeditor5-angular.js");
 
@@ -1922,8 +1915,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(CreateAnnouncementComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          this.userPayload = jwt_decode__WEBPACK_IMPORTED_MODULE_2___default()(this.currentUser.token);
-          console.log(this.userPayload.f_name);
+          //this.userPayload = decode(this.currentUser.token);
+          console.log(this.currentUser.f_name);
         }
       }, {
         key: "onReady",
@@ -1948,9 +1941,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         value: function createAnnouncement() {
           var _this6 = this;
 
-          var userName = this.userPayload.f_name + " " + this.userPayload.l_name;
+          var userName = this.currentUser.f_name + " " + this.currentUser.l_name;
           var today = new Date();
-          this.globalAnnouncementService.createGlobalAnnouncement(userName, this.editorData, today, today, this.userPayload.id).subscribe(function () {
+          this.globalAnnouncementService.createGlobalAnnouncement(userName, this.editorData, today, today, this.currentUser.id).subscribe(function () {
             //alert("Created announcement");
             _this6.router.navigate(['/']);
           });
@@ -1961,7 +1954,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }();
 
     CreateAnnouncementComponent.ɵfac = function CreateAnnouncementComponent_Factory(t) {
-      return new (t || CreateAnnouncementComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__["GlobalAnnouncementService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_4__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_5__["Router"]));
+      return new (t || CreateAnnouncementComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_2__["GlobalAnnouncementService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]));
     };
 
     CreateAnnouncementComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
@@ -2027,7 +2020,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("innerHTML", ctx.editorData, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsanitizeHtml"]);
         }
       },
-      directives: [_ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_6__["CKEditorComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_5__["RouterLinkWithHref"]],
+      directives: [_ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_5__["CKEditorComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_4__["RouterLinkWithHref"]],
       styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL21vZHVsZXMvaG9tZS9wYWdlcy9hbm5vdW5jZW1lbnRzTWFuYWdlci9jcmVhdGUtYW5ub3VuY2VtZW50L2NyZWF0ZS1hbm5vdW5jZW1lbnQuY29tcG9uZW50LnNjc3MifQ== */"]
     });
     /*@__PURE__*/
@@ -2042,11 +2035,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }]
       }], function () {
         return [{
-          type: _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__["GlobalAnnouncementService"]
+          type: _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_2__["GlobalAnnouncementService"]
         }, {
-          type: _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_4__["AuthenticationService"]
+          type: _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__["AuthenticationService"]
         }, {
-          type: _angular_router__WEBPACK_IMPORTED_MODULE_5__["Router"]
+          type: _angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]
         }];
       }, null);
     })();
@@ -2094,43 +2087,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony import */
 
 
-    var jwt_decode__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
-    /*! jwt-decode */
-    "./node_modules/jwt-decode/lib/index.js");
-    /* harmony import */
-
-
-    var jwt_decode__WEBPACK_IMPORTED_MODULE_2___default =
-    /*#__PURE__*/
-    __webpack_require__.n(jwt_decode__WEBPACK_IMPORTED_MODULE_2__);
-    /* harmony import */
-
-
-    var _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
+    var _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
     /*! @app/core/services/global-announcement.service */
     "./src/app/core/services/global-announcement.service.ts");
     /* harmony import */
 
 
-    var _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+    var _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
     /*! @app/core/services/authentication.service */
     "./src/app/core/services/authentication.service.ts");
     /* harmony import */
 
 
-    var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
+    var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
     /*! @angular/router */
     "./node_modules/@angular/router/__ivy_ngcc__/fesm2015/router.js");
     /* harmony import */
 
 
-    var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
+    var _angular_common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
     /*! @angular/common */
     "./node_modules/@angular/common/__ivy_ngcc__/fesm2015/common.js");
     /* harmony import */
 
 
-    var _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
+    var _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
     /*! @ckeditor/ckeditor5-angular */
     "./node_modules/@ckeditor/ckeditor5-angular/__ivy_ngcc__/fesm2015/ckeditor-ckeditor5-angular.js");
 
@@ -2229,13 +2210,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         value: function ngOnInit() {
           var _this8 = this;
 
-          this.userPayload = jwt_decode__WEBPACK_IMPORTED_MODULE_2___default()(this.currentUser.token);
+          //this.userPayload = decode(this.currentUser.token);
           this.route.params.subscribe(function (params) {
             _this8.id = params.id;
           });
           this.globalAnnouncement = this.globalAnnouncementService.fetchGlobalAnnouncementById(this.id); //this.fetchAnnouncementById(this.id);
 
-          console.log(this.userPayload.f_name);
+          console.log(this.currentUser.f_name);
         }
       }, {
         key: "onChange",
@@ -2277,7 +2258,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }();
 
     EditAnnouncementComponent.ɵfac = function EditAnnouncementComponent_Factory(t) {
-      return new (t || EditAnnouncementComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__["GlobalAnnouncementService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_4__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_5__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_5__["ActivatedRoute"]));
+      return new (t || EditAnnouncementComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_2__["GlobalAnnouncementService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_4__["ActivatedRoute"]));
     };
 
     EditAnnouncementComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
@@ -2303,8 +2284,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](2, 1, ctx.globalAnnouncement));
         }
       },
-      directives: [_angular_common__WEBPACK_IMPORTED_MODULE_6__["NgIf"], _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_7__["CKEditorComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_5__["RouterLinkWithHref"]],
-      pipes: [_angular_common__WEBPACK_IMPORTED_MODULE_6__["AsyncPipe"]],
+      directives: [_angular_common__WEBPACK_IMPORTED_MODULE_5__["NgIf"], _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_6__["CKEditorComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_4__["RouterLinkWithHref"]],
+      pipes: [_angular_common__WEBPACK_IMPORTED_MODULE_5__["AsyncPipe"]],
       styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL21vZHVsZXMvaG9tZS9wYWdlcy9hbm5vdW5jZW1lbnRzTWFuYWdlci9lZGl0LWFubm91bmNlbWVudC9lZGl0LWFubm91bmNlbWVudC5jb21wb25lbnQuc2NzcyJ9 */"]
     });
     /*@__PURE__*/
@@ -2319,13 +2300,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }]
       }], function () {
         return [{
-          type: _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__["GlobalAnnouncementService"]
+          type: _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_2__["GlobalAnnouncementService"]
         }, {
-          type: _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_4__["AuthenticationService"]
+          type: _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__["AuthenticationService"]
         }, {
-          type: _angular_router__WEBPACK_IMPORTED_MODULE_5__["Router"]
+          type: _angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]
         }, {
-          type: _angular_router__WEBPACK_IMPORTED_MODULE_5__["ActivatedRoute"]
+          type: _angular_router__WEBPACK_IMPORTED_MODULE_4__["ActivatedRoute"]
         }];
       }, null);
     })();
@@ -3548,8 +3529,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /*! @angular/common */
     "./node_modules/@angular/common/__ivy_ngcc__/fesm2015/common.js");
 
-    var _c0 = ["header"];
-
     function HomeComponent_ng_container_10_a_1_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "a", 8);
@@ -3574,7 +3553,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
 
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r3.userPayload.role == "admin");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r3.currentUser.role == "admin");
       }
     }
 
@@ -3654,7 +3633,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
 
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r4.userPayload.role == "admin");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r4.currentUser.role == "admin");
       }
     }
 
@@ -3700,20 +3679,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "ngOnInit",
         value: function ngOnInit() {
-          console.log(this.currentUser);
-          /*
-          Promise.resolve(decode(this.currentUser.token)).then((user) => {
-            this.userPayload = user;
+          var _this17 = this;
+
+          console.log(this.currentUser); // fetch announcements
+
+          this.globalAnnouncementService.fetchGlobalAnnouncements().subscribe(function (globalAnnouncementsData) {
+            _this17.globalAnnouncements = globalAnnouncementsData;
           });
-                var userCookie = this.getCookie('user');
-          this.globalAnnouncementService.fetchGlobalAnnouncements().subscribe((globalAnnouncementsData: any[]) => {
-            this.globalAnnouncements = globalAnnouncementsData;
-          })
-          //console.log("The user cookie is: " + this.getCookie('user'));
-                if (localStorage.getItem('user') == '')
-            localStorage.setItem('user', userCookie);
-          this.cookieService.delete('user');
-          */
 
           if (!this.currentUser) {
             this.waitingForFBLogin();
@@ -3724,8 +3696,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "ngOnDestroy",
         value: function ngOnDestroy() {
-          clearTimeout(this.timeoutVar);
-          localStorage.clear();
+          clearTimeout(this.timeoutVar); //localStorage.clear();
         }
       }, {
         key: "deleteAnnouncement",
@@ -3741,21 +3712,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "waitingForFBLogin",
         value: function waitingForFBLogin() {
-          var _this17 = this;
+          var _this18 = this;
 
           if (!(this.fbInitiated && this.loggedIn)) {
             // FB Initialization
             if (this.fbInitiated) {
               this.FB.init(this.FB_settings).subscribe(function () {
                 console.log("fb initiated");
-                _this17.fbInitiated = true;
+                _this18.fbInitiated = true;
               });
             }
 
             this.FBLogin();
           } else {
             this.timeoutVar = setTimeout(function () {
-              _this17.waitingForFBLogin();
+              _this18.waitingForFBLogin();
             }, 1000);
             clearTimeout(this.timeoutVar);
             return;
@@ -3764,36 +3735,36 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "FBLogin",
         value: function FBLogin() {
-          var _this18 = this;
+          var _this19 = this;
 
           console.log("FBlogin");
           this.authFB.signIn(angularx_social_login__WEBPACK_IMPORTED_MODULE_1__["FacebookLoginProvider"].PROVIDER_ID).then(function () {
-            _this18.authFB.authState.subscribe(function (user) {
-              _this18.FB_User.user_id = user.id;
-              _this18.FB_User.email = user.email;
-              _this18.FB_User.f_name = user.firstName;
-              _this18.FB_User.l_name = user.lastName;
-              _this18.loggedIn = user != null;
+            _this19.authFB.authState.subscribe(function (user) {
+              _this19.FB_User.user_id = user.id;
+              _this19.FB_User.email = user.email;
+              _this19.FB_User.f_name = user.firstName;
+              _this19.FB_User.l_name = user.lastName;
+              _this19.loggedIn = user != null;
 
-              if (_this18.loggedIn) {
+              if (_this19.loggedIn) {
                 console.log("login successful."); // Check if user is in DB
 
-                console.log(_this18.FB_User.email);
+                console.log(_this19.FB_User.email);
                 var isNewStudent = null;
 
-                _this18.studentService.getStudentByEmail(_this18.FB_User.email).subscribe(function (user) {
+                _this19.studentService.getStudentByEmail(_this19.FB_User.email).subscribe(function (user) {
                   // In DB
                   console.log(user);
-                  _this18.FB_User.role = user.role;
-                  _this18.FB_User.id = user.id;
-                  console.log(_this18.FB_User);
+                  _this19.FB_User.role = user.role;
+                  _this19.FB_User.id = user.id;
+                  console.log(_this19.FB_User);
 
-                  _this18.inStudentDB(_this18.FB_User);
+                  _this19.inStudentDB(_this19.FB_User);
                 }, function (error) {
                   // Not in DB
-                  _this18.FB_User.role = 'student';
+                  _this19.FB_User.role = 'student';
 
-                  _this18.notInStudentDB(_this18.FB_User);
+                  _this19.notInStudentDB(_this19.FB_User);
                 });
               }
             });
@@ -3849,17 +3820,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     HomeComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
       type: HomeComponent,
       selectors: [["app-home"]],
-      viewQuery: function HomeComponent_Query(rf, ctx) {
-        if (rf & 1) {
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵviewQuery"](_c0, true);
-        }
-
-        if (rf & 2) {
-          var _t;
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.myHeader = _t.first);
-        }
-      },
       decls: 14,
       vars: 2,
       consts: [[1, "container"], [1, "row", "justify-content-center"], [1, "col-4", "center-form"], ["src", "../../../../../assets/images/FIU_Panther_Logo.png", "alt", "FIU_Panther_Logo", "width", "400", "height", "400"], ["routerLink", "/course-library", 1, "btn", "btn-primary"], [4, "ngIf"], ["class", "announcement", 4, "ngFor", "ngForOf"], ["routerLink", "/create-announcement", "class", "btn btn-primary", "style", "margin-top:30px", 4, "ngIf"], ["routerLink", "/create-announcement", 1, "btn", "btn-primary", 2, "margin-top", "30px"], [1, "announcement"], [1, "custom-font", 3, "innerHTML"], [1, "btn", "btn-success", 3, "routerLink"], ["type", "button", 1, "btn", "btn-danger", 3, "click"]],
@@ -3913,7 +3873,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (rf & 2) {
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](10);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.userPayload);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.currentUser);
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
 
@@ -3948,12 +3908,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }, {
           type: _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_6__["FacebookService"]
         }];
-      }, {
-        myHeader: [{
-          type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"],
-          args: ['header']
-        }]
-      });
+      }, null);
     })();
     /***/
 
@@ -4150,7 +4105,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(LoginComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this19 = this;
+          var _this20 = this;
 
           this.loginForm = this.formBuilder.group({
             email: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required],
@@ -4168,16 +4123,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           if (!this.loggedIn) {
             this.FBLogin();
             setTimeout(function () {
-              console.log("loggedIn: " + _this19.loggedIn);
+              console.log("loggedIn: " + _this20.loggedIn);
 
-              if (_this19.loggedIn) {
+              if (_this20.loggedIn) {
                 console.log("login successful.");
                 var userData = {
-                  "email": _this19.FB_email,
-                  "f_name": _this19.FB_fname,
-                  "l_name": _this19.FB_lname,
-                  "user_id": _this19.FB_id,
-                  "role": _this19.FB_role
+                  "email": _this20.FB_email,
+                  "f_name": _this20.FB_fname,
+                  "l_name": _this20.FB_lname,
+                  "user_id": _this20.FB_id,
+                  "role": _this20.FB_role
                 };
                 console.log(JSON.stringify(userData));
                 localStorage.setItem("FB_user", JSON.stringify(userData));
@@ -4186,10 +4141,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 console.log("name: " + JSON.parse(localStorage.getItem("FB_user")).f_name + " " + JSON.parse(localStorage.getItem("FB_user")).l_name); // Database functions
                 // Student is added (returns error if email already exists, code continues)
 
-                _this19.studentService.addStudent(userData).subscribe(); // Data is updated (in case email already existed but user data is different)
+                _this20.studentService.addStudent(userData).subscribe(); // Data is updated (in case email already existed but user data is different)
 
 
-                _this19.studentService.updateStudent(_this19.FB_email, userData).subscribe();
+                _this20.studentService.updateStudent(_this20.FB_email, userData).subscribe();
               }
             }, 1000);
           }
@@ -4198,7 +4153,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "onSubmit",
         value: function onSubmit(email, password) {
-          var _this20 = this;
+          var _this21 = this;
 
           this.submitted = true; // stop here if form is invalid
 
@@ -4211,24 +4166,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["first"])()).subscribe(function (data) {
             console.log(data); //this.loading = false;
 
-            _this20.router.navigate([_this20.returnUrl]);
+            _this21.router.navigate([_this21.returnUrl]);
           }, function (error) {
-            _this20.error = error;
+            _this21.error = error;
           });
         }
       }, {
         key: "FBLogin",
         value: function FBLogin() {
-          var _this21 = this;
+          var _this22 = this;
 
           console.log("FBlogin");
           this.authFB.signIn(angularx_social_login__WEBPACK_IMPORTED_MODULE_3__["FacebookLoginProvider"].PROVIDER_ID);
           this.authFB.authState.subscribe(function (user) {
-            _this21.FB_id = user.id;
-            _this21.FB_email = user.email;
-            _this21.FB_fname = user.firstName;
-            _this21.FB_lname = user.lastName;
-            _this21.loggedIn = user != null;
+            _this22.FB_id = user.id;
+            _this22.FB_email = user.email;
+            _this22.FB_fname = user.firstName;
+            _this22.FB_lname = user.lastName;
+            _this22.loggedIn = user != null;
           });
           console.log(this.FB_id);
           console.log(this.FB_email); //localStorage.setItem("FB_email", this.FB_email);
@@ -4553,11 +4508,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(ProfileComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this22 = this;
+          var _this23 = this;
 
           this.authService.getProfile().subscribe(function (data) {
-            _this22.profileData = data;
-            console.log(_this22.profileData);
+            _this23.profileData = data;
+            console.log(_this23.profileData);
             console.log("The profile data is: " + JSON.stringify(data));
           });
           /*this.authService.getTest().subscribe((data) => {
@@ -4872,7 +4827,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /*#__PURE__*/
     function () {
       function HeaderComponent(router, authenticationService, FB, authFB) {
-        var _this23 = this;
+        var _this24 = this;
 
         _classCallCheck(this, HeaderComponent);
 
@@ -4881,21 +4836,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.FB = FB;
         this.authFB = authFB;
         this.authenticationService.currentUser.subscribe(function (x) {
-          return _this23.currentUser = Promise.resolve(x);
+          return _this24.currentUser = x;
         });
       }
 
       _createClass(HeaderComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this24 = this;
-
           console.log("header OnInit");
-          this.currentUser.then(function (user) {
-            console.log("ngOnInit");
-            console.log(user);
-            _this24.isAdmin = true;
-          });
+          console.log(this.currentUser);
+
+          if (this.currentUser.role == "admin") {
+            this.isAdmin = true;
+          }
+
           this.currentUserAsync = this.authenticationService.currentUser.subscribe();
         }
       }, {
@@ -4904,13 +4858,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var _this25 = this;
 
           this.authenticationService.currentUser.subscribe(function (x) {
-            return _this25.currentUser = Promise.resolve(x);
+            console.log("header on changes subscribed");
+            _this25.currentUser = x;
+            console.log(_this25.currentUser);
           });
-          this.currentUser.then(function (user) {
-            console.log("ngOnChanges");
-            console.log(user);
-            _this25.isAdmin = true;
-          });
+          console.log("header on changes");
+          console.log(this.currentUser);
+
+          if (this.currentUser.role == "admin") {
+            this.isAdmin = true;
+          }
+
           this.currentUserAsync = this.authenticationService.currentUser.subscribe();
         }
       }, {
@@ -4966,8 +4924,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       type: HeaderComponent,
       selectors: [["app-header"]],
       features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]],
-      decls: 19,
-      vars: 6,
+      decls: 18,
+      vars: 4,
       consts: [[1, "navbar", "navbar-expand-lg", "navbar-dark", "lms-bg"], ["routerLink", "/", 1, "navbar-brand"], ["src", "../../../assets/android-chrome-512x512.png", "alt", "FIU Logo", "width", "32", "height", "32"], ["type", "button", "data-toggle", "collapse", "data-target", "#navbarNav", "aria-controls", "navbarNav", "aria-expanded", "false", "aria-label", "Toggle navigation", 1, "navbar-toggler"], [1, "navbar-toggler-icon"], ["id", "navbarNav", 1, "collapse", "navbar-collapse"], [1, "navbar-nav"], [1, "nav-item"], ["routerLink", "/", "routerLinkActive", "active", 1, "nav-link", 3, "routerLinkActiveOptions"], ["routerLink", "/course-library", "routerLinkActive", "active", 1, "nav-link"], ["routerLink", "/courses", "routerLinkActive", "active", 1, "nav-link"], ["class", "nav-item", 4, "ngIf"], ["class", "navbar-nav", 4, "ngIf"], ["routerLink", "/admin", "routerLinkActive", "active", 1, "nav-link"], [1, "nav-welcome"]],
       template: function HeaderComponent_Template(rf, ctx) {
         if (rf & 1) {
@@ -5027,15 +4985,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](17, HeaderComponent_ul_17_Template, 7, 3, "ul", 12);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](18, "async");
-
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         }
 
         if (rf & 2) {
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](8);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLinkActiveOptions", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](5, _c0));
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLinkActiveOptions", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](3, _c0));
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](8);
 
@@ -5043,11 +4999,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](18, 3, ctx.currentUserAsync));
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.currentUserAsync);
         }
       },
       directives: [_ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_5__["NgbNavbar"], _angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterLinkWithHref"], _angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterLinkActive"], _angular_common__WEBPACK_IMPORTED_MODULE_6__["NgIf"]],
-      pipes: [_angular_common__WEBPACK_IMPORTED_MODULE_6__["AsyncPipe"]],
       styles: [".navbar-nav[_ngcontent-%COMP%] {\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen, Ubuntu, Cantarell, \"Open Sans\", \"Helvetica Neue\", sans-serif;\n  font-weight: 500;\n}\n.active-link[_ngcontent-%COMP%] {\n  color: red;\n  background-color: transparent;\n}\n.nav-welcome[_ngcontent-%COMP%] {\n  display: block;\n  color: white;\n  padding: 0.5rem 1rem;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvc2hhcmVkL2hlYWRlci9DOlxcVXNlcnNcXE5pY29sYXNcXERlc2t0b3BcXExNU0ZJVS1GQlxcbG1zLWZpdS1mYi1jbGllbnQvc3JjXFxhcHBcXHNoYXJlZFxcaGVhZGVyXFxoZWFkZXIuY29tcG9uZW50LnNjc3MiLCJzcmMvYXBwL3NoYXJlZC9oZWFkZXIvaGVhZGVyLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7O0VBQUE7QUFNQTs7O0VBQUE7QUFLQTtFQUNJLHdJQUFBO0VBQ0EsZ0JBQUE7QUNESjtBRElBO0VBQ0ksVUFBQTtFQUNBLDZCQUFBO0FDREo7QURJQTtFQUNJLGNBQUE7RUFDQSxZQUFBO0VBQ0Esb0JBQUE7QUNESiIsImZpbGUiOiJzcmMvYXBwL3NoYXJlZC9oZWFkZXIvaGVhZGVyLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLyoubmF2YmFyLW5hdiB7XHJcbiAgICBmb250LXdlaWdodDogYm9sZDtcclxuICAgIGNvbG9yOiB3aGl0ZTtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50O1xyXG59Ki9cclxuXHJcbi8qLm5hdi1saW5rLWlubmVyIHtcclxuICAgIGNvbG9yOiB3aGl0ZTtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50O1xyXG59Ki9cclxuXHJcbi5uYXZiYXItbmF2IHtcclxuICAgIGZvbnQtZmFtaWx5OiAtYXBwbGUtc3lzdGVtLCBCbGlua01hY1N5c3RlbUZvbnQsICdTZWdvZSBVSScsIFJvYm90bywgT3h5Z2VuLCBVYnVudHUsIENhbnRhcmVsbCwgJ09wZW4gU2FucycsICdIZWx2ZXRpY2EgTmV1ZScsIHNhbnMtc2VyaWY7XHJcbiAgICBmb250LXdlaWdodDogNTAwO1xyXG59XHJcblxyXG4uYWN0aXZlLWxpbmsge1xyXG4gICAgY29sb3I6IHJlZDtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50O1xyXG59XHJcblxyXG4ubmF2LXdlbGNvbWUge1xyXG4gICAgZGlzcGxheTogYmxvY2s7XHJcbiAgICBjb2xvcjogd2hpdGU7XHJcbiAgICBwYWRkaW5nOiAwLjVyZW0gMXJlbTtcclxufVxyXG4iLCIvKi5uYXZiYXItbmF2IHtcbiAgICBmb250LXdlaWdodDogYm9sZDtcbiAgICBjb2xvcjogd2hpdGU7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdHJhbnNwYXJlbnQ7XG59Ki9cbi8qLm5hdi1saW5rLWlubmVyIHtcbiAgICBjb2xvcjogd2hpdGU7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdHJhbnNwYXJlbnQ7XG59Ki9cbi5uYXZiYXItbmF2IHtcbiAgZm9udC1mYW1pbHk6IC1hcHBsZS1zeXN0ZW0sIEJsaW5rTWFjU3lzdGVtRm9udCwgXCJTZWdvZSBVSVwiLCBSb2JvdG8sIE94eWdlbiwgVWJ1bnR1LCBDYW50YXJlbGwsIFwiT3BlbiBTYW5zXCIsIFwiSGVsdmV0aWNhIE5ldWVcIiwgc2Fucy1zZXJpZjtcbiAgZm9udC13ZWlnaHQ6IDUwMDtcbn1cblxuLmFjdGl2ZS1saW5rIHtcbiAgY29sb3I6IHJlZDtcbiAgYmFja2dyb3VuZC1jb2xvcjogdHJhbnNwYXJlbnQ7XG59XG5cbi5uYXYtd2VsY29tZSB7XG4gIGRpc3BsYXk6IGJsb2NrO1xuICBjb2xvcjogd2hpdGU7XG4gIHBhZGRpbmc6IDAuNXJlbSAxcmVtO1xufSJdfQ== */"]
     });
     /*@__PURE__*/

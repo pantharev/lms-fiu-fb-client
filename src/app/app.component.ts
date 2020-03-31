@@ -21,4 +21,8 @@ export class AppComponent {
     this.authenticationService.logout();
     this.router.navigate(['/login']);
   }
+
+  ngOnDestroy(){
+    this.authenticationService.logoutFromFB();
+  }
 }

@@ -18,7 +18,7 @@ export class CreatePostComponent implements OnInit {
 
   postForm: FormGroup;
   module: Promise<object>|null = null;
-  currentUser;
+  currentUser: User;
   userPayload: User;
   submitted = false;
 
@@ -31,7 +31,7 @@ export class CreatePostComponent implements OnInit {
   get p() { return this.postForm.controls; };
 
   ngOnInit(): void {
-    this.userPayload = decode(this.currentUser.token);
+    //this.userPayload = decode(this.currentUser.token);
 
     this.route.params.subscribe((params) => {
       this.moduleService.getModuleById(params.moduleId).subscribe((moduleData) => {
@@ -57,9 +57,9 @@ export class CreatePostComponent implements OnInit {
     }
 
     this.module.then((moduleVal: any) => {
-      let userName = this.userPayload.f_name + " " + this.userPayload.l_name;
+      let userName = this.currentUser.f_name + " " + this.currentUser.l_name;
       let today = new Date();
-      this.discussionService.createDiscussion(userName, post, today, today, moduleVal.id, this.userPayload.id).subscribe(() => {
+      this.discussionService.createDiscussion(userName, post, today, today, moduleVal.id, this.currentUser.id).subscribe(() => {
         alert("Created post");
       })
     })

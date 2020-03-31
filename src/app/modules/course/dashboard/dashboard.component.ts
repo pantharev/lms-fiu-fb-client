@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit {
 
   courses: Course[] = [];
   course: Course;
-  currentStudent: User;
+  currentUser: User;
   tokenPayload: User;
   isAdmin: Boolean;
   hasCourses;
@@ -31,11 +31,11 @@ export class DashboardComponent implements OnInit {
   constructor(private studentCourseService: StudentCourseService, private courseService: CourseService, private authService: AuthenticationService, private router: Router, private announcementService: AnnouncementService) { }
 
   ngOnInit() {  
-    this.currentStudent = this.authService.currentUserValue;
-    if(this.currentStudent){
+    this.currentUser = this.authService.currentUserValue;
+    if(this.currentUser){
       //this.tokenPayload = decode(this.currentStudent.token);
-      this.isAdmin = (this.currentStudent.role == 'admin');
-      this.studentId = this.currentStudent.id;
+      this.isAdmin = (this.currentUser.role == 'admin');
+      this.studentId = this.currentUser.id;
       //this.isAdmin = (this.tokenPayload.role == 'admin');      
       //this.studentId = this.tokenPayload.id;
       //this.hasCourses = this.asyncFetchStudentCourses(this.studentId);
@@ -122,7 +122,7 @@ export class DashboardComponent implements OnInit {
   }
 
   checkBox(i, courseId){
-    if(this.tokenPayload.role != 'admin'){
+    if(this.currentUser.role != 'admin'){
       return;
     }
     if(this.isChecked[i]){

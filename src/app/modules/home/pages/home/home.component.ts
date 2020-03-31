@@ -45,8 +45,6 @@ export class HomeComponent implements OnInit {
   };
   timeoutVar: any;
 
-  @ViewChild('header') private myHeader: HeaderComponent;
-
   constructor(private cookieService: CookieService, private authFB: AuthService, private globalAnnouncementService: GlobalAnnouncementService, private authenticationService: AuthenticationService, private studentService: StudentService, private FB: FacebookService) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
   }
@@ -58,21 +56,12 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
 
     console.log(this.currentUser);
-    /*
-    Promise.resolve(decode(this.currentUser.token)).then((user) => {
-      this.userPayload = user;
-    });
 
-    var userCookie = this.getCookie('user');
+    // fetch announcements
     this.globalAnnouncementService.fetchGlobalAnnouncements().subscribe((globalAnnouncementsData: any[]) => {
       this.globalAnnouncements = globalAnnouncementsData;
     })
-    //console.log("The user cookie is: " + this.getCookie('user'));
 
-    if (localStorage.getItem('user') == '')
-      localStorage.setItem('user', userCookie);
-    this.cookieService.delete('user');
-    */
     if (!this.currentUser) {
       this.waitingForFBLogin();
     } else{
@@ -82,7 +71,7 @@ export class HomeComponent implements OnInit {
 
   ngOnDestroy() {
     clearTimeout(this.timeoutVar);
-    localStorage.clear();
+    //localStorage.clear();
   }
 
   deleteAnnouncement(id) {

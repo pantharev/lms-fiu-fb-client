@@ -18,7 +18,7 @@ export class EditAnnouncementComponent implements OnInit {
 
   public Editor = ClassicEditor;
   public editorData;
-  currentUser;
+  currentUser: User;
   userPayload: User;
   isCleared;
   id;
@@ -30,13 +30,13 @@ export class EditAnnouncementComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userPayload = decode(this.currentUser.token);
+    //this.userPayload = decode(this.currentUser.token);
     this.route.params.subscribe((params) => {
       this.id = params.id;
     })
     this.globalAnnouncement = this.globalAnnouncementService.fetchGlobalAnnouncementById(this.id);
     //this.fetchAnnouncementById(this.id);
-    console.log(this.userPayload.f_name);
+    console.log(this.currentUser.f_name);
   }
 
   public onChange( { editor }: ChangeEvent){

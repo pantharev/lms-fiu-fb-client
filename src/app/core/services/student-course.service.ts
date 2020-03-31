@@ -21,23 +21,24 @@ export class StudentCourseService {
     return this.http.get(`${environment.apiURL}/student-courses/p/${courseId}/${studentId}`);
   }
 
-  enrollStudentToCourse(student_email, course_id, enrollment_status) {
+  enrollStudentToCourse(student_id, course_id, enrollment_status) {
     const student_course = {
-      student_email: student_email,
+      student_id: student_id,
       course_id: course_id,
-      enrollment_status: enrollment_status
+      enrollment_status: enrollment_status,
+      points: 0
     }
     return this.http.post(`${environment.apiURL}/student-courses`, student_course);
   }
 
-  acceptStudentEnrollment(student_email, course_id, enrollment_status) {
+  acceptStudentEnrollment(student_id, course_id, enrollment_status) {
     const student_course = {
-      student_email: student_email,
+      student_id: student_id,
       course_id: course_id,
       enrollment_status: enrollment_status
     };
     console.log(student_course);
-    return this.http.put(`${environment.apiURL}/student-courses/${student_email}`, student_course);
+    return this.http.put(`${environment.apiURL}/student-courses/${student_id}`, student_course);
   }
 
   declineStudentEnrollment(student_id, course_id) {

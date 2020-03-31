@@ -2435,7 +2435,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
               if (!_this8.noSeats) {
                 _this8.studentCourseService.getStudentsByCourseId(_this8.id).subscribe(function (res) {
-                  _this8.students = res; //console.log(this.students);
+                  _this8.students = res;
+                  console.log(_this8.students);
                 });
               }
             });

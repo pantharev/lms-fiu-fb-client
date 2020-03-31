@@ -653,22 +653,23 @@ class StudentCourseService {
     getAvgStudentPoints(courseId, studentId) {
         return this.http.get(`${src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL}/student-courses/p/${courseId}/${studentId}`);
     }
-    enrollStudentToCourse(student_email, course_id, enrollment_status) {
+    enrollStudentToCourse(student_id, course_id, enrollment_status) {
         const student_course = {
-            student_email: student_email,
+            student_id: student_id,
             course_id: course_id,
-            enrollment_status: enrollment_status
+            enrollment_status: enrollment_status,
+            points: 0
         };
         return this.http.post(`${src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL}/student-courses`, student_course);
     }
-    acceptStudentEnrollment(student_email, course_id, enrollment_status) {
+    acceptStudentEnrollment(student_id, course_id, enrollment_status) {
         const student_course = {
-            student_email: student_email,
+            student_id: student_id,
             course_id: course_id,
             enrollment_status: enrollment_status
         };
         console.log(student_course);
-        return this.http.put(`${src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL}/student-courses/${student_email}`, student_course);
+        return this.http.put(`${src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL}/student-courses/${student_id}`, student_course);
     }
     declineStudentEnrollment(student_id, course_id) {
         return this.http.delete(`${src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL}/student-courses/${student_id}/${course_id}`);
@@ -1368,7 +1369,7 @@ function CourseBrowserComponent_div_17_tr_6_td_13_Template(rf, ctx) { if (rf & 1
     const _r53 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "button", 27);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function CourseBrowserComponent_div_17_tr_6_td_13_Template_button_click_1_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r53); const course_r47 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]().$implicit; const ctx_r52 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r52.studentEnroll(ctx_r52.studentId, course_r47.id, course_r47.name, "pending"); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function CourseBrowserComponent_div_17_tr_6_td_13_Template_button_click_1_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r53); const course_r47 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]().$implicit; const ctx_r52 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r52.studentEnroll(ctx_r52.currentUser.id, course_r47.id, course_r47.name, "pending"); });
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Enroll");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -1524,20 +1525,22 @@ class CourseBrowserComponent {
         this.duplicateCourse = false;
         this.num = 0;
         this.numberPerPage = 5;
+        this.authService.currentUser.subscribe(x => this.currentUser = x);
     }
     ngOnInit() {
         let page = this.route.snapshot.paramMap.get('page') || this.page;
         this.fetchCourses(page);
         this.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_2___default.a.connect(src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL);
         this.studentEmail = JSON.parse(localStorage.getItem("FB_user")).email;
-        /*
-        if(this.authService.currentUserValue){
-          this.currentUser = this.authService.currentUserValue;
-          this.tokenUser = decode(this.currentUser.token);
-          if(this.currentUser)
-            this.studentId = this.tokenUser.id;
+        console.log("course-browser:");
+        console.log(this.currentUser);
+        this.studentId = this.currentUser.id;
+        if (this.authService.currentUserValue) {
+            this.currentUser = this.authService.currentUserValue;
+            //this.tokenUser = decode(this.currentUser.token);
+            if (this.currentUser)
+                this.studentId = this.currentUser.id;
         }
-        */
         //console.log("Init page: " + page);
     }
     fetchCourses(page) {
@@ -1594,14 +1597,14 @@ class CourseBrowserComponent {
             this.router.navigate(['/course-library', { page: this.courses.pagination.current }]);
         });
     }
-    studentEnroll(studentEmail, courseId, course_name, enrollment_status) {
+    studentEnroll(studentId, courseId, course_name, enrollment_status) {
         // Add student to students_courses table with pending enrollment
         this.courseService.getCourseById(courseId).subscribe((course) => {
             if (course.seats > 0) {
-                this.studentCourseService.enrollStudentToCourse(studentEmail, courseId, enrollment_status).subscribe(() => {
+                this.studentCourseService.enrollStudentToCourse(studentId, courseId, enrollment_status).subscribe(() => {
                     alert("Enrolled for course: " + course_name);
                 });
-                console.log("StudentEmail: " + studentEmail);
+                console.log("StudentId: " + studentId);
                 console.log(`Enrollment pending for courseId: ${courseId}`);
             }
         });

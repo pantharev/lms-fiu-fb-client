@@ -1175,7 +1175,7 @@ class PendingEnrollmentComponent {
                 if (!this.noSeats) {
                     this.studentCourseService.getStudentsByCourseId(this.id).subscribe(res => {
                         this.students = res;
-                        //console.log(this.students);
+                        console.log(this.students);
                     });
                 }
             });

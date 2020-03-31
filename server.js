@@ -111,12 +111,14 @@ app.all(() => {
 });
 
 // Start the app by listening on the default Heroku port
-/*app.listen(port, () => {
+// production
+app.listen(port, () => {
     console.log("angular server started on port: " + port);
-});*/
+});
 
-httpsServer.listen(port , () => {
+// local testing
+/*httpsServer.listen(port , () => {
     console.log("https server running at port : " + port);
     console.log("https://localhost:8080");
-})
+})*/
 

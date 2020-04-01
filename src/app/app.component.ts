@@ -147,8 +147,8 @@ export class AppComponent {
       console.log(user.id);
       userData.id = user.id;
       console.log("added to db");
+      localStorage.setItem("FB_user", JSON.stringify(userData));
+      console.log(userData);
     });
-    localStorage.setItem("FB_user", JSON.stringify(userData));
-    console.log(userData);
   }
 }

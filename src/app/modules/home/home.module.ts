@@ -13,7 +13,6 @@ import { CourseBrowserComponent } from './pages/course-browser/course-browser.co
 
 
 import { CourseService } from '../../core/services/course.service';
-import { LoginComponent } from './pages/login/login.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -35,12 +34,12 @@ const config = new AuthServiceConfig([
 
 ]);
 
-export function provideConfig(){
+export function provideConfig() {
   return config;
 }
 
 @NgModule({
-  declarations: [HomeComponent, CourseBrowserComponent, LoginComponent, ProfileComponent, CreateAnnouncementComponent, EditAnnouncementComponent],
+  declarations: [HomeComponent, CourseBrowserComponent, ProfileComponent, CreateAnnouncementComponent, EditAnnouncementComponent],
   imports: [
     CommonModule,
     HomeRoutingModule,
@@ -61,8 +60,8 @@ export function provideConfig(){
   providers: [
     CourseService,
     {
-    provide: AuthServiceConfig, 
-    useFactory: provideConfig 
+      provide: AuthServiceConfig,
+      useFactory: provideConfig
     }]
 })
 export class HomeModule { }

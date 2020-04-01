@@ -175,45 +175,92 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony import */
 
 
-    var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
+    var angularx_social_login__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
+    /*! angularx-social-login */
+    "./node_modules/angularx-social-login/__ivy_ngcc__/angularx-social-login.js");
+    /* harmony import */
+
+
+    var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
     /*! @angular/router */
     "./node_modules/@angular/router/__ivy_ngcc__/fesm2015/router.js");
     /* harmony import */
 
 
-    var _core_services_authentication_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
+    var _core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
     /*! ./core/services/authentication.service */
     "./src/app/core/services/authentication.service.ts");
     /* harmony import */
 
 
-    var _shared_header_header_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
+    var _core_services_student_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+    /*! ./core/services/student.service */
+    "./src/app/core/services/student.service.ts");
+    /* harmony import */
+
+
+    var _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
+    /*! @greg-md/ng-facebook */
+    "./node_modules/@greg-md/ng-facebook/__ivy_ngcc__/fesm2015/greg-md-ng-facebook.js");
+    /* harmony import */
+
+
+    var _shared_header_header_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
     /*! ./shared/header/header.component */
     "./src/app/shared/header/header.component.ts");
     /* harmony import */
 
 
-    var _shared_footer_footer_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+    var _shared_footer_footer_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
     /*! ./shared/footer/footer.component */
     "./src/app/shared/footer/footer.component.ts");
 
     var AppComponent =
     /*#__PURE__*/
     function () {
-      function AppComponent(router, authenticationService) {
+      function AppComponent(router, authenticationService, studentService, FB, authFB) {
         var _this = this;
 
         _classCallCheck(this, AppComponent);
 
         this.router = router;
         this.authenticationService = authenticationService;
+        this.studentService = studentService;
+        this.FB = FB;
+        this.authFB = authFB;
         this.title = 'LMS-FIU';
+        this.FB_User = {
+          f_name: '',
+          l_name: '',
+          email: '',
+          role: '',
+          user_id: '',
+          id: 0
+        };
+        this.loggedIn = false;
+        this.fbInitiated = false;
+        this.FB_settings = {
+          appId: '903187940138780',
+          version: 'v6.0'
+        };
         this.authenticationService.currentUser.subscribe(function (x) {
           return _this.currentUser = x;
         });
       }
 
       _createClass(AppComponent, [{
+        key: "ngOnInit",
+        value: function ngOnInit() {
+          var _this2 = this;
+
+          console.log("app.component init2");
+          this.FB.init(this.FB_settings).subscribe(function () {
+            console.log("fb initiated");
+
+            _this2.waitingForFBLogin();
+          });
+        }
+      }, {
         key: "logout",
         value: function logout() {
           this.authenticationService.logout();
@@ -224,13 +271,108 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         value: function ngOnDestroy() {
           this.authenticationService.logoutFromFB();
         }
+      }, {
+        key: "waitingForFBLogin",
+        value: function waitingForFBLogin() {
+          var _this3 = this;
+
+          console.log("waiting for FB login");
+          console.log("Logged in: " + this.loggedIn);
+
+          if (!this.loggedIn) {
+            this.FBLogin();
+          } else {
+            this.timeoutVar = setTimeout(function () {
+              _this3.waitingForFBLogin();
+            }, 1000);
+            clearTimeout(this.timeoutVar);
+            return;
+          }
+        }
+      }, {
+        key: "FBLogin",
+        value: function FBLogin() {
+          var _this4 = this;
+
+          console.log("FBlogin-appc");
+          this.authFB.signIn(angularx_social_login__WEBPACK_IMPORTED_MODULE_1__["FacebookLoginProvider"].PROVIDER_ID).then(function () {
+            _this4.authFB.authState.subscribe(function (user) {
+              _this4.FB_User.user_id = user.id;
+              _this4.FB_User.email = user.email;
+              _this4.FB_User.f_name = user.firstName;
+              _this4.FB_User.l_name = user.lastName;
+              _this4.loggedIn = user != null;
+
+              if (_this4.loggedIn) {
+                console.log("login successful."); // Check if user is in DB
+
+                console.log(_this4.FB_User.email);
+                var isNewStudent = null;
+
+                _this4.studentService.getStudentByEmail(_this4.FB_User.email).subscribe(function (user) {
+                  // In DB
+                  console.log(user);
+                  _this4.FB_User.role = user[0].role;
+                  _this4.FB_User.id = user[0].id;
+                  console.log(_this4.FB_User);
+
+                  _this4.inStudentDB(_this4.FB_User);
+                }, function (error) {
+                  // Not in DB
+                  _this4.FB_User.role = 'student';
+
+                  _this4.notInStudentDB(_this4.FB_User);
+                });
+              }
+            });
+          });
+        }
+      }, {
+        key: "inStudentDB",
+        value: function inStudentDB(FBUser) {
+          var userData = {
+            "email": FBUser.email,
+            "f_name": FBUser.f_name,
+            "l_name": FBUser.l_name,
+            "role": FBUser.role,
+            "user_id": FBUser.user_id,
+            "id": FBUser.id
+          };
+          this.authenticationService.loginWithFB(userData);
+          console.log("Student found in DB, updating info");
+          console.log(FBUser.role);
+          this.studentService.updateStudent(this.FB_email, userData).subscribe(function () {
+            console.log("updated student");
+          });
+          localStorage.setItem("FB_user", JSON.stringify(userData));
+          console.log(JSON.stringify(userData));
+        }
+      }, {
+        key: "notInStudentDB",
+        value: function notInStudentDB(FBUser) {
+          var userData = {
+            "email": FBUser.email,
+            "f_name": FBUser.f_name,
+            "l_name": FBUser.l_name,
+            "user_id": FBUser.user_id,
+            "id": FBUser.id,
+            "role": FBUser.role
+          };
+          this.authenticationService.loginWithFB(userData);
+          console.log("Student not found in DB, adding");
+          this.studentService.addStudent(userData).subscribe(function () {
+            console.log("added to db");
+          });
+          localStorage.setItem("FB_user", JSON.stringify(userData));
+          console.log(JSON.stringify(userData));
+        }
       }]);
 
       return AppComponent;
     }();
 
     AppComponent.ɵfac = function AppComponent_Factory(t) {
-      return new (t || AppComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_2__["AuthenticationService"]));
+      return new (t || AppComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_core_services_student_service__WEBPACK_IMPORTED_MODULE_4__["StudentService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_5__["FacebookService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](angularx_social_login__WEBPACK_IMPORTED_MODULE_1__["AuthService"]));
     };
 
     AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
@@ -247,7 +389,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](2, "app-footer");
         }
       },
-      directives: [_shared_header_header_component__WEBPACK_IMPORTED_MODULE_3__["HeaderComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterOutlet"], _shared_footer_footer_component__WEBPACK_IMPORTED_MODULE_4__["FooterComponent"]],
+      directives: [_shared_header_header_component__WEBPACK_IMPORTED_MODULE_6__["HeaderComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_2__["RouterOutlet"], _shared_footer_footer_component__WEBPACK_IMPORTED_MODULE_7__["FooterComponent"]],
       styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2FwcC5jb21wb25lbnQuc2NzcyJ9 */"]
     });
     /*@__PURE__*/
@@ -262,9 +404,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }]
       }], function () {
         return [{
-          type: _angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]
+          type: _angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"]
         }, {
-          type: _core_services_authentication_service__WEBPACK_IMPORTED_MODULE_2__["AuthenticationService"]
+          type: _core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__["AuthenticationService"]
+        }, {
+          type: _core_services_student_service__WEBPACK_IMPORTED_MODULE_4__["StudentService"]
+        }, {
+          type: _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_5__["FacebookService"]
+        }, {
+          type: angularx_social_login__WEBPACK_IMPORTED_MODULE_1__["AuthService"]
         }];
       }, null);
     })();
@@ -588,12 +736,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(ErrorInterceptor, [{
         key: "intercept",
         value: function intercept(request, next) {
-          var _this2 = this;
+          var _this5 = this;
 
           return next.handle(request).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["catchError"])(function (err) {
             if (err.status === 401) {
               // auto logout if 401 response returned from api
-              _this2.authenticationService.logout();
+              _this5.authenticationService.logout();
 
               location.reload(true);
             }
@@ -899,7 +1047,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(AuthenticationService, [{
         key: "login",
         value: function login(email, password) {
-          var _this3 = this;
+          var _this6 = this;
 
           return this.http.post("".concat(_environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].apiURL, "/auth/login"), {
             email: email,
@@ -908,7 +1056,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             // store user details and jwt token in local storage to keep user logged in between page refreshes
             localStorage.setItem('currentUser', JSON.stringify(user));
 
-            _this3.currentUserSubject.next(user);
+            _this6.currentUserSubject.next(user);
 
             return user;
           }));
@@ -921,13 +1069,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "logout",
         value: function logout() {
-          var _this4 = this;
+          var _this7 = this;
 
           // remove user from local storage to log user out
           return this.http.get("".concat(_environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].apiURL, "/auth/logout")).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["map"])(function (user) {
             localStorage.removeItem('currentUser');
 
-            _this4.currentUserSubject.next(null);
+            _this7.currentUserSubject.next(null);
           }));
           localStorage.removeItem('currentUser');
           this.currentUserSubject.next(null);
@@ -1538,31 +1686,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony import */
 
 
-    var _pages_login_login_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
-    /*! ./pages/login/login.component */
-    "./src/app/modules/home/pages/login/login.component.ts");
-    /* harmony import */
-
-
-    var _pages_profile_profile_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
+    var _pages_profile_profile_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
     /*! ./pages/profile/profile.component */
     "./src/app/modules/home/pages/profile/profile.component.ts");
     /* harmony import */
 
 
-    var _pages_announcementsManager_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
+    var _pages_announcementsManager_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
     /*! ./pages/announcementsManager/create-announcement/create-announcement.component */
     "./src/app/modules/home/pages/announcementsManager/create-announcement/create-announcement.component.ts");
     /* harmony import */
 
 
-    var _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
+    var _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
     /*! @app/core/services/authentication.service */
     "./src/app/core/services/authentication.service.ts");
     /* harmony import */
 
 
-    var _pages_announcementsManager_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(
+    var _pages_announcementsManager_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
     /*! ./pages/announcementsManager/edit-announcement/edit-announcement.component */
     "./src/app/modules/home/pages/announcementsManager/edit-announcement/edit-announcement.component.ts");
 
@@ -1573,23 +1715,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       path: 'course-library',
       component: _pages_course_browser_course_browser_component__WEBPACK_IMPORTED_MODULE_3__["CourseBrowserComponent"]
     }, {
-      path: 'login',
-      component: _pages_login_login_component__WEBPACK_IMPORTED_MODULE_4__["LoginComponent"]
-    }, {
       path: 'profile',
-      component: _pages_profile_profile_component__WEBPACK_IMPORTED_MODULE_5__["ProfileComponent"],
-      canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_7__["AuthenticationService"]]
+      component: _pages_profile_profile_component__WEBPACK_IMPORTED_MODULE_4__["ProfileComponent"],
+      canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_6__["AuthenticationService"]]
     }, {
       path: 'create-announcement',
-      component: _pages_announcementsManager_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_6__["CreateAnnouncementComponent"],
-      canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_7__["AuthenticationService"]],
+      component: _pages_announcementsManager_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_5__["CreateAnnouncementComponent"],
+      canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_6__["AuthenticationService"]],
       data: {
         expectedRole: 'admin'
       }
     }, {
       path: 'edit-announcement/:id',
-      component: _pages_announcementsManager_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_8__["EditAnnouncementComponent"],
-      canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_7__["AuthenticationService"]],
+      component: _pages_announcementsManager_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_7__["EditAnnouncementComponent"],
+      canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_6__["AuthenticationService"]],
       data: {
         expectedRole: 'admin'
       }
@@ -1726,73 +1865,67 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony import */
 
 
-    var _pages_login_login_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(
-    /*! ./pages/login/login.component */
-    "./src/app/modules/home/pages/login/login.component.ts");
-    /* harmony import */
-
-
-    var _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(
+    var _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(
     /*! @angular/material/autocomplete */
     "./node_modules/@angular/material/__ivy_ngcc__/fesm2015/autocomplete.js");
     /* harmony import */
 
 
-    var _angular_material_button__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(
+    var _angular_material_button__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(
     /*! @angular/material/button */
     "./node_modules/@angular/material/__ivy_ngcc__/fesm2015/button.js");
     /* harmony import */
 
 
-    var _angular_material_card__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(
+    var _angular_material_card__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(
     /*! @angular/material/card */
     "./node_modules/@angular/material/__ivy_ngcc__/fesm2015/card.js");
     /* harmony import */
 
 
-    var _angular_material_core__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(
+    var _angular_material_core__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(
     /*! @angular/material/core */
     "./node_modules/@angular/material/__ivy_ngcc__/fesm2015/core.js");
     /* harmony import */
 
 
-    var _angular_material_icon__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(
+    var _angular_material_icon__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(
     /*! @angular/material/icon */
     "./node_modules/@angular/material/__ivy_ngcc__/fesm2015/icon.js");
     /* harmony import */
 
 
-    var _pages_profile_profile_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(
+    var _pages_profile_profile_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(
     /*! ./pages/profile/profile.component */
     "./src/app/modules/home/pages/profile/profile.component.ts");
     /* harmony import */
 
 
-    var _pages_announcementsManager_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(
+    var _pages_announcementsManager_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(
     /*! ./pages/announcementsManager/create-announcement/create-announcement.component */
     "./src/app/modules/home/pages/announcementsManager/create-announcement/create-announcement.component.ts");
     /* harmony import */
 
 
-    var _pages_announcementsManager_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(
+    var _pages_announcementsManager_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(
     /*! ./pages/announcementsManager/edit-announcement/edit-announcement.component */
     "./src/app/modules/home/pages/announcementsManager/edit-announcement/edit-announcement.component.ts");
     /* harmony import */
 
 
-    var _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(
+    var _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(
     /*! @greg-md/ng-facebook */
     "./node_modules/@greg-md/ng-facebook/__ivy_ngcc__/fesm2015/greg-md-ng-facebook.js");
     /* harmony import */
 
 
-    var angularx_social_login__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(
+    var angularx_social_login__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(
     /*! angularx-social-login */
     "./node_modules/angularx-social-login/__ivy_ngcc__/angularx-social-login.js");
 
-    var config = new angularx_social_login__WEBPACK_IMPORTED_MODULE_21__["AuthServiceConfig"]([{
-      id: angularx_social_login__WEBPACK_IMPORTED_MODULE_21__["FacebookLoginProvider"].PROVIDER_ID,
-      provider: new angularx_social_login__WEBPACK_IMPORTED_MODULE_21__["FacebookLoginProvider"]('903187940138780')
+    var config = new angularx_social_login__WEBPACK_IMPORTED_MODULE_20__["AuthServiceConfig"]([{
+      id: angularx_social_login__WEBPACK_IMPORTED_MODULE_20__["FacebookLoginProvider"].PROVIDER_ID,
+      provider: new angularx_social_login__WEBPACK_IMPORTED_MODULE_20__["FacebookLoginProvider"]('903187940138780')
     }]);
 
     function provideConfig() {
@@ -1811,16 +1944,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         return new (t || HomeModule)();
       },
       providers: [_core_services_course_service__WEBPACK_IMPORTED_MODULE_10__["CourseService"], {
-        provide: angularx_social_login__WEBPACK_IMPORTED_MODULE_21__["AuthServiceConfig"],
+        provide: angularx_social_login__WEBPACK_IMPORTED_MODULE_20__["AuthServiceConfig"],
         useFactory: provideConfig
       }],
-      imports: [[_angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"], _home_routing_module__WEBPACK_IMPORTED_MODULE_8__["HomeRoutingModule"], _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClientModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormsModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["ReactiveFormsModule"], _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_3__["NgbModule"], angularx_social_login__WEBPACK_IMPORTED_MODULE_21__["SocialLoginModule"], _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_5__["BrowserAnimationsModule"], _angular_material_icon__WEBPACK_IMPORTED_MODULE_16__["MatIconModule"], _angular_material_button__WEBPACK_IMPORTED_MODULE_13__["MatButtonModule"], _angular_material_card__WEBPACK_IMPORTED_MODULE_14__["MatCardModule"], _angular_material_core__WEBPACK_IMPORTED_MODULE_15__["MatOptionModule"], _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_12__["MatAutocompleteModule"], _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_6__["CKEditorModule"], _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_20__["FacebookModule"]]]
+      imports: [[_angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"], _home_routing_module__WEBPACK_IMPORTED_MODULE_8__["HomeRoutingModule"], _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClientModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormsModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["ReactiveFormsModule"], _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_3__["NgbModule"], angularx_social_login__WEBPACK_IMPORTED_MODULE_20__["SocialLoginModule"], _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_5__["BrowserAnimationsModule"], _angular_material_icon__WEBPACK_IMPORTED_MODULE_15__["MatIconModule"], _angular_material_button__WEBPACK_IMPORTED_MODULE_12__["MatButtonModule"], _angular_material_card__WEBPACK_IMPORTED_MODULE_13__["MatCardModule"], _angular_material_core__WEBPACK_IMPORTED_MODULE_14__["MatOptionModule"], _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_11__["MatAutocompleteModule"], _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_6__["CKEditorModule"], _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_19__["FacebookModule"]]]
     });
 
     (function () {
       (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsetNgModuleScope"](HomeModule, {
-        declarations: [_pages_home_home_component__WEBPACK_IMPORTED_MODULE_7__["HomeComponent"], _pages_course_browser_course_browser_component__WEBPACK_IMPORTED_MODULE_9__["CourseBrowserComponent"], _pages_login_login_component__WEBPACK_IMPORTED_MODULE_11__["LoginComponent"], _pages_profile_profile_component__WEBPACK_IMPORTED_MODULE_17__["ProfileComponent"], _pages_announcementsManager_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_18__["CreateAnnouncementComponent"], _pages_announcementsManager_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_19__["EditAnnouncementComponent"]],
-        imports: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"], _home_routing_module__WEBPACK_IMPORTED_MODULE_8__["HomeRoutingModule"], _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClientModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormsModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["ReactiveFormsModule"], _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_3__["NgbModule"], angularx_social_login__WEBPACK_IMPORTED_MODULE_21__["SocialLoginModule"], _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_5__["BrowserAnimationsModule"], _angular_material_icon__WEBPACK_IMPORTED_MODULE_16__["MatIconModule"], _angular_material_button__WEBPACK_IMPORTED_MODULE_13__["MatButtonModule"], _angular_material_card__WEBPACK_IMPORTED_MODULE_14__["MatCardModule"], _angular_material_core__WEBPACK_IMPORTED_MODULE_15__["MatOptionModule"], _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_12__["MatAutocompleteModule"], _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_6__["CKEditorModule"], _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_20__["FacebookModule"]]
+        declarations: [_pages_home_home_component__WEBPACK_IMPORTED_MODULE_7__["HomeComponent"], _pages_course_browser_course_browser_component__WEBPACK_IMPORTED_MODULE_9__["CourseBrowserComponent"], _pages_profile_profile_component__WEBPACK_IMPORTED_MODULE_16__["ProfileComponent"], _pages_announcementsManager_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_17__["CreateAnnouncementComponent"], _pages_announcementsManager_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_18__["EditAnnouncementComponent"]],
+        imports: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"], _home_routing_module__WEBPACK_IMPORTED_MODULE_8__["HomeRoutingModule"], _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClientModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormsModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["ReactiveFormsModule"], _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_3__["NgbModule"], angularx_social_login__WEBPACK_IMPORTED_MODULE_20__["SocialLoginModule"], _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_5__["BrowserAnimationsModule"], _angular_material_icon__WEBPACK_IMPORTED_MODULE_15__["MatIconModule"], _angular_material_button__WEBPACK_IMPORTED_MODULE_12__["MatButtonModule"], _angular_material_card__WEBPACK_IMPORTED_MODULE_13__["MatCardModule"], _angular_material_core__WEBPACK_IMPORTED_MODULE_14__["MatOptionModule"], _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_11__["MatAutocompleteModule"], _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_6__["CKEditorModule"], _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_19__["FacebookModule"]]
       });
     })();
     /*@__PURE__*/
@@ -1830,10 +1963,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](HomeModule, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["NgModule"],
         args: [{
-          declarations: [_pages_home_home_component__WEBPACK_IMPORTED_MODULE_7__["HomeComponent"], _pages_course_browser_course_browser_component__WEBPACK_IMPORTED_MODULE_9__["CourseBrowserComponent"], _pages_login_login_component__WEBPACK_IMPORTED_MODULE_11__["LoginComponent"], _pages_profile_profile_component__WEBPACK_IMPORTED_MODULE_17__["ProfileComponent"], _pages_announcementsManager_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_18__["CreateAnnouncementComponent"], _pages_announcementsManager_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_19__["EditAnnouncementComponent"]],
-          imports: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"], _home_routing_module__WEBPACK_IMPORTED_MODULE_8__["HomeRoutingModule"], _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClientModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormsModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["ReactiveFormsModule"], _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_3__["NgbModule"], angularx_social_login__WEBPACK_IMPORTED_MODULE_21__["SocialLoginModule"], _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_5__["BrowserAnimationsModule"], _angular_material_icon__WEBPACK_IMPORTED_MODULE_16__["MatIconModule"], _angular_material_button__WEBPACK_IMPORTED_MODULE_13__["MatButtonModule"], _angular_material_card__WEBPACK_IMPORTED_MODULE_14__["MatCardModule"], _angular_material_core__WEBPACK_IMPORTED_MODULE_15__["MatOptionModule"], _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_12__["MatAutocompleteModule"], _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_6__["CKEditorModule"], _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_20__["FacebookModule"]],
+          declarations: [_pages_home_home_component__WEBPACK_IMPORTED_MODULE_7__["HomeComponent"], _pages_course_browser_course_browser_component__WEBPACK_IMPORTED_MODULE_9__["CourseBrowserComponent"], _pages_profile_profile_component__WEBPACK_IMPORTED_MODULE_16__["ProfileComponent"], _pages_announcementsManager_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_17__["CreateAnnouncementComponent"], _pages_announcementsManager_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_18__["EditAnnouncementComponent"]],
+          imports: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"], _home_routing_module__WEBPACK_IMPORTED_MODULE_8__["HomeRoutingModule"], _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClientModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormsModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["ReactiveFormsModule"], _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_3__["NgbModule"], angularx_social_login__WEBPACK_IMPORTED_MODULE_20__["SocialLoginModule"], _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_5__["BrowserAnimationsModule"], _angular_material_icon__WEBPACK_IMPORTED_MODULE_15__["MatIconModule"], _angular_material_button__WEBPACK_IMPORTED_MODULE_12__["MatButtonModule"], _angular_material_card__WEBPACK_IMPORTED_MODULE_13__["MatCardModule"], _angular_material_core__WEBPACK_IMPORTED_MODULE_14__["MatOptionModule"], _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_11__["MatAutocompleteModule"], _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_6__["CKEditorModule"], _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_19__["FacebookModule"]],
           providers: [_core_services_course_service__WEBPACK_IMPORTED_MODULE_10__["CourseService"], {
-            provide: angularx_social_login__WEBPACK_IMPORTED_MODULE_21__["AuthServiceConfig"],
+            provide: angularx_social_login__WEBPACK_IMPORTED_MODULE_20__["AuthServiceConfig"],
             useFactory: provideConfig
           }]
         }]
@@ -1909,7 +2042,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /*#__PURE__*/
     function () {
       function CreateAnnouncementComponent(globalAnnouncementService, authenticationService, router) {
-        var _this5 = this;
+        var _this8 = this;
 
         _classCallCheck(this, CreateAnnouncementComponent);
 
@@ -1919,7 +2052,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.Editor = _ckeditor_ckeditor5_build_classic__WEBPACK_IMPORTED_MODULE_1__;
         this.editorData = "";
         this.authenticationService.currentUser.subscribe(function (x) {
-          return _this5.currentUser = x;
+          return _this8.currentUser = x;
         });
       }
 
@@ -1950,13 +2083,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "createAnnouncement",
         value: function createAnnouncement() {
-          var _this6 = this;
+          var _this9 = this;
 
           var userName = this.currentUser.f_name + " " + this.currentUser.l_name;
           var today = new Date();
           this.globalAnnouncementService.createGlobalAnnouncement(userName, this.editorData, today, today, this.currentUser.id).subscribe(function () {
             //alert("Created announcement");
-            _this6.router.navigate(['/']);
+            _this9.router.navigate(['/']);
           });
         }
       }]);
@@ -2128,18 +2261,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     function EditAnnouncementComponent_ng_container_1_Template(rf, ctx) {
       if (rf & 1) {
-        var _r83 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+        var _r74 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](0);
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "ckeditor", 2);
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("change", function EditAnnouncementComponent_ng_container_1_Template_ckeditor_change_1_listener($event) {
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r83);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r74);
 
-          var ctx_r82 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
+          var ctx_r73 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
 
-          return ctx_r82.onChange($event);
+          return ctx_r73.onChange($event);
         });
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2149,11 +2282,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "button", 3);
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function EditAnnouncementComponent_ng_container_1_Template_button_click_3_listener() {
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r83);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r74);
 
-          var ctx_r84 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
+          var ctx_r75 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
 
-          return ctx_r84.editAnnouncement();
+          return ctx_r75.editAnnouncement();
         });
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](4, "Submit");
@@ -2184,17 +2317,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
 
       if (rf & 2) {
-        var announcement_r81 = ctx.ngIf;
+        var announcement_r72 = ctx.ngIf;
 
-        var ctx_r80 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
+        var ctx_r71 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
 
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("editor", ctx_r80.Editor)("data", ctx_r80.editorData ? ctx_r80.editorData : announcement_r81.content);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("editor", ctx_r71.Editor)("data", ctx_r71.editorData ? ctx_r71.editorData : announcement_r72.content);
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](10);
 
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("innerHTML", ctx_r80.editorData ? ctx_r80.editorData : announcement_r81.content, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsanitizeHtml"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("innerHTML", ctx_r71.editorData ? ctx_r71.editorData : announcement_r72.content, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsanitizeHtml"]);
       }
     }
 
@@ -2202,7 +2335,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /*#__PURE__*/
     function () {
       function EditAnnouncementComponent(globalAnnouncementService, authenticationService, router, route) {
-        var _this7 = this;
+        var _this10 = this;
 
         _classCallCheck(this, EditAnnouncementComponent);
 
@@ -2212,18 +2345,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.route = route;
         this.Editor = _ckeditor_ckeditor5_build_classic__WEBPACK_IMPORTED_MODULE_1__;
         this.authenticationService.currentUser.subscribe(function (x) {
-          return _this7.currentUser = x;
+          return _this10.currentUser = x;
         });
       }
 
       _createClass(EditAnnouncementComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this8 = this;
+          var _this11 = this;
 
           //this.userPayload = decode(this.currentUser.token);
           this.route.params.subscribe(function (params) {
-            _this8.id = params.id;
+            _this11.id = params.id;
           });
           this.globalAnnouncement = this.globalAnnouncementService.fetchGlobalAnnouncementById(this.id); //this.fetchAnnouncementById(this.id);
 
@@ -2245,21 +2378,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "editAnnouncement",
         value: function editAnnouncement() {
-          var _this9 = this;
+          var _this12 = this;
 
           var today = new Date();
           this.globalAnnouncementService.updateGlobalAnnouncement(this.id, this.editorData, today).subscribe(function () {
             //alert("Created announcement");
-            _this9.router.navigate(['/']);
+            _this12.router.navigate(['/']);
           });
         }
       }, {
         key: "fetchAnnouncementById",
         value: function fetchAnnouncementById(id) {
-          var _this10 = this;
+          var _this13 = this;
 
           this.globalAnnouncementService.fetchGlobalAnnouncementById(id).subscribe(function (globalAnnouncementData) {
-            _this10.globalAnnouncementDetails = globalAnnouncementData;
+            _this13.globalAnnouncementDetails = globalAnnouncementData;
             console.log(globalAnnouncementData);
           });
         }
@@ -3112,7 +3245,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /*#__PURE__*/
     function () {
       function CourseBrowserComponent(courseService, studentCourseService, authService, router, route) {
-        var _this11 = this;
+        var _this14 = this;
 
         _classCallCheck(this, CourseBrowserComponent);
 
@@ -3135,7 +3268,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.num = 0;
         this.numberPerPage = 5;
         this.authService.currentUser.subscribe(function (x) {
-          return _this11.currentUser = x;
+          return _this14.currentUser = x;
         });
       }
 
@@ -3160,33 +3293,33 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "fetchCourses",
         value: function fetchCourses(page) {
-          var _this12 = this;
+          var _this15 = this;
 
           this.courseService.getCourses(page, this.numberPerPage).subscribe(function (data) {
-            _this12.courses = data;
-            _this12.page = page;
-            _this12.currentPage = _this12.courses.pagination.current;
-            _this12.maxPages = _this12.courses.pagination.maxPages;
-            _this12.maxPagesArray = new Array(_this12.maxPages);
-            _this12.pages = Object.values(_this12.courses.pagination); //console.log(this.pages);
+            _this15.courses = data;
+            _this15.page = page;
+            _this15.currentPage = _this15.courses.pagination.current;
+            _this15.maxPages = _this15.courses.pagination.maxPages;
+            _this15.maxPagesArray = new Array(_this15.maxPages);
+            _this15.pages = Object.values(_this15.courses.pagination); //console.log(this.pages);
 
             console.log('Data requested...'); //console.log(this.courses.res);
 
-            _this12.courses.res.forEach(function (course, index, arr) {
+            _this15.courses.res.forEach(function (course, index, arr) {
               var start_date = new Date(arr[index].start_date.toString());
               var end_date = new Date(arr[index].end_date.toString());
               arr[index].start_date = start_date.toLocaleDateString();
               arr[index].end_date = end_date.toLocaleDateString();
-              _this12.coursesUnavailable[index] = false;
+              _this15.coursesUnavailable[index] = false;
 
               if (course.seats < 1) {
-                _this12.coursesUnavailable[index] = true;
+                _this15.coursesUnavailable[index] = true;
               }
             }); //console.log('Data requested...');
             //console.log(this.courses);
 
 
-            _this12.router.navigate(['/course-library', {
+            _this15.router.navigate(['/course-library', {
               page: page
             }]);
           });
@@ -3194,7 +3327,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "fetchPageCourses",
         value: function fetchPageCourses(pageNo) {
-          var _this13 = this;
+          var _this16 = this;
 
           console.log("pageNo: " + pageNo);
 
@@ -3204,40 +3337,40 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           this.courseService.getCourses(pageNo, this.numberPerPage).subscribe(function () {
             var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-            _this13.courses = data;
-            _this13.page = pageNo;
-            _this13.currentPage = _this13.courses.pagination.current;
-            _this13.maxPages = _this13.courses.pagination.maxPages;
+            _this16.courses = data;
+            _this16.page = pageNo;
+            _this16.currentPage = _this16.courses.pagination.current;
+            _this16.maxPages = _this16.courses.pagination.maxPages;
 
-            _this13.courses.res.forEach(function (course, index, arr) {
+            _this16.courses.res.forEach(function (course, index, arr) {
               var start_date = new Date(arr[index].start_date.toString());
               var end_date = new Date(arr[index].end_date.toString());
               arr[index].start_date = start_date.toLocaleDateString();
               arr[index].end_date = end_date.toLocaleDateString();
-              _this13.coursesUnavailable[index] = false;
+              _this16.coursesUnavailable[index] = false;
 
               if (course.seats < 1) {
-                _this13.coursesUnavailable[index] = true;
+                _this16.coursesUnavailable[index] = true;
               }
             });
 
             console.log('Data requested...' + pageNo); //console.log(this.courses);
             //console.log("Current page: " + this.courses.pagination.current);
 
-            _this13.router.navigate(['/course-library', {
-              page: _this13.courses.pagination.current
+            _this16.router.navigate(['/course-library', {
+              page: _this16.courses.pagination.current
             }]);
           });
         }
       }, {
         key: "studentEnroll",
         value: function studentEnroll(studentId, courseId, course_name, enrollment_status) {
-          var _this14 = this;
+          var _this17 = this;
 
           // Add student to students_courses table with pending enrollment
           this.courseService.getCourseById(courseId).subscribe(function (course) {
             if (course.seats > 0) {
-              _this14.studentCourseService.enrollStudentToCourse(studentId, courseId, enrollment_status).subscribe(function () {
+              _this17.studentCourseService.enrollStudentToCourse(studentId, courseId, enrollment_status).subscribe(function () {
                 alert("Enrolled for course: " + course_name);
               });
 
@@ -3249,7 +3382,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "searchCourse",
         value: function searchCourse(searchTerm) {
-          var _this15 = this;
+          var _this18 = this;
 
           if (searchTerm == "") {
             this.foundCoursesN = 0;
@@ -3259,14 +3392,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           this.socket.emit('search', searchTerm);
           this.socket.on('search-data', function (course) {
-            _this15.searchedCourses.length = 0;
-            _this15.num++; //console.log(course);
+            _this18.searchedCourses.length = 0;
+            _this18.num++; //console.log(course);
 
             course.forEach(function (val, i, arr) {
-              _this15.searchedCourses.push(arr[i]);
+              _this18.searchedCourses.push(arr[i]);
             });
 
-            _this15.searchCourseFnAll(course);
+            _this18.searchCourseFnAll(course);
           });
         }
       }, {
@@ -3494,15 +3627,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony import */
 
 
-    var angularx_social_login__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
-    /*! angularx-social-login */
-    "./node_modules/angularx-social-login/__ivy_ngcc__/angularx-social-login.js");
+    var ngx_cookie_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
+    /*! ngx-cookie-service */
+    "./node_modules/ngx-cookie-service/__ivy_ngcc__/ngx-cookie-service.js");
     /* harmony import */
 
 
-    var ngx_cookie_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
-    /*! ngx-cookie-service */
-    "./node_modules/ngx-cookie-service/__ivy_ngcc__/ngx-cookie-service.js");
+    var angularx_social_login__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
+    /*! angularx-social-login */
+    "./node_modules/angularx-social-login/__ivy_ngcc__/angularx-social-login.js");
     /* harmony import */
 
 
@@ -3652,7 +3785,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /*#__PURE__*/
     function () {
       function HomeComponent(cookieService, authFB, globalAnnouncementService, authenticationService, studentService, FB) {
-        var _this16 = this;
+        var _this19 = this;
 
         _classCallCheck(this, HomeComponent);
 
@@ -3663,22 +3796,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.studentService = studentService;
         this.FB = FB;
         this.globalAnnouncements = [];
-        this.FB_User = {
-          f_name: '',
-          l_name: '',
-          email: '',
-          role: '',
-          user_id: '',
-          id: 0
-        };
-        this.loggedIn = false;
-        this.fbInitiated = false;
-        this.FB_settings = {
-          appId: '903187940138780',
-          version: 'v6.0'
-        };
         this.authenticationService.currentUser.subscribe(function (x) {
-          return _this16.currentUser = x;
+          return _this19.currentUser = x;
         });
       }
 
@@ -3690,19 +3809,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this17 = this;
+          var _this20 = this;
 
-          console.log(this.currentUser); // fetch announcements
-
+          // fetch announcements
           this.globalAnnouncementService.fetchGlobalAnnouncements().subscribe(function (globalAnnouncementsData) {
-            _this17.globalAnnouncements = globalAnnouncementsData;
+            _this20.globalAnnouncements = globalAnnouncementsData;
           });
-
-          if (!this.currentUser) {
-            this.waitingForFBLogin();
-          } else {
-            return;
-          }
         }
       }, {
         key: "ngOnDestroy",
@@ -3720,112 +3832,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             });
           }
         }
-      }, {
-        key: "waitingForFBLogin",
-        value: function waitingForFBLogin() {
-          var _this18 = this;
-
-          if (!(this.fbInitiated && this.loggedIn)) {
-            // FB Initialization
-            if (this.fbInitiated) {
-              this.FB.init(this.FB_settings).subscribe(function () {
-                console.log("fb initiated");
-                _this18.fbInitiated = true;
-              });
-            }
-
-            this.FBLogin();
-          } else {
-            this.timeoutVar = setTimeout(function () {
-              _this18.waitingForFBLogin();
-            }, 1000);
-            clearTimeout(this.timeoutVar);
-            return;
-          }
-        }
-      }, {
-        key: "FBLogin",
-        value: function FBLogin() {
-          var _this19 = this;
-
-          console.log("FBlogin");
-          this.authFB.signIn(angularx_social_login__WEBPACK_IMPORTED_MODULE_1__["FacebookLoginProvider"].PROVIDER_ID).then(function () {
-            _this19.authFB.authState.subscribe(function (user) {
-              _this19.FB_User.user_id = user.id;
-              _this19.FB_User.email = user.email;
-              _this19.FB_User.f_name = user.firstName;
-              _this19.FB_User.l_name = user.lastName;
-              _this19.loggedIn = user != null;
-
-              if (_this19.loggedIn) {
-                console.log("login successful."); // Check if user is in DB
-
-                console.log(_this19.FB_User.email);
-                var isNewStudent = null;
-
-                _this19.studentService.getStudentByEmail(_this19.FB_User.email).subscribe(function (user) {
-                  // In DB
-                  console.log(user);
-                  _this19.FB_User.role = user.role;
-                  _this19.FB_User.id = user.id;
-                  console.log(_this19.FB_User);
-
-                  _this19.inStudentDB(_this19.FB_User);
-                }, function (error) {
-                  // Not in DB
-                  _this19.FB_User.role = 'student';
-
-                  _this19.notInStudentDB(_this19.FB_User);
-                });
-              }
-            });
-          });
-        }
-      }, {
-        key: "inStudentDB",
-        value: function inStudentDB(FBUser) {
-          var userData = {
-            "email": FBUser.email,
-            "f_name": FBUser.f_name,
-            "l_name": FBUser.l_name,
-            "role": FBUser.role,
-            "user_id": FBUser.user_id,
-            "id": FBUser.id
-          };
-          this.authenticationService.loginWithFB(userData);
-          console.log("Student found in DB, updating info");
-          this.studentService.updateStudent(this.FB_email, userData).subscribe(function () {
-            console.log("updated student");
-          });
-          localStorage.setItem("FB_user", JSON.stringify(userData));
-          console.log(JSON.stringify(userData));
-        }
-      }, {
-        key: "notInStudentDB",
-        value: function notInStudentDB(FBUser) {
-          var userData = {
-            "email": FBUser.email,
-            "f_name": FBUser.f_name,
-            "l_name": FBUser.l_name,
-            "user_id": FBUser.user_id,
-            "id": FBUser.id,
-            "role": FBUser.role
-          };
-          this.authenticationService.loginWithFB(userData);
-          console.log("Student not found in DB, adding");
-          this.studentService.addStudent(userData).subscribe(function () {
-            console.log("added to db");
-          });
-          localStorage.setItem("FB_user", JSON.stringify(userData));
-          console.log(JSON.stringify(userData));
-        }
       }]);
 
       return HomeComponent;
     }();
 
     HomeComponent.ɵfac = function HomeComponent_Factory(t) {
-      return new (t || HomeComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](ngx_cookie_service__WEBPACK_IMPORTED_MODULE_2__["CookieService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](angularx_social_login__WEBPACK_IMPORTED_MODULE_1__["AuthService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__["GlobalAnnouncementService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_4__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_student_service__WEBPACK_IMPORTED_MODULE_5__["StudentService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_6__["FacebookService"]));
+      return new (t || HomeComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](ngx_cookie_service__WEBPACK_IMPORTED_MODULE_1__["CookieService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](angularx_social_login__WEBPACK_IMPORTED_MODULE_2__["AuthService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__["GlobalAnnouncementService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_4__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_student_service__WEBPACK_IMPORTED_MODULE_5__["StudentService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_6__["FacebookService"]));
     };
 
     HomeComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
@@ -3907,9 +3920,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }]
       }], function () {
         return [{
-          type: ngx_cookie_service__WEBPACK_IMPORTED_MODULE_2__["CookieService"]
+          type: ngx_cookie_service__WEBPACK_IMPORTED_MODULE_1__["CookieService"]
         }, {
-          type: angularx_social_login__WEBPACK_IMPORTED_MODULE_1__["AuthService"]
+          type: angularx_social_login__WEBPACK_IMPORTED_MODULE_2__["AuthService"]
         }, {
           type: _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__["GlobalAnnouncementService"]
         }, {
@@ -3918,498 +3931,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           type: _app_core_services_student_service__WEBPACK_IMPORTED_MODULE_5__["StudentService"]
         }, {
           type: _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_6__["FacebookService"]
-        }];
-      }, null);
-    })();
-    /***/
-
-  },
-
-  /***/
-  "./src/app/modules/home/pages/login/login.component.ts":
-  /*!*************************************************************!*\
-    !*** ./src/app/modules/home/pages/login/login.component.ts ***!
-    \*************************************************************/
-
-  /*! exports provided: LoginComponent */
-
-  /***/
-  function srcAppModulesHomePagesLoginLoginComponentTs(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-
-    __webpack_require__.r(__webpack_exports__);
-    /* harmony export (binding) */
-
-
-    __webpack_require__.d(__webpack_exports__, "LoginComponent", function () {
-      return LoginComponent;
-    });
-    /* harmony import */
-
-
-    var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
-    /*! @angular/core */
-    "./node_modules/@angular/core/__ivy_ngcc__/fesm2015/core.js");
-    /* harmony import */
-
-
-    var _angular_forms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
-    /*! @angular/forms */
-    "./node_modules/@angular/forms/__ivy_ngcc__/fesm2015/forms.js");
-    /* harmony import */
-
-
-    var rxjs_operators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
-    /*! rxjs/operators */
-    "./node_modules/rxjs/_esm2015/operators/index.js");
-    /* harmony import */
-
-
-    var angularx_social_login__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
-    /*! angularx-social-login */
-    "./node_modules/angularx-social-login/__ivy_ngcc__/angularx-social-login.js");
-    /* harmony import */
-
-
-    var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
-    /*! @angular/router */
-    "./node_modules/@angular/router/__ivy_ngcc__/fesm2015/router.js");
-    /* harmony import */
-
-
-    var _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
-    /*! @app/core/services/authentication.service */
-    "./src/app/core/services/authentication.service.ts");
-    /* harmony import */
-
-
-    var _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
-    /*! @greg-md/ng-facebook */
-    "./node_modules/@greg-md/ng-facebook/__ivy_ngcc__/fesm2015/greg-md-ng-facebook.js");
-    /* harmony import */
-
-
-    var _app_core_services_student_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
-    /*! @app/core/services/student.service */
-    "./src/app/core/services/student.service.ts");
-    /* harmony import */
-
-
-    var _angular_common__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(
-    /*! @angular/common */
-    "./node_modules/@angular/common/__ivy_ngcc__/fesm2015/common.js");
-
-    function LoginComponent_div_30_div_1_Template(rf, ctx) {
-      if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div");
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1, "Email is required");
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-      }
-    }
-
-    function LoginComponent_div_30_Template(rf, ctx) {
-      if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 21);
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, LoginComponent_div_30_div_1_Template, 2, 0, "div", 22);
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-      }
-
-      if (rf & 2) {
-        var ctx_r70 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r70.f.email.errors.required);
-      }
-    }
-
-    function LoginComponent_div_36_div_1_Template(rf, ctx) {
-      if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div");
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1, "Password is required");
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-      }
-    }
-
-    function LoginComponent_div_36_Template(rf, ctx) {
-      if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 21);
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, LoginComponent_div_36_div_1_Template, 2, 0, "div", 22);
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-      }
-
-      if (rf & 2) {
-        var ctx_r72 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r72.f.password.errors.required);
-      }
-    }
-
-    function LoginComponent_span_38_Template(rf, ctx) {
-      if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "span", 23);
-      }
-    }
-
-    function LoginComponent_div_40_Template(rf, ctx) {
-      if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 24);
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-      }
-
-      if (rf & 2) {
-        var ctx_r74 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ctx_r74.error);
-      }
-    }
-
-    var _c0 = function _c0(a0) {
-      return {
-        "is-invalid": a0
-      };
-    };
-
-    var LoginComponent =
-    /*#__PURE__*/
-    function () {
-      function LoginComponent(formBuilder, route, router, authenticationService, FB, authFB, studentService) {
-        _classCallCheck(this, LoginComponent);
-
-        this.formBuilder = formBuilder;
-        this.route = route;
-        this.router = router;
-        this.authenticationService = authenticationService;
-        this.FB = FB;
-        this.authFB = authFB;
-        this.studentService = studentService;
-        this.loading = false;
-        this.submitted = false;
-        this.error = '';
-        this.loggedIn = false;
-        this.fbInitiated = false;
-        this.FB_settings = {
-          appId: '903187940138780',
-          version: 'v6.0'
-        }; // redirect to home if already logged in
-
-        if (this.authenticationService.currentUserValue) {
-          this.router.navigate(['/']);
-        }
-      }
-
-      _createClass(LoginComponent, [{
-        key: "ngOnInit",
-        value: function ngOnInit() {
-          var _this20 = this;
-
-          this.loginForm = this.formBuilder.group({
-            email: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required],
-            password: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required]
-          }); // get return url from route parameters or default to '/'
-
-          this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/'; //console.log(this.returnUrl);
-
-          if (!this.fbInitiated) {
-            this.FB.init(this.FB_settings).subscribe();
-            console.log("fb initiated");
-            this.fbInitiated = true;
-          }
-
-          if (!this.loggedIn) {
-            this.FBLogin();
-            setTimeout(function () {
-              console.log("loggedIn: " + _this20.loggedIn);
-
-              if (_this20.loggedIn) {
-                console.log("login successful.");
-                var userData = {
-                  "email": _this20.FB_email,
-                  "f_name": _this20.FB_fname,
-                  "l_name": _this20.FB_lname,
-                  "user_id": _this20.FB_id,
-                  "role": _this20.FB_role
-                };
-                console.log(JSON.stringify(userData));
-                localStorage.setItem("FB_user", JSON.stringify(userData));
-                console.log("user data stored. Info:");
-                console.log("full: " + JSON.parse(localStorage.getItem("FB_user")));
-                console.log("name: " + JSON.parse(localStorage.getItem("FB_user")).f_name + " " + JSON.parse(localStorage.getItem("FB_user")).l_name); // Database functions
-                // Student is added (returns error if email already exists, code continues)
-
-                _this20.studentService.addStudent(userData).subscribe(); // Data is updated (in case email already existed but user data is different)
-
-
-                _this20.studentService.updateStudent(_this20.FB_email, userData).subscribe();
-              }
-            }, 1000);
-          }
-        } // convenience getter for easy access to form fields
-
-      }, {
-        key: "onSubmit",
-        value: function onSubmit(email, password) {
-          var _this21 = this;
-
-          this.submitted = true; // stop here if form is invalid
-
-          if (this.loginForm.invalid) {
-            return;
-          } //this.loading = true;
-
-
-          this.authenticationService.login(email, password) // this.f.email.value, this.f.password.value)
-          .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["first"])()).subscribe(function (data) {
-            console.log(data); //this.loading = false;
-
-            _this21.router.navigate([_this21.returnUrl]);
-          }, function (error) {
-            _this21.error = error;
-          });
-        }
-      }, {
-        key: "FBLogin",
-        value: function FBLogin() {
-          var _this22 = this;
-
-          console.log("FBlogin");
-          this.authFB.signIn(angularx_social_login__WEBPACK_IMPORTED_MODULE_3__["FacebookLoginProvider"].PROVIDER_ID);
-          this.authFB.authState.subscribe(function (user) {
-            _this22.FB_id = user.id;
-            _this22.FB_email = user.email;
-            _this22.FB_fname = user.firstName;
-            _this22.FB_lname = user.lastName;
-            _this22.loggedIn = user != null;
-          });
-          console.log(this.FB_id);
-          console.log(this.FB_email); //localStorage.setItem("FB_email", this.FB_email);
-          //localStorage.setItem("FB_id", this.FB_id);
-          //localStorage.setItem("FB_name", this.FB_name);
-        }
-      }, {
-        key: "f",
-        get: function get() {
-          return this.loginForm.controls;
-        }
-      }]);
-
-      return LoginComponent;
-    }();
-
-    LoginComponent.ɵfac = function LoginComponent_Factory(t) {
-      return new (t || LoginComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormBuilder"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_4__["ActivatedRoute"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_5__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_6__["FacebookService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](angularx_social_login__WEBPACK_IMPORTED_MODULE_3__["AuthService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_student_service__WEBPACK_IMPORTED_MODULE_7__["StudentService"]));
-    };
-
-    LoginComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
-      type: LoginComponent,
-      selectors: [["app-login"]],
-      decls: 41,
-      vars: 12,
-      consts: [[1, "col-md-6", "offset-md-3", "mt-5"], [1, "row", "justify-content-center"], [1, "alert", "alert-info"], [2, "color", "red"], [2, "color", "green"], [2, "color", "blue"], [1, "card"], [1, "card-header"], [1, "card-body"], [3, "formGroup", "ngSubmit"], [1, "form-group"], ["for", "email"], ["type", "text", "formControlName", "email", 1, "form-control", 3, "ngClass"], ["email", ""], ["class", "invalid-feedback", 4, "ngIf"], ["for", "password"], ["type", "password", "formControlName", "password", 1, "form-control", 3, "ngClass"], ["password", ""], [1, "btn", "btn-primary", 3, "disabled"], ["class", "spinner-border spinner-border-sm mr-1", 4, "ngIf"], ["class", "alert alert-danger mt-3 mb-0", 4, "ngIf"], [1, "invalid-feedback"], [4, "ngIf"], [1, "spinner-border", "spinner-border-sm", "mr-1"], [1, "alert", "alert-danger", "mt-3", "mb-0"]],
-      template: function LoginComponent_Template(rf, ctx) {
-        if (rf & 1) {
-          var _r77 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 1);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "div", 2);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "h4", 3);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](4, "Admin");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](5, " email: doe@mail.com");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](6, "br");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](7, " Password: pass ");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "div", 2);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "h4", 4);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](10, "Instructor");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](11, " email: mail2@mail.edu");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](12, "br");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](13, " Password: pass ");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](14, "div", 2);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](15, "h4", 5);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](16, "Student");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](17, " email: mail3@mail.edu");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](18, "br");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](19, " Password: pass ");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](20, "div", 6);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](21, "h4", 7);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](22, "Login to LMS-FIU");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](23, "div", 8);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](24, "form", 9);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("ngSubmit", function LoginComponent_Template_form_ngSubmit_24_listener() {
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r77);
-
-            var _r69 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵreference"](29);
-
-            var _r71 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵreference"](35);
-
-            return ctx.onSubmit(_r69.value, _r71.value);
-          });
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](25, "div", 10);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](26, "label", 11);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](27, "Email");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](28, "input", 12, 13);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](30, LoginComponent_div_30_Template, 2, 1, "div", 14);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](31, "div", 10);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](32, "label", 15);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](33, "Password");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](34, "input", 16, 17);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](36, LoginComponent_div_36_Template, 2, 1, "div", 14);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](37, "button", 18);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](38, LoginComponent_span_38_Template, 1, 0, "span", 19);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](39, " Login ");
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](40, LoginComponent_div_40_Template, 2, 1, "div", 20);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        }
-
-        if (rf & 2) {
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](24);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formGroup", ctx.loginForm);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](8, _c0, ctx.submitted && ctx.f.email.errors));
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.submitted && ctx.f.email.errors);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](10, _c0, ctx.submitted && ctx.f.password.errors));
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.submitted && ctx.f.password.errors);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("disabled", ctx.loading);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.loading);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.error);
-        }
-      },
-      directives: [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵangular_packages_forms_forms_y"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroupDirective"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["DefaultValueAccessor"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControlName"], _angular_common__WEBPACK_IMPORTED_MODULE_8__["NgClass"], _angular_common__WEBPACK_IMPORTED_MODULE_8__["NgIf"]],
-      styles: [".example-container[_ngcontent-%COMP%] {\n  position: relative;\n  padding: 5px;\n  background-color: aqua;\n}\n\n.example-loading-shade[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 0;\n  left: 0;\n  bottom: 56px;\n  right: 0;\n  background: rgba(0, 0, 0, 0.15);\n  z-index: 1;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.example-card[_ngcontent-%COMP%] {\n  margin: 5px;\n  padding-bottom: 40px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbW9kdWxlcy9ob21lL3BhZ2VzL2xvZ2luL0M6XFxVc2Vyc1xcTmljb2xhc1xcRGVza3RvcFxcTE1TRklVLUZCXFxsbXMtZml1LWZiLWNsaWVudC9zcmNcXGFwcFxcbW9kdWxlc1xcaG9tZVxccGFnZXNcXGxvZ2luXFxsb2dpbi5jb21wb25lbnQuc2NzcyIsInNyYy9hcHAvbW9kdWxlcy9ob21lL3BhZ2VzL2xvZ2luL2xvZ2luLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksa0JBQUE7RUFDQSxZQUFBO0VBQ0Esc0JBQUE7QUNDSjs7QURFRTtFQUNFLGtCQUFBO0VBQ0EsTUFBQTtFQUNBLE9BQUE7RUFDQSxZQUFBO0VBQ0EsUUFBQTtFQUNBLCtCQUFBO0VBQ0EsVUFBQTtFQUNBLGFBQUE7RUFDQSxtQkFBQTtFQUNBLHVCQUFBO0FDQ0o7O0FERUU7RUFDRSxXQUFBO0VBQ0Esb0JBQUE7QUNDSiIsImZpbGUiOiJzcmMvYXBwL21vZHVsZXMvaG9tZS9wYWdlcy9sb2dpbi9sb2dpbi5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIi5leGFtcGxlLWNvbnRhaW5lciB7XG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgIHBhZGRpbmc6IDVweDtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBhcXVhO1xuICB9XG4gIFxuICAuZXhhbXBsZS1sb2FkaW5nLXNoYWRlIHtcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgdG9wOiAwO1xuICAgIGxlZnQ6IDA7XG4gICAgYm90dG9tOiA1NnB4O1xuICAgIHJpZ2h0OiAwO1xuICAgIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC4xNSk7XG4gICAgei1pbmRleDogMTtcbiAgICBkaXNwbGF5OiBmbGV4O1xuICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gIH1cbiAgXG4gIC5leGFtcGxlLWNhcmQge1xuICAgIG1hcmdpbjogNXB4O1xuICAgIHBhZGRpbmctYm90dG9tOiA0MHB4O1xuICB9IiwiLmV4YW1wbGUtY29udGFpbmVyIHtcbiAgcG9zaXRpb246IHJlbGF0aXZlO1xuICBwYWRkaW5nOiA1cHg7XG4gIGJhY2tncm91bmQtY29sb3I6IGFxdWE7XG59XG5cbi5leGFtcGxlLWxvYWRpbmctc2hhZGUge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIHRvcDogMDtcbiAgbGVmdDogMDtcbiAgYm90dG9tOiA1NnB4O1xuICByaWdodDogMDtcbiAgYmFja2dyb3VuZDogcmdiYSgwLCAwLCAwLCAwLjE1KTtcbiAgei1pbmRleDogMTtcbiAgZGlzcGxheTogZmxleDtcbiAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG59XG5cbi5leGFtcGxlLWNhcmQge1xuICBtYXJnaW46IDVweDtcbiAgcGFkZGluZy1ib3R0b206IDQwcHg7XG59Il19 */"]
-    });
-    /*@__PURE__*/
-
-    (function () {
-      _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](LoginComponent, [{
-        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
-        args: [{
-          selector: 'app-login',
-          templateUrl: './login.component.html',
-          styleUrls: ['./login.component.scss']
-        }]
-      }], function () {
-        return [{
-          type: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormBuilder"]
-        }, {
-          type: _angular_router__WEBPACK_IMPORTED_MODULE_4__["ActivatedRoute"]
-        }, {
-          type: _angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]
-        }, {
-          type: _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_5__["AuthenticationService"]
-        }, {
-          type: _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_6__["FacebookService"]
-        }, {
-          type: angularx_social_login__WEBPACK_IMPORTED_MODULE_3__["AuthService"]
-        }, {
-          type: _app_core_services_student_service__WEBPACK_IMPORTED_MODULE_7__["StudentService"]
         }];
       }, null);
     })();
@@ -4487,23 +4008,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
 
       if (rf & 2) {
-        var user_r79 = ctx.ngIf;
+        var user_r70 = ctx.ngIf;
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
 
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](user_r79.role);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](user_r70.role);
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
 
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](user_r79.email);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](user_r70.email);
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
 
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](user_r79.f_name);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](user_r70.f_name);
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
 
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](user_r79.l_name);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](user_r70.l_name);
       }
     }
 
@@ -4519,11 +4040,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(ProfileComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this23 = this;
+          var _this21 = this;
 
           this.authService.getProfile().subscribe(function (data) {
-            _this23.profileData = data;
-            console.log(_this23.profileData);
+            _this21.profileData = data;
+            console.log(_this21.profileData);
             console.log("The profile data is: " + JSON.stringify(data));
           });
           /*this.authService.getTest().subscribe((data) => {
@@ -4788,7 +4309,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }
 
-    function HeaderComponent_ul_17_Template(rf, ctx) {
+    function HeaderComponent_ul_18_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "ul", 6);
 
@@ -4838,7 +4359,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /*#__PURE__*/
     function () {
       function HeaderComponent(router, authenticationService, FB, authFB) {
-        var _this24 = this;
+        var _this22 = this;
 
         _classCallCheck(this, HeaderComponent);
 
@@ -4846,79 +4367,56 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.authenticationService = authenticationService;
         this.FB = FB;
         this.authFB = authFB;
+        this.isAdmin = null;
         this.authenticationService.currentUser.subscribe(function (x) {
-          return _this24.currentUser = x;
+          return _this22.currentUser = x;
         });
       }
 
       _createClass(HeaderComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          console.log("header OnInit");
-          console.log(this.currentUser);
+          var _this23 = this;
 
-          if (this.currentUser.role == "admin") {
-            this.isAdmin = true;
-          }
+          console.log("header OnInit");
+          console.log(this.currentUser); //async
 
           this.currentUserAsync = this.authenticationService.currentUser;
-        }
-      }, {
-        key: "ngOnChanges",
-        value: function ngOnChanges() {
-          var _this25 = this;
+          this.authenticationService.currentUser.subscribe(function (user) {
+            _this23.isAdmin = Promise.resolve(true);
+          }); //this.waitForCurrentUser();
 
-          this.authenticationService.currentUser.subscribe(function (x) {
-            console.log("header on changes subscribed");
-            _this25.currentUser = x;
-            console.log(_this25.currentUser);
-          });
-          console.log("header on changes");
           console.log(this.currentUser);
-
-          if (this.currentUser.role == "admin") {
-            this.isAdmin = true;
-          }
-
-          this.currentUserAsync = this.authenticationService.currentUser.subscribe();
         }
       }, {
-        key: "ngAfterViewInit",
-        value: function ngAfterViewInit() {
-          this.FB_user = JSON.parse(localStorage.getItem("FB_user"));
+        key: "waitForCurrentUser",
+        value: function waitForCurrentUser() {
+          var _this24 = this;
 
-          if (this.FB_user) {
-            if (this.FB_user.role == "admin") {
-              this.isAdmin = true;
+          if (this.currentUser) {
+            this.authenticationService.currentUser.subscribe(function (x) {
+              console.log("header on changes subscribed");
+              _this24.currentUser = x;
+              console.log(_this24.currentUser);
+            });
+            console.log("header on changes");
+            console.log(this.currentUser);
+
+            if (this.currentUser.role == "admin") {
+              this.isAdmin = Promise.resolve(true);
             }
+
+            this.currentUserAsync = this.authenticationService.currentUser;
+            console.log("currentUserAsync set");
+          } else {
+            this.timeoutVar = setTimeout(function () {
+              _this24.waitForCurrentUser();
+            }, 1000);
           }
         }
-        /*reInit(){
-          this.authenticationService.currentUser.subscribe(x => {
-            this.currentUser = x;
-            //this.tokenPayload = decode(this.currentUser.token);
-          });
-          //console.log("CurrentUser: " + JSON.stringify(this.currentUser));
-          if(this.currentUser)
-            var myInterval = setTimeout(() => {
-              console.log("User Header0: " + this.currentUser.token);
-            //console.log("User Header: " + localStorage.getItem('currentUser'));
-            if(this.authenticationService.currentUserValue){
-              this.tokenPayload = decode(this.currentUser.token);
-            }
-            }, 1000);
-        }*/
-
       }, {
         key: "logout",
         value: function logout() {
-          /*
-          this.authenticationService.logout().subscribe(() => {
-            console.log("Logged out");
-            this.router.navigate(['/login']);
-          });
-          //this.router.navigate(['/login']);
-          */
           this.authFB.signOut();
           this.router.navigate(['/login']);
         }
@@ -4934,9 +4432,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     HeaderComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
       type: HeaderComponent,
       selectors: [["app-header"]],
-      features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]],
-      decls: 19,
-      vars: 6,
+      decls: 20,
+      vars: 8,
       consts: [[1, "navbar", "navbar-expand-lg", "navbar-dark", "lms-bg"], ["routerLink", "/", 1, "navbar-brand"], ["src", "../../../assets/android-chrome-512x512.png", "alt", "FIU Logo", "width", "32", "height", "32"], ["type", "button", "data-toggle", "collapse", "data-target", "#navbarNav", "aria-controls", "navbarNav", "aria-expanded", "false", "aria-label", "Toggle navigation", 1, "navbar-toggler"], [1, "navbar-toggler-icon"], ["id", "navbarNav", 1, "collapse", "navbar-collapse"], [1, "navbar-nav"], [1, "nav-item"], ["routerLink", "/", "routerLinkActive", "active", 1, "nav-link", 3, "routerLinkActiveOptions"], ["routerLink", "/course-library", "routerLinkActive", "active", 1, "nav-link"], ["routerLink", "/courses", "routerLinkActive", "active", 1, "nav-link"], ["class", "nav-item", 4, "ngIf"], ["class", "navbar-nav", 4, "ngIf"], ["routerLink", "/admin", "routerLinkActive", "active", 1, "nav-link"], [1, "nav-welcome"]],
       template: function HeaderComponent_Template(rf, ctx) {
         if (rf & 1) {
@@ -4990,13 +4487,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](16, HeaderComponent_li_16_Template, 3, 0, "li", 11);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](17, "async");
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](17, HeaderComponent_ul_17_Template, 7, 3, "ul", 12);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](18, "async");
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](18, HeaderComponent_ul_18_Template, 7, 3, "ul", 12);
+
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](19, "async");
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         }
@@ -5004,15 +4503,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (rf & 2) {
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](8);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLinkActiveOptions", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](5, _c0));
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLinkActiveOptions", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](7, _c0));
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](8);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.isAdmin);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](17, 3, ctx.isAdmin));
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](18, 3, ctx.currentUserAsync));
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](19, 5, ctx.currentUserAsync));
         }
       },
       directives: [_ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_5__["NgbNavbar"], _angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterLinkWithHref"], _angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterLinkActive"], _angular_common__WEBPACK_IMPORTED_MODULE_6__["NgIf"]],

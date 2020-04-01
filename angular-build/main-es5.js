@@ -230,12 +230,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.authFB = authFB;
         this.title = 'LMS-FIU';
         this.FB_User = {
+          id: 0,
+          email: '',
           f_name: '',
           l_name: '',
-          email: '',
-          role: '',
           user_id: '',
-          id: 0
+          role: ''
         };
         this.loggedIn = false;
         this.fbInitiated = false;
@@ -312,8 +312,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 _this4.studentService.getStudentByEmail(_this4.FB_User.email).subscribe(function (user) {
                   // In DB
                   console.log(user);
-                  _this4.FB_User.role = user[0].role;
-                  _this4.FB_User.id = user[0].id;
+                  _this4.FB_User.role = user.role;
+                  _this4.FB_User.id = user.id;
                   console.log(_this4.FB_User);
 
                   _this4.inStudentDB(_this4.FB_User);
@@ -331,12 +331,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         key: "inStudentDB",
         value: function inStudentDB(FBUser) {
           var userData = {
+            "id": FBUser.id,
             "email": FBUser.email,
             "f_name": FBUser.f_name,
             "l_name": FBUser.l_name,
-            "role": FBUser.role,
             "user_id": FBUser.user_id,
-            "id": FBUser.id
+            "role": FBUser.role
           };
           this.authenticationService.loginWithFB(userData);
           console.log("Student found in DB, updating info");
@@ -345,26 +345,29 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             console.log("updated student");
           });
           localStorage.setItem("FB_user", JSON.stringify(userData));
-          console.log(JSON.stringify(userData));
+          console.log(userData);
         }
       }, {
         key: "notInStudentDB",
         value: function notInStudentDB(FBUser) {
           var userData = {
+            "id": '',
             "email": FBUser.email,
             "f_name": FBUser.f_name,
             "l_name": FBUser.l_name,
             "user_id": FBUser.user_id,
-            "id": FBUser.id,
             "role": FBUser.role
           };
           this.authenticationService.loginWithFB(userData);
           console.log("Student not found in DB, adding");
-          this.studentService.addStudent(userData).subscribe(function () {
+          this.studentService.addStudent(userData).subscribe(function (user) {
+            console.log(user);
+            console.log(user.id);
+            userData.id = user.id;
             console.log("added to db");
+            localStorage.setItem("FB_user", JSON.stringify(userData));
+            console.log(userData);
           });
-          localStorage.setItem("FB_user", JSON.stringify(userData));
-          console.log(JSON.stringify(userData));
         }
       }]);
 

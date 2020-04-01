@@ -22,12 +22,12 @@ export class AppComponent {
   FB_email: string;
   FB_role: string;
   FB_User = {
+    id: 0,
+    email: '',
     f_name: '',
     l_name: '',
-    email: '',
-    role: '',
     user_id: '',
-    id: 0
+    role: ''
   }
   loggedIn = false;
   fbInitiated = false;
@@ -94,8 +94,8 @@ export class AppComponent {
           this.studentService.getStudentByEmail(this.FB_User.email).subscribe((user: any) => {
             // In DB
             console.log(user);
-            this.FB_User.role = user[0].role;
-            this.FB_User.id = user[0].id;
+            this.FB_User.role = user.role;
+            this.FB_User.id = user.id;
             console.log(this.FB_User);
             this.inStudentDB(this.FB_User);
           }, (error) => {
@@ -111,12 +111,12 @@ export class AppComponent {
 
   inStudentDB(FBUser: any) {
     const userData = {
+      "id": FBUser.id,
       "email": FBUser.email,
       "f_name": FBUser.f_name,
       "l_name": FBUser.l_name,
-      "role": FBUser.role,
       "user_id": FBUser.user_id,
-      "id": FBUser.id
+      "role": FBUser.role
     };
     this.authenticationService.loginWithFB(userData);
 
@@ -131,11 +131,11 @@ export class AppComponent {
 
   notInStudentDB(FBUser: any) {
     let userData = {
+      "id": '',
       "email": FBUser.email,
       "f_name": FBUser.f_name,
       "l_name": FBUser.l_name,
       "user_id": FBUser.user_id,
-      "id": '',
       "role": FBUser.role
     };
 

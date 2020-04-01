@@ -100,12 +100,12 @@ class AppComponent {
         this.authFB = authFB;
         this.title = 'LMS-FIU';
         this.FB_User = {
+            id: 0,
+            email: '',
             f_name: '',
             l_name: '',
-            email: '',
-            role: '',
             user_id: '',
-            id: 0
+            role: ''
         };
         this.loggedIn = false;
         this.fbInitiated = false;
@@ -160,8 +160,8 @@ class AppComponent {
                     this.studentService.getStudentByEmail(this.FB_User.email).subscribe((user) => {
                         // In DB
                         console.log(user);
-                        this.FB_User.role = user[0].role;
-                        this.FB_User.id = user[0].id;
+                        this.FB_User.role = user.role;
+                        this.FB_User.id = user.id;
                         console.log(this.FB_User);
                         this.inStudentDB(this.FB_User);
                     }, (error) => {
@@ -175,12 +175,12 @@ class AppComponent {
     }
     inStudentDB(FBUser) {
         const userData = {
+            "id": FBUser.id,
             "email": FBUser.email,
             "f_name": FBUser.f_name,
             "l_name": FBUser.l_name,
-            "role": FBUser.role,
             "user_id": FBUser.user_id,
-            "id": FBUser.id
+            "role": FBUser.role
         };
         this.authenticationService.loginWithFB(userData);
         console.log("Student found in DB, updating info");
@@ -189,24 +189,27 @@ class AppComponent {
             console.log("updated student");
         });
         localStorage.setItem("FB_user", JSON.stringify(userData));
-        console.log(JSON.stringify(userData));
+        console.log(userData);
     }
     notInStudentDB(FBUser) {
-        const userData = {
+        let userData = {
+            "id": '',
             "email": FBUser.email,
             "f_name": FBUser.f_name,
             "l_name": FBUser.l_name,
             "user_id": FBUser.user_id,
-            "id": FBUser.id,
             "role": FBUser.role
         };
         this.authenticationService.loginWithFB(userData);
         console.log("Student not found in DB, adding");
-        this.studentService.addStudent(userData).subscribe(() => {
+        this.studentService.addStudent(userData).subscribe((user) => {
+            console.log(user);
+            console.log(user.id);
+            userData.id = user.id;
             console.log("added to db");
+            localStorage.setItem("FB_user", JSON.stringify(userData));
+            console.log(userData);
         });
-        localStorage.setItem("FB_user", JSON.stringify(userData));
-        console.log(JSON.stringify(userData));
     }
 }
 AppComponent.ɵfac = function AppComponent_Factory(t) { return new (t || AppComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_core_services_student_service__WEBPACK_IMPORTED_MODULE_4__["StudentService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_5__["FacebookService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](angularx_social_login__WEBPACK_IMPORTED_MODULE_1__["AuthService"])); };

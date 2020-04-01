@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "local": "ng build && node server.js"
+    "local": "ng build && nodemon server.js"
   },
   "private": true,
   "dependencies": {

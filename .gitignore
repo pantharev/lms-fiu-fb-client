@@ -49,3 +49,6 @@ Thumbs.db
 
 # User data
 /node_localStorage
+
+# Build files
+/angular-build

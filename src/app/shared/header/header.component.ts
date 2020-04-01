@@ -31,7 +31,7 @@ export class HeaderComponent implements OnInit, OnChanges {
     if(this.currentUser.role == "admin"){
       this.isAdmin = true;
     }
-    this.currentUserAsync = this.authenticationService.currentUser.subscribe();
+    this.currentUserAsync = this.authenticationService.currentUser;
   }
 
   ngOnChanges(){

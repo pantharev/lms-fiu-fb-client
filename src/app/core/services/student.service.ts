@@ -13,6 +13,10 @@ export class StudentService {
     return this.http.get(`${environment.apiURL}/students`);
   }
 
+  getInstructors(){
+    return this.http.get(`${environment.apiURL}/students/i`);
+  }
+
   addStudent(student) {
     return this.http.post(`${environment.apiURL}/students`, student);
   }

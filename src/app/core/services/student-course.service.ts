@@ -21,6 +21,10 @@ export class StudentCourseService {
     return this.http.get(`${environment.apiURL}/student-courses/p/${courseId}/${studentId}`);
   }
 
+  getInstructorByCourseId(id){
+    return this.http.get(`${environment.apiURL}/student-courses/i/${id}`);
+  }
+
   enrollStudentToCourse(student_id, course_id, enrollment_status) {
     const student_course = {
       student_id: student_id,
@@ -28,6 +32,7 @@ export class StudentCourseService {
       enrollment_status: enrollment_status,
       points: 0
     }
+    console.log(student_course);
     return this.http.post(`${environment.apiURL}/student-courses`, student_course);
   }
 

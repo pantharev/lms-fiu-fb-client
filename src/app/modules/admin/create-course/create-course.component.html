@@ -11,6 +11,20 @@
     </div>
 
     <div class="form-group">
+        <mat-form-field>
+            <mat-label>Instructor</mat-label>
+            <mat-select formControlName="instructor" [ngClass]="{ 'is-invalid': submitted && c.instructor.errors }" required #instructor>
+                <mat-option>None</mat-option>
+                <mat-option *ngFor="let instructor of instructors | async" [value]="{id: instructor.id, email: instructor.email}">{{instructor.email}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <!--<input type="text" class="form-control"  formControlName="instructor" #instructor [value]="instructor.email" [ngClass]="{ 'is-invalid': submitted && c.instructor.errors }" required>-->
+        <div *ngIf="submitted && c.instructor.errors" class="invalid-feedback">
+            <div *ngIf="c.instructor.errors.required">Instructor is required</div>
+        </div>
+    </div>
+
+    <div class="form-group">
         <label for="description"><span style="color: red">*</span>Description</label>
         <textarea class="form-control"  formControlName="description" #description [ngClass]="{ 'is-invalid': submitted && c.description.errors }" required></textarea>
         <div *ngIf="submitted && c.description.errors" class="invalid-feedback">
@@ -54,7 +68,7 @@
         </div>
     </div>
 
-    <button type="submit" (click)="addCourse(name.value, description.value, seats.value, start_date.value, end_date.value)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Create Course</button>
+    <button type="submit" (click)="addCourse(name.value, instructor.value, description.value, seats.value, start_date.value, end_date.value)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Create Course</button>
     <a routerLink="/admin" class="btn btn-warning"><i class="fas fa-arrow-circle-left"></i> Go Back</a>
 </form>
 </div>

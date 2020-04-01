@@ -4,6 +4,9 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { Course } from '@app/core/models/course.model';
 import { CourseService } from '../../../core/services/course.service';
+import { StudentCourseService } from '@app/core/services/student-course.service';
+import { StudentService } from '@app/core/services/student.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-edit-course',
@@ -22,14 +25,18 @@ export class EditCourseComponent implements OnInit {
   endDate: Promise<string> | null = null;
   endDateSelected = false;
   endDateEvent: Promise<String> | null = null;
+  instructors: Observable<any>;
+  oldInstructor: String;
+  oldInstructorId: number;
 
-  constructor(private courseService: CourseService, private router: Router, private route: ActivatedRoute, private fb: FormBuilder) {
+  constructor(private courseService: CourseService, private studentCourseService: StudentCourseService, private studentService: StudentService, private router: Router, private route: ActivatedRoute, private fb: FormBuilder) {
     this.CreateForm();
   }
 
   CreateForm() {
     this.updateForm = this.fb.group({
       name: ['', Validators.required],
+      instructor: ['', Validators.required],
       description: ['', Validators.required],
       seats: ['', Validators.required],
       start_date: ['', Validators.required],
@@ -40,6 +47,7 @@ export class EditCourseComponent implements OnInit {
   get cu() { return this.updateForm.controls; }
 
   ngOnInit() {
+    this.instructors = this.studentService.getInstructors();
     this.route.params.subscribe(params => {
       this.id = params.id;
       this.courseService.getCourseById(this.id).subscribe((res: Course) => {
@@ -55,6 +63,12 @@ export class EditCourseComponent implements OnInit {
         this.updateForm.get('description').setValue(this.course.description);
         this.updateForm.get('seats').setValue(this.course.seats);
 
+        this.studentCourseService.getInstructorByCourseId(this.id).subscribe((instructor: any) => {
+          console.log(instructor);
+          //this.updateForm.get('instructor').setValue(instructor.email);
+          this.oldInstructor = instructor.email;
+          this.oldInstructorId = instructor.student_id;
+        })
         let newDate = new Date(this.course.start_date.toString());
         let dd = String(newDate.getDate()).padStart(2, '0');
         let mm = String(newDate.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -74,7 +88,7 @@ export class EditCourseComponent implements OnInit {
     });
   }
 
-  updateCourse(name, description, seats, start_date, end_date) {
+  updateCourse(name, instructor, description, seats, start_date, end_date) {
     this.submitted = true;
 
     start_date = this.formatDate(start_date);
@@ -83,11 +97,21 @@ export class EditCourseComponent implements OnInit {
     end_date = this.formatDate(end_date);
     console.log("going to submit end_date: " + end_date);
 
+    console.log(instructor);
+    console.log(instructor.id);
     if (!this.updateForm.valid) {
       return;
     }
 
     this.courseService.updateCourse(this.id, name, description, seats, start_date, end_date).subscribe(res => {
+      //remove old instructor
+      this.studentCourseService.declineStudentEnrollment(this.oldInstructorId, this.id).subscribe(() => {
+        console.log("Removed old instructor from course");
+      });
+      //add new instructor
+      this.studentCourseService.enrollStudentToCourse(instructor.id, this.id, 'enrolled').subscribe(() => {
+        console.log("Added new instructor to course");
+      });
       this.router.navigate(['/admin']);
     });
   }

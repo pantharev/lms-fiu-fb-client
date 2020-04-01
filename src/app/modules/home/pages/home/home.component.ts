@@ -54,19 +54,20 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    console.log("HOME");
     console.log(this.currentUser);
 
     // fetch announcements
     this.globalAnnouncementService.fetchGlobalAnnouncements().subscribe((globalAnnouncementsData: any[]) => {
       this.globalAnnouncements = globalAnnouncementsData;
     })
-
+    /*
     if (!this.currentUser) {
       this.waitingForFBLogin();
     } else{
       return;
     }
+    */
   }
 
   ngOnDestroy() {

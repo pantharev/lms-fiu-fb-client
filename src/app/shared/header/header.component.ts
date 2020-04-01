@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthenticationService } from '@app/core/services/authentication.service';
@@ -13,13 +13,14 @@ import { Observable } from 'rxjs';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit, OnChanges {
+export class HeaderComponent implements OnInit, OnChanges, AfterViewChecked {
 
   currentUser: User;
   currentUserAsync;
   FB_user: any;
   isAdmin: boolean;
   tokenPayload: Promise<void | User>;
+  timeoutVar: any;
 
   constructor(private router: Router, private authenticationService: AuthenticationService, private FB: FacebookService, private authFB: AuthService) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
@@ -28,13 +29,17 @@ export class HeaderComponent implements OnInit, OnChanges {
   ngOnInit() {
     console.log("header OnInit");
     console.log(this.currentUser);
+    /*
     if(this.currentUser.role == "admin"){
       this.isAdmin = true;
     }
     this.currentUserAsync = this.authenticationService.currentUser;
+    */
+    this.waitForCurrentUser();
+    console.log(this.currentUser);
   }
 
-  ngOnChanges(){
+  ngOnChanges() {
     this.authenticationService.currentUser.subscribe(x => {
       console.log("header on changes subscribed");
       this.currentUser = x;
@@ -42,38 +47,51 @@ export class HeaderComponent implements OnInit, OnChanges {
     });
     console.log("header on changes");
     console.log(this.currentUser);
-    if(this.currentUser.role == "admin"){
+    if (this.currentUser.role == "admin") {
       this.isAdmin = true;
     }
     this.currentUserAsync = this.authenticationService.currentUser.subscribe();
   }
 
-  ngAfterViewInit() {
-    this.FB_user = JSON.parse(localStorage.getItem("FB_user"));
-    if (this.FB_user) {
-      if (this.FB_user.role == "admin") {
+  ngAfterViewChecked() {
+    /*
+    if (!this.currentUser){
+      this.authenticationService.currentUser.subscribe(x => {
+        console.log("header on changes subscribed");
+        this.currentUser = x;
+        console.log(this.currentUser);
+      });
+      console.log("header on changes");
+      console.log(this.currentUser);
+      if (this.currentUser.role == "admin") {
         this.isAdmin = true;
       }
+      this.currentUserAsync = this.authenticationService.currentUser.subscribe();
     }
+    */
   }
 
-
-  /*reInit(){
-    this.authenticationService.currentUser.subscribe(x => {
-      this.currentUser = x;
-      //this.tokenPayload = decode(this.currentUser.token);
-    });
-    //console.log("CurrentUser: " + JSON.stringify(this.currentUser));
-    if(this.currentUser)
-      var myInterval = setTimeout(() => {
-        console.log("User Header0: " + this.currentUser.token);
-      //console.log("User Header: " + localStorage.getItem('currentUser'));
-      if(this.authenticationService.currentUserValue){
-        this.tokenPayload = decode(this.currentUser.token);
+  waitForCurrentUser() {
+    if (this.currentUser) {
+      this.authenticationService.currentUser.subscribe(x => {
+        console.log("header on changes subscribed");
+        this.currentUser = x;
+        console.log(this.currentUser);
+      });
+      console.log("header on changes");
+      console.log(this.currentUser);
+      if (this.currentUser.role == "admin") {
+        this.isAdmin = true;
       }
-      }, 1000);
-  }*/
-
+      this.currentUserAsync = this.authenticationService.currentUser.subscribe();
+      console.log("currentUserAsync set");
+    }
+    else {
+      this.timeoutVar = setTimeout(() => {
+        this.waitForCurrentUser();
+      }, 1000)
+    }
+  }
   logout() {
     /*
     this.authenticationService.logout().subscribe(() => {

@@ -21,7 +21,7 @@
       </li>
     </ul>
   </div>
-  <ul class="navbar-nav" *ngIf="currentUserAsync | async as currentUser">
+  <ul class="navbar-nav" *ngIf="currentUserAsync">
     <li class="nav-item">
       <span class="nav-welcome">Hello, {{currentUser.f_name}} {{currentUser.l_name}}!</span>
     </li>

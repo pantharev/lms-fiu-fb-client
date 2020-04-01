@@ -121,7 +121,7 @@ export class AppComponent {
     this.authenticationService.loginWithFB(userData);
 
     console.log("Student found in DB, updating info");
-    console.log(this.currentUser.role);
+    console.log(FBUser.role);
     this.studentService.updateStudent(this.FB_email, userData).subscribe(() => {
       console.log("updated student");
     });

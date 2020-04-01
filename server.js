@@ -117,10 +117,9 @@ app.listen(port, () => {
 });
 
 // local testing
-/*
-httpsServer.listen(port, () => {
+
+/*httpsServer.listen(port, () => {
     console.log("https server running at port : " + port);
     console.log("https://localhost:8080");
-})
-*/
+})*/
 

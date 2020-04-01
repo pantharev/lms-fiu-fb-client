@@ -83,7 +83,7 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewChecked {
       if (this.currentUser.role == "admin") {
         this.isAdmin = true;
       }
-      this.currentUserAsync = this.authenticationService.currentUser.subscribe();
+      this.currentUserAsync = this.authenticationService.currentUser;
       console.log("currentUserAsync set");
     }
     else {

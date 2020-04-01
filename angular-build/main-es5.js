@@ -341,9 +341,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.authenticationService.loginWithFB(userData);
           console.log("Student found in DB, updating info");
           console.log(FBUser.role);
-          this.studentService.updateStudent(this.FB_email, userData).subscribe(function () {
+          /*this.studentService.updateStudent(this.FB_email, userData).subscribe(() => {
             console.log("updated student");
-          });
+          });*/
+
           localStorage.setItem("FB_user", JSON.stringify(userData));
           console.log(userData);
         }

@@ -110,7 +110,7 @@ export class AppComponent {
 
 
   inStudentDB(FBUser: any) {
-    const userData: JSON = <JSON><any>{
+    const userData = {
       "email": FBUser.email,
       "f_name": FBUser.f_name,
       "l_name": FBUser.l_name,
@@ -126,26 +126,29 @@ export class AppComponent {
       console.log("updated student");
     });
     localStorage.setItem("FB_user", JSON.stringify(userData));
-    console.log(JSON.stringify(userData));
+    console.log(userData);
   }
 
   notInStudentDB(FBUser: any) {
-    const userData: JSON = <JSON><any>{
+    let userData = {
       "email": FBUser.email,
       "f_name": FBUser.f_name,
       "l_name": FBUser.l_name,
       "user_id": FBUser.user_id,
-      "id": FBUser.id,
+      "id": '',
       "role": FBUser.role
     };
 
     this.authenticationService.loginWithFB(userData);
 
     console.log("Student not found in DB, adding");
-    this.studentService.addStudent(userData).subscribe(() => {
+    this.studentService.addStudent(userData).subscribe((user: any) => {
+      console.log(user);
+      console.log(user.id);
+      userData.id = user.id;
       console.log("added to db");
     });
     localStorage.setItem("FB_user", JSON.stringify(userData));
-    console.log(JSON.stringify(userData));
+    console.log(userData);
   }
 }

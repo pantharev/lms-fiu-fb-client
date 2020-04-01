@@ -26,7 +26,7 @@
                                 <h5 class="card-title text-wrap" style="word-wrap: break-word">{{course.name}}</h5>
                                 <p class="card-text text-wrap" style="word-wrap: break-word">{{course.description}}</p>
                                 <div class="flex-container">
-                                    <a [routerLink]="[course.course_id, 'modules']" class="btn btn-primary flex-item">Go to Course</a>
+                                    <a [routerLink]="[course.course_id]" class="btn btn-primary flex-item">Go to Course</a>
                                     <button type="button" (click)="dropCourse(course.course_id)" class="btn btn-danger btn-sm flex-item" *ngIf="courseDrop">Drop Course</button>
                                 </div>
                             </div>

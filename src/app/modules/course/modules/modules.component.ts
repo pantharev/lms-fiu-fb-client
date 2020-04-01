@@ -303,7 +303,10 @@ export class ModulesComponent implements OnInit {
         this.moduleSurveysFetched[moduleId] = true;
 
         let surveyUrl: SafeResourceUrl;
-        surveyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(survey.link);
+        let surveyWithEmailUrl = survey.link;
+        surveyWithEmailUrl = survey.link + '?email=' + this.currentUser.email;
+        //console.log(surveyWithEmailUrl);
+        surveyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(surveyWithEmailUrl);
         let surveyObject = {
           surveyUrl: surveyUrl,
           survey_id: survey.survey_id,

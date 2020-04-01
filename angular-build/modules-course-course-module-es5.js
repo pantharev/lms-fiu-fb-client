@@ -11002,7 +11002,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             if (survey.module_id === moduleId) {
               _this44.moduleSurveysFetched[moduleId] = true;
               var surveyUrl;
-              surveyUrl = _this44.sanitizer.bypassSecurityTrustResourceUrl(survey.link);
+              var surveyWithEmailUrl = survey.link;
+              surveyWithEmailUrl = survey.link + '?email=' + _this44.currentUser.email;
+              console.log(surveyWithEmailUrl);
+              surveyUrl = _this44.sanitizer.bypassSecurityTrustResourceUrl(surveyWithEmailUrl);
               var surveyObject = {
                 surveyUrl: surveyUrl,
                 survey_id: survey.survey_id,

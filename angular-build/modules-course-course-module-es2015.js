@@ -5914,7 +5914,10 @@ class ModulesComponent {
             if (survey.module_id === moduleId) {
                 this.moduleSurveysFetched[moduleId] = true;
                 let surveyUrl;
-                surveyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(survey.link);
+                let surveyWithEmailUrl = survey.link;
+                surveyWithEmailUrl = survey.link + '?email=' + this.currentUser.email;
+                console.log(surveyWithEmailUrl);
+                surveyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(surveyWithEmailUrl);
                 let surveyObject = {
                     surveyUrl: surveyUrl,
                     survey_id: survey.survey_id,

@@ -18,7 +18,7 @@ export class CreateAnnouncementComponent implements OnInit {
 
   public Editor = ClassicEditor;
   public editorData = "";
-  currentUser;
+  currentUser: User;
   userPayload: User;
   isCleared;
 
@@ -27,8 +27,8 @@ export class CreateAnnouncementComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    this.userPayload = decode(this.currentUser.token);
-    console.log(this.userPayload.f_name);
+    //this.userPayload = decode(this.currentUser.token);
+    console.log(this.currentUser.f_name);
   }
 
   public onReady(editor){
@@ -46,9 +46,9 @@ export class CreateAnnouncementComponent implements OnInit {
   }
 
   createAnnouncement(){
-    let userName = this.userPayload.f_name + " " + this.userPayload.l_name;
+    let userName = this.currentUser.f_name + " " + this.currentUser.l_name;
     let today = new Date();
-    this.globalAnnouncementService.createGlobalAnnouncement(userName, this.editorData, today, today, this.userPayload.id).subscribe(() => {
+    this.globalAnnouncementService.createGlobalAnnouncement(userName, this.editorData, today, today, this.currentUser.id).subscribe(() => {
       //alert("Created announcement");
       this.router.navigate(['/']);
     })

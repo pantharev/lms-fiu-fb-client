@@ -26,7 +26,7 @@ export class CreateAnnouncementComponent implements OnInit {
 
   public Editor = ClassicEditor;
   public editorData = "";
-  currentUser;
+  currentUser: User;
   userPayload: User;
   isCleared;
   courses: any[] = [];
@@ -36,8 +36,8 @@ export class CreateAnnouncementComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    this.userPayload = decode(this.currentUser.token);
-    console.log(this.userPayload.f_name);
+    //this.userPayload = decode(this.currentUser.token);
+    console.log(this.currentUser.f_name);
 
     this.subscription = this.announcementService.sharedCheckedCourses.subscribe((checkedCourses: number[]) => {
       this.checkedCourses = checkedCourses;
@@ -74,9 +74,9 @@ export class CreateAnnouncementComponent implements OnInit {
   }
 
   createAnnouncement(){
-    let user = this.userPayload.f_name + " " + this.userPayload.l_name;
+    let user = this.currentUser.f_name + " " + this.currentUser.l_name;
     let today =  new Date();
-    this.announcementService.createAnnouncement(user, this.editorData, today, today, this.userPayload.id).subscribe((announcement: any) => {
+    this.announcementService.createAnnouncement(user, this.editorData, today, today, this.currentUser.id).subscribe((announcement: any) => {
       console.log(announcement);
       for(let i = 0; i < this.checkedCourses.length; i++){
         let courseId = this.checkedCourses[i];

@@ -109,24 +109,24 @@ export class ModulesComponent implements OnInit {
       this.courseId = params.id;
       console.log("param id is: " + params.id);
     })
-    if(!this.currentUser){
+    /*if(!this.currentUser){
       return;
-    }
+    }*/
     this.todayDate = new Date();
     //console.log(this.todayDate.toLocaleString());
-    this.tokenPayload = decode(this.currentUser.token);
-    this.isAdmin = (this.tokenPayload.role === "admin");
-    this.isInstructor = (this.tokenPayload.role === "instructor");
-    this.isStudent = (this.tokenPayload.role === "student");
+    //this.tokenPayload = decode(this.currentUser.token);
+    this.isAdmin = (this.currentUser.role === "admin");
+    this.isInstructor = (this.currentUser.role === "instructor");
+    this.isStudent = (this.currentUser.role === "student");
 
     this.fetchModules(this.courseId);
-    this.getAvgStudentPoints(this.courseId, this.tokenPayload.id);
+    this.getAvgStudentPoints(this.courseId, this.currentUser.id);
 
     //this.waitForProgressBar();
 
     this.studentCourseService.getStudentsByCourseId(this.courseId).subscribe((data: []) => {
       data.forEach((val: any, i, arr) => {
-        if(val.student_id == this.tokenPayload.id) {
+        if(val.student_id == this.currentUser.id) {
           //console.log("Got student: " + JSON.stringify(val));
           this.points = val.points;
           console.log("Points: " + this.points);

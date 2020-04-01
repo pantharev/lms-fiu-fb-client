@@ -6,6 +6,7 @@ import { ChangeEvent } from '@ckeditor/ckeditor5-angular/ckeditor.component';
 import { AuthenticationService } from '@app/core/services/authentication.service';
 import { CourseDetailsService } from '@app/core/services/course-details.service';
 
+import { User } from '@app/core/models/user';
 import decode from 'jwt-decode';
 @Component({
   selector: 'app-home',
@@ -20,7 +21,7 @@ export class HomeComponent implements OnInit {
   courseDetails: any;
   public courseContent;
   isCleared = false;
-  currentUser;
+  currentUser: User;
   tokenPayload;
   isAdmin;
   isInstructor;
@@ -32,10 +33,10 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
 
-    this.tokenPayload = decode(this.currentUser.token);
-    this.isAdmin = (this.tokenPayload.role === "admin");
-    this.isInstructor = (this.tokenPayload.role === "instructor");
-    this.isStudent = (this.tokenPayload.role === "student");
+    //this.tokenPayload = decode(this.currentUser.token);
+    this.isAdmin = (this.currentUser.role === "admin");
+    this.isInstructor = (this.currentUser.role === "instructor");
+    this.isStudent = (this.currentUser.role === "student");
 
     this.route.params.subscribe((params) => {
       this.courseId = params.id;

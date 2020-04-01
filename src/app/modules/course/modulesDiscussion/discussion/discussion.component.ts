@@ -17,7 +17,7 @@ export class DiscussionComponent implements OnInit {
 
   discussions = [];
   moduleDetails = {};
-  currentUser;
+  currentUser: User;
   userPayload: User;
 
   constructor(private discussionService: DiscussionService, private moduleService: ModuleService, private authenticationService: AuthenticationService, private route: ActivatedRoute) {
@@ -25,7 +25,7 @@ export class DiscussionComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    this.userPayload = decode(this.currentUser.token);
+    //this.userPayload = decode(this.currentUser.token);
 
     this.route.params.subscribe((params) => {
       this.discussionService.getDiscussionsInModule(params.moduleId).subscribe((discussionsData: any[]) => {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthenticationService } from '@app/core/services/authentication.service';
@@ -13,35 +13,38 @@ import { Observable } from 'rxjs';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnChanges {
 
-  currentUser: Promise<User>;
+  currentUser: User;
   currentUserAsync;
   FB_user: any;
   isAdmin: boolean;
   tokenPayload: Promise<void | User>;
 
   constructor(private router: Router, private authenticationService: AuthenticationService, private FB: FacebookService, private authFB: AuthService) {
-    this.authenticationService.currentUser.subscribe(x => this.currentUser = Promise.resolve(x));
+    this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
   }
 
   ngOnInit() {
     console.log("header OnInit");
-    this.currentUser.then((user) => {
-      console.log("ngOnInit");
-      console.log(user);
+    console.log(this.currentUser);
+    if(this.currentUser.role == "admin"){
       this.isAdmin = true;
-    })
-    this.currentUserAsync = this.authenticationService.currentUser.subscribe();
+    }
+    this.currentUserAsync = this.authenticationService.currentUser;
   }
 
   ngOnChanges(){
-    this.authenticationService.currentUser.subscribe(x => this.currentUser = Promise.resolve(x));
-    this.currentUser.then((user) => {
-      console.log("ngOnChanges");
-      console.log(user);
+    this.authenticationService.currentUser.subscribe(x => {
+      console.log("header on changes subscribed");
+      this.currentUser = x;
+      console.log(this.currentUser);
+    });
+    console.log("header on changes");
+    console.log(this.currentUser);
+    if(this.currentUser.role == "admin"){
       this.isAdmin = true;
-    })
+    }
     this.currentUserAsync = this.authenticationService.currentUser.subscribe();
   }
 

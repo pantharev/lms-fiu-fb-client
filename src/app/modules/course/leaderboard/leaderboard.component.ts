@@ -16,7 +16,7 @@ export class LeaderboardComponent implements OnInit {
   students: any = [];
   average;
   courseId;
-  currentUser;
+  currentUser: User;
   userPayload: User;
 
   constructor(private studentCourseService: StudentCourseService, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService) {
@@ -28,10 +28,10 @@ export class LeaderboardComponent implements OnInit {
       this.courseId = params.id;
       console.log("param id is: " + params.id);
     })
-    this.userPayload = decode(this.currentUser.token);
+    //this.userPayload = decode(this.currentUser.token);
 
     this.fetchStudents(this.courseId);
-    this.getAvgStudentPoints(this.courseId, this.userPayload.id);
+    this.getAvgStudentPoints(this.courseId, this.currentUser.id);
   }
 
   // Gets students from course ID

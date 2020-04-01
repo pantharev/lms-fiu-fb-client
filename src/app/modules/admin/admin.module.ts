@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { MatSelectModule } from '@angular/material/select';
 
 import { CreateCourseComponent } from './create-course/create-course.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -16,7 +17,8 @@ import { PendingEnrollmentComponent } from './pending-enrollment/pending-enrollm
     CommonModule,
     AdminRoutingModule,
     ReactiveFormsModule,
-    NgbModule
+    NgbModule,
+    MatSelectModule
   ]
 })
 export class AdminModule { }

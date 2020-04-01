@@ -219,6 +219,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.authenticationService.logout();
           this.router.navigate(['/login']);
         }
+      }, {
+        key: "ngOnDestroy",
+        value: function ngOnDestroy() {
+          this.authenticationService.logoutFromFB();
+        }
       }]);
 
       return AppComponent;
@@ -1317,25 +1322,32 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           return this.http.get("".concat(src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL, "/student-courses/p/").concat(courseId, "/").concat(studentId));
         }
       }, {
+        key: "getInstructorByCourseId",
+        value: function getInstructorByCourseId(id) {
+          return this.http.get("".concat(src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL, "/student-courses/i/").concat(id));
+        }
+      }, {
         key: "enrollStudentToCourse",
-        value: function enrollStudentToCourse(student_email, course_id, enrollment_status) {
+        value: function enrollStudentToCourse(student_id, course_id, enrollment_status) {
           var student_course = {
-            student_email: student_email,
+            student_id: student_id,
             course_id: course_id,
-            enrollment_status: enrollment_status
+            enrollment_status: enrollment_status,
+            points: 0
           };
+          console.log(student_course);
           return this.http.post("".concat(src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL, "/student-courses"), student_course);
         }
       }, {
         key: "acceptStudentEnrollment",
-        value: function acceptStudentEnrollment(student_email, course_id, enrollment_status) {
+        value: function acceptStudentEnrollment(student_id, course_id, enrollment_status) {
           var student_course = {
-            student_email: student_email,
+            student_id: student_id,
             course_id: course_id,
             enrollment_status: enrollment_status
           };
           console.log(student_course);
-          return this.http.put("".concat(src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL, "/student-courses/").concat(student_email), student_course);
+          return this.http.put("".concat(src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL, "/student-courses/").concat(student_id), student_course);
         }
       }, {
         key: "declineStudentEnrollment",
@@ -1425,6 +1437,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         key: "getStudents",
         value: function getStudents() {
           return this.http.get("".concat(src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL, "/students"));
+        }
+      }, {
+        key: "getInstructors",
+        value: function getInstructors() {
+          return this.http.get("".concat(src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL, "/students/i"));
         }
       }, {
         key: "addStudent",
@@ -1866,37 +1883,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony import */
 
 
-    var jwt_decode__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
-    /*! jwt-decode */
-    "./node_modules/jwt-decode/lib/index.js");
-    /* harmony import */
-
-
-    var jwt_decode__WEBPACK_IMPORTED_MODULE_2___default =
-    /*#__PURE__*/
-    __webpack_require__.n(jwt_decode__WEBPACK_IMPORTED_MODULE_2__);
-    /* harmony import */
-
-
-    var _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
+    var _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
     /*! @app/core/services/global-announcement.service */
     "./src/app/core/services/global-announcement.service.ts");
     /* harmony import */
 
 
-    var _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+    var _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
     /*! @app/core/services/authentication.service */
     "./src/app/core/services/authentication.service.ts");
     /* harmony import */
 
 
-    var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
+    var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
     /*! @angular/router */
     "./node_modules/@angular/router/__ivy_ngcc__/fesm2015/router.js");
     /* harmony import */
 
 
-    var _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
+    var _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
     /*! @ckeditor/ckeditor5-angular */
     "./node_modules/@ckeditor/ckeditor5-angular/__ivy_ngcc__/fesm2015/ckeditor-ckeditor5-angular.js");
 
@@ -1921,8 +1926,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(CreateAnnouncementComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          this.userPayload = jwt_decode__WEBPACK_IMPORTED_MODULE_2___default()(this.currentUser.token);
-          console.log(this.userPayload.f_name);
+          //this.userPayload = decode(this.currentUser.token);
+          console.log(this.currentUser.f_name);
         }
       }, {
         key: "onReady",
@@ -1947,9 +1952,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         value: function createAnnouncement() {
           var _this6 = this;
 
-          var userName = this.userPayload.f_name + " " + this.userPayload.l_name;
+          var userName = this.currentUser.f_name + " " + this.currentUser.l_name;
           var today = new Date();
-          this.globalAnnouncementService.createGlobalAnnouncement(userName, this.editorData, today, today, this.userPayload.id).subscribe(function () {
+          this.globalAnnouncementService.createGlobalAnnouncement(userName, this.editorData, today, today, this.currentUser.id).subscribe(function () {
             //alert("Created announcement");
             _this6.router.navigate(['/']);
           });
@@ -1960,7 +1965,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }();
 
     CreateAnnouncementComponent.ɵfac = function CreateAnnouncementComponent_Factory(t) {
-      return new (t || CreateAnnouncementComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__["GlobalAnnouncementService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_4__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_5__["Router"]));
+      return new (t || CreateAnnouncementComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_2__["GlobalAnnouncementService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]));
     };
 
     CreateAnnouncementComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
@@ -2026,7 +2031,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("innerHTML", ctx.editorData, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsanitizeHtml"]);
         }
       },
-      directives: [_ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_6__["CKEditorComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_5__["RouterLinkWithHref"]],
+      directives: [_ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_5__["CKEditorComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_4__["RouterLinkWithHref"]],
       styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL21vZHVsZXMvaG9tZS9wYWdlcy9hbm5vdW5jZW1lbnRzTWFuYWdlci9jcmVhdGUtYW5ub3VuY2VtZW50L2NyZWF0ZS1hbm5vdW5jZW1lbnQuY29tcG9uZW50LnNjc3MifQ== */"]
     });
     /*@__PURE__*/
@@ -2041,11 +2046,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }]
       }], function () {
         return [{
-          type: _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__["GlobalAnnouncementService"]
+          type: _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_2__["GlobalAnnouncementService"]
         }, {
-          type: _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_4__["AuthenticationService"]
+          type: _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__["AuthenticationService"]
         }, {
-          type: _angular_router__WEBPACK_IMPORTED_MODULE_5__["Router"]
+          type: _angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]
         }];
       }, null);
     })();
@@ -2093,43 +2098,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony import */
 
 
-    var jwt_decode__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
-    /*! jwt-decode */
-    "./node_modules/jwt-decode/lib/index.js");
-    /* harmony import */
-
-
-    var jwt_decode__WEBPACK_IMPORTED_MODULE_2___default =
-    /*#__PURE__*/
-    __webpack_require__.n(jwt_decode__WEBPACK_IMPORTED_MODULE_2__);
-    /* harmony import */
-
-
-    var _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
+    var _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
     /*! @app/core/services/global-announcement.service */
     "./src/app/core/services/global-announcement.service.ts");
     /* harmony import */
 
 
-    var _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+    var _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
     /*! @app/core/services/authentication.service */
     "./src/app/core/services/authentication.service.ts");
     /* harmony import */
 
 
-    var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
+    var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
     /*! @angular/router */
     "./node_modules/@angular/router/__ivy_ngcc__/fesm2015/router.js");
     /* harmony import */
 
 
-    var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
+    var _angular_common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
     /*! @angular/common */
     "./node_modules/@angular/common/__ivy_ngcc__/fesm2015/common.js");
     /* harmony import */
 
 
-    var _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
+    var _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
     /*! @ckeditor/ckeditor5-angular */
     "./node_modules/@ckeditor/ckeditor5-angular/__ivy_ngcc__/fesm2015/ckeditor-ckeditor5-angular.js");
 
@@ -2228,13 +2221,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         value: function ngOnInit() {
           var _this8 = this;
 
-          this.userPayload = jwt_decode__WEBPACK_IMPORTED_MODULE_2___default()(this.currentUser.token);
+          //this.userPayload = decode(this.currentUser.token);
           this.route.params.subscribe(function (params) {
             _this8.id = params.id;
           });
           this.globalAnnouncement = this.globalAnnouncementService.fetchGlobalAnnouncementById(this.id); //this.fetchAnnouncementById(this.id);
 
-          console.log(this.userPayload.f_name);
+          console.log(this.currentUser.f_name);
         }
       }, {
         key: "onChange",
@@ -2276,7 +2269,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }();
 
     EditAnnouncementComponent.ɵfac = function EditAnnouncementComponent_Factory(t) {
-      return new (t || EditAnnouncementComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__["GlobalAnnouncementService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_4__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_5__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_5__["ActivatedRoute"]));
+      return new (t || EditAnnouncementComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_2__["GlobalAnnouncementService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_4__["ActivatedRoute"]));
     };
 
     EditAnnouncementComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
@@ -2302,8 +2295,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](2, 1, ctx.globalAnnouncement));
         }
       },
-      directives: [_angular_common__WEBPACK_IMPORTED_MODULE_6__["NgIf"], _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_7__["CKEditorComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_5__["RouterLinkWithHref"]],
-      pipes: [_angular_common__WEBPACK_IMPORTED_MODULE_6__["AsyncPipe"]],
+      directives: [_angular_common__WEBPACK_IMPORTED_MODULE_5__["NgIf"], _ckeditor_ckeditor5_angular__WEBPACK_IMPORTED_MODULE_6__["CKEditorComponent"], _angular_router__WEBPACK_IMPORTED_MODULE_4__["RouterLinkWithHref"]],
+      pipes: [_angular_common__WEBPACK_IMPORTED_MODULE_5__["AsyncPipe"]],
       styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL21vZHVsZXMvaG9tZS9wYWdlcy9hbm5vdW5jZW1lbnRzTWFuYWdlci9lZGl0LWFubm91bmNlbWVudC9lZGl0LWFubm91bmNlbWVudC5jb21wb25lbnQuc2NzcyJ9 */"]
     });
     /*@__PURE__*/
@@ -2318,13 +2311,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }]
       }], function () {
         return [{
-          type: _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_3__["GlobalAnnouncementService"]
+          type: _app_core_services_global_announcement_service__WEBPACK_IMPORTED_MODULE_2__["GlobalAnnouncementService"]
         }, {
-          type: _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_4__["AuthenticationService"]
+          type: _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__["AuthenticationService"]
         }, {
-          type: _angular_router__WEBPACK_IMPORTED_MODULE_5__["Router"]
+          type: _angular_router__WEBPACK_IMPORTED_MODULE_4__["Router"]
         }, {
-          type: _angular_router__WEBPACK_IMPORTED_MODULE_5__["ActivatedRoute"]
+          type: _angular_router__WEBPACK_IMPORTED_MODULE_4__["ActivatedRoute"]
         }];
       }, null);
     })();
@@ -2811,7 +2804,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           var ctx_r52 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2);
 
-          return ctx_r52.studentEnroll(ctx_r52.studentId, course_r47.id, course_r47.name, "pending");
+          return ctx_r52.studentEnroll(ctx_r52.currentUser.id, course_r47.id, course_r47.name, "pending");
         });
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Enroll");
@@ -3119,6 +3112,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /*#__PURE__*/
     function () {
       function CourseBrowserComponent(courseService, studentCourseService, authService, router, route) {
+        var _this11 = this;
+
         _classCallCheck(this, CourseBrowserComponent);
 
         this.courseService = courseService;
@@ -3139,6 +3134,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.duplicateCourse = false;
         this.num = 0;
         this.numberPerPage = 5;
+        this.authService.currentUser.subscribe(function (x) {
+          return _this11.currentUser = x;
+        });
       }
 
       _createClass(CourseBrowserComponent, [{
@@ -3148,67 +3146,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.fetchCourses(page);
           this.socket = socket_io_client__WEBPACK_IMPORTED_MODULE_2___default.a.connect(src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL);
           this.studentEmail = JSON.parse(localStorage.getItem("FB_user")).email;
-          /*
-          if(this.authService.currentUserValue){
-            this.currentUser = this.authService.currentUserValue;
-            this.tokenUser = decode(this.currentUser.token);
-            if(this.currentUser)
-              this.studentId = this.tokenUser.id;
-          }
-          */
-          //console.log("Init page: " + page);
+          console.log("course-browser:");
+          console.log(this.currentUser);
+          this.studentId = this.currentUser.id;
+
+          if (this.authService.currentUserValue) {
+            this.currentUser = this.authService.currentUserValue; //this.tokenUser = decode(this.currentUser.token);
+
+            if (this.currentUser) this.studentId = this.currentUser.id;
+          } //console.log("Init page: " + page);
+
         }
       }, {
         key: "fetchCourses",
         value: function fetchCourses(page) {
-          var _this11 = this;
-
-          this.courseService.getCourses(page, this.numberPerPage).subscribe(function (data) {
-            _this11.courses = data;
-            _this11.page = page;
-            _this11.currentPage = _this11.courses.pagination.current;
-            _this11.maxPages = _this11.courses.pagination.maxPages;
-            _this11.maxPagesArray = new Array(_this11.maxPages);
-            _this11.pages = Object.values(_this11.courses.pagination); //console.log(this.pages);
-
-            console.log('Data requested...'); //console.log(this.courses.res);
-
-            _this11.courses.res.forEach(function (course, index, arr) {
-              var start_date = new Date(arr[index].start_date.toString());
-              var end_date = new Date(arr[index].end_date.toString());
-              arr[index].start_date = start_date.toLocaleDateString();
-              arr[index].end_date = end_date.toLocaleDateString();
-              _this11.coursesUnavailable[index] = false;
-
-              if (course.seats < 1) {
-                _this11.coursesUnavailable[index] = true;
-              }
-            }); //console.log('Data requested...');
-            //console.log(this.courses);
-
-
-            _this11.router.navigate(['/course-library', {
-              page: page
-            }]);
-          });
-        }
-      }, {
-        key: "fetchPageCourses",
-        value: function fetchPageCourses(pageNo) {
           var _this12 = this;
 
-          console.log("pageNo: " + pageNo);
-
-          if (pageNo < 0) {
-            return;
-          }
-
-          this.courseService.getCourses(pageNo, this.numberPerPage).subscribe(function () {
-            var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+          this.courseService.getCourses(page, this.numberPerPage).subscribe(function (data) {
             _this12.courses = data;
-            _this12.page = pageNo;
+            _this12.page = page;
             _this12.currentPage = _this12.courses.pagination.current;
             _this12.maxPages = _this12.courses.pagination.maxPages;
+            _this12.maxPagesArray = new Array(_this12.maxPages);
+            _this12.pages = Object.values(_this12.courses.pagination); //console.log(this.pages);
+
+            console.log('Data requested...'); //console.log(this.courses.res);
 
             _this12.courses.res.forEach(function (course, index, arr) {
               var start_date = new Date(arr[index].start_date.toString());
@@ -3220,29 +3182,66 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               if (course.seats < 1) {
                 _this12.coursesUnavailable[index] = true;
               }
+            }); //console.log('Data requested...');
+            //console.log(this.courses);
+
+
+            _this12.router.navigate(['/course-library', {
+              page: page
+            }]);
+          });
+        }
+      }, {
+        key: "fetchPageCourses",
+        value: function fetchPageCourses(pageNo) {
+          var _this13 = this;
+
+          console.log("pageNo: " + pageNo);
+
+          if (pageNo < 0) {
+            return;
+          }
+
+          this.courseService.getCourses(pageNo, this.numberPerPage).subscribe(function () {
+            var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+            _this13.courses = data;
+            _this13.page = pageNo;
+            _this13.currentPage = _this13.courses.pagination.current;
+            _this13.maxPages = _this13.courses.pagination.maxPages;
+
+            _this13.courses.res.forEach(function (course, index, arr) {
+              var start_date = new Date(arr[index].start_date.toString());
+              var end_date = new Date(arr[index].end_date.toString());
+              arr[index].start_date = start_date.toLocaleDateString();
+              arr[index].end_date = end_date.toLocaleDateString();
+              _this13.coursesUnavailable[index] = false;
+
+              if (course.seats < 1) {
+                _this13.coursesUnavailable[index] = true;
+              }
             });
 
             console.log('Data requested...' + pageNo); //console.log(this.courses);
             //console.log("Current page: " + this.courses.pagination.current);
 
-            _this12.router.navigate(['/course-library', {
-              page: _this12.courses.pagination.current
+            _this13.router.navigate(['/course-library', {
+              page: _this13.courses.pagination.current
             }]);
           });
         }
       }, {
         key: "studentEnroll",
-        value: function studentEnroll(studentEmail, courseId, course_name, enrollment_status) {
-          var _this13 = this;
+        value: function studentEnroll(studentId, courseId, course_name, enrollment_status) {
+          var _this14 = this;
 
           // Add student to students_courses table with pending enrollment
           this.courseService.getCourseById(courseId).subscribe(function (course) {
             if (course.seats > 0) {
-              _this13.studentCourseService.enrollStudentToCourse(studentEmail, courseId, enrollment_status).subscribe(function () {
+              _this14.studentCourseService.enrollStudentToCourse(studentId, courseId, enrollment_status).subscribe(function () {
                 alert("Enrolled for course: " + course_name);
               });
 
-              console.log("StudentEmail: " + studentEmail);
+              console.log("StudentId: " + studentId);
               console.log("Enrollment pending for courseId: ".concat(courseId));
             }
           });
@@ -3250,7 +3249,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "searchCourse",
         value: function searchCourse(searchTerm) {
-          var _this14 = this;
+          var _this15 = this;
 
           if (searchTerm == "") {
             this.foundCoursesN = 0;
@@ -3260,14 +3259,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           this.socket.emit('search', searchTerm);
           this.socket.on('search-data', function (course) {
-            _this14.searchedCourses.length = 0;
-            _this14.num++; //console.log(course);
+            _this15.searchedCourses.length = 0;
+            _this15.num++; //console.log(course);
 
             course.forEach(function (val, i, arr) {
-              _this14.searchedCourses.push(arr[i]);
+              _this15.searchedCourses.push(arr[i]);
             });
 
-            _this14.searchCourseFnAll(course);
+            _this15.searchCourseFnAll(course);
           });
         }
       }, {
@@ -3541,8 +3540,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /*! @angular/common */
     "./node_modules/@angular/common/__ivy_ngcc__/fesm2015/common.js");
 
-    var _c0 = ["header"];
-
     function HomeComponent_ng_container_10_a_1_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "a", 8);
@@ -3567,7 +3564,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
 
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r3.userPayload.role == "admin");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r3.currentUser.role == "admin");
       }
     }
 
@@ -3647,7 +3644,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
 
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r4.userPayload.role == "admin");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r4.currentUser.role == "admin");
       }
     }
 
@@ -3655,7 +3652,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /*#__PURE__*/
     function () {
       function HomeComponent(cookieService, authFB, globalAnnouncementService, authenticationService, studentService, FB) {
-        var _this15 = this;
+        var _this16 = this;
 
         _classCallCheck(this, HomeComponent);
 
@@ -3681,7 +3678,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           version: 'v6.0'
         };
         this.authenticationService.currentUser.subscribe(function (x) {
-          return _this15.currentUser = x;
+          return _this16.currentUser = x;
         });
       }
 
@@ -3693,20 +3690,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "ngOnInit",
         value: function ngOnInit() {
-          console.log(this.currentUser);
-          /*
-          Promise.resolve(decode(this.currentUser.token)).then((user) => {
-            this.userPayload = user;
+          var _this17 = this;
+
+          console.log(this.currentUser); // fetch announcements
+
+          this.globalAnnouncementService.fetchGlobalAnnouncements().subscribe(function (globalAnnouncementsData) {
+            _this17.globalAnnouncements = globalAnnouncementsData;
           });
-                var userCookie = this.getCookie('user');
-          this.globalAnnouncementService.fetchGlobalAnnouncements().subscribe((globalAnnouncementsData: any[]) => {
-            this.globalAnnouncements = globalAnnouncementsData;
-          })
-          //console.log("The user cookie is: " + this.getCookie('user'));
-                if (localStorage.getItem('user') == '')
-            localStorage.setItem('user', userCookie);
-          this.cookieService.delete('user');
-          */
 
           if (!this.currentUser) {
             this.waitingForFBLogin();
@@ -3717,8 +3707,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "ngOnDestroy",
         value: function ngOnDestroy() {
-          clearTimeout(this.timeoutVar);
-          localStorage.clear();
+          clearTimeout(this.timeoutVar); //localStorage.clear();
         }
       }, {
         key: "deleteAnnouncement",
@@ -3734,21 +3723,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "waitingForFBLogin",
         value: function waitingForFBLogin() {
-          var _this16 = this;
+          var _this18 = this;
 
           if (!(this.fbInitiated && this.loggedIn)) {
             // FB Initialization
             if (this.fbInitiated) {
               this.FB.init(this.FB_settings).subscribe(function () {
                 console.log("fb initiated");
-                _this16.fbInitiated = true;
+                _this18.fbInitiated = true;
               });
             }
 
             this.FBLogin();
           } else {
             this.timeoutVar = setTimeout(function () {
-              _this16.waitingForFBLogin();
+              _this18.waitingForFBLogin();
             }, 1000);
             clearTimeout(this.timeoutVar);
             return;
@@ -3757,36 +3746,36 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "FBLogin",
         value: function FBLogin() {
-          var _this17 = this;
+          var _this19 = this;
 
           console.log("FBlogin");
           this.authFB.signIn(angularx_social_login__WEBPACK_IMPORTED_MODULE_1__["FacebookLoginProvider"].PROVIDER_ID).then(function () {
-            _this17.authFB.authState.subscribe(function (user) {
-              _this17.FB_User.user_id = user.id;
-              _this17.FB_User.email = user.email;
-              _this17.FB_User.f_name = user.firstName;
-              _this17.FB_User.l_name = user.lastName;
-              _this17.loggedIn = user != null;
+            _this19.authFB.authState.subscribe(function (user) {
+              _this19.FB_User.user_id = user.id;
+              _this19.FB_User.email = user.email;
+              _this19.FB_User.f_name = user.firstName;
+              _this19.FB_User.l_name = user.lastName;
+              _this19.loggedIn = user != null;
 
-              if (_this17.loggedIn) {
+              if (_this19.loggedIn) {
                 console.log("login successful."); // Check if user is in DB
 
-                console.log(_this17.FB_User.email);
+                console.log(_this19.FB_User.email);
                 var isNewStudent = null;
 
-                _this17.studentService.getStudentByEmail(_this17.FB_User.email).subscribe(function (user) {
+                _this19.studentService.getStudentByEmail(_this19.FB_User.email).subscribe(function (user) {
                   // In DB
                   console.log(user);
-                  _this17.FB_User.role = user.role;
-                  _this17.FB_User.id = user.id;
-                  console.log(_this17.FB_User);
+                  _this19.FB_User.role = user.role;
+                  _this19.FB_User.id = user.id;
+                  console.log(_this19.FB_User);
 
-                  _this17.inStudentDB(_this17.FB_User);
+                  _this19.inStudentDB(_this19.FB_User);
                 }, function (error) {
                   // Not in DB
-                  _this17.FB_User.role = 'student';
+                  _this19.FB_User.role = 'student';
 
-                  _this17.notInStudentDB(_this17.FB_User);
+                  _this19.notInStudentDB(_this19.FB_User);
                 });
               }
             });
@@ -3842,17 +3831,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     HomeComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
       type: HomeComponent,
       selectors: [["app-home"]],
-      viewQuery: function HomeComponent_Query(rf, ctx) {
-        if (rf & 1) {
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵviewQuery"](_c0, true);
-        }
-
-        if (rf & 2) {
-          var _t;
-
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.myHeader = _t.first);
-        }
-      },
       decls: 14,
       vars: 2,
       consts: [[1, "container"], [1, "row", "justify-content-center"], [1, "col-4", "center-form"], ["src", "../../../../../assets/images/FIU_Panther_Logo.png", "alt", "FIU_Panther_Logo", "width", "400", "height", "400"], ["routerLink", "/course-library", 1, "btn", "btn-primary"], [4, "ngIf"], ["class", "announcement", 4, "ngFor", "ngForOf"], ["routerLink", "/create-announcement", "class", "btn btn-primary", "style", "margin-top:30px", 4, "ngIf"], ["routerLink", "/create-announcement", 1, "btn", "btn-primary", 2, "margin-top", "30px"], [1, "announcement"], [1, "custom-font", 3, "innerHTML"], [1, "btn", "btn-success", 3, "routerLink"], ["type", "button", 1, "btn", "btn-danger", 3, "click"]],
@@ -3906,7 +3884,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (rf & 2) {
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](10);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.userPayload);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.currentUser);
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
 
@@ -3941,12 +3919,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }, {
           type: _greg_md_ng_facebook__WEBPACK_IMPORTED_MODULE_6__["FacebookService"]
         }];
-      }, {
-        myHeader: [{
-          type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"],
-          args: ['header']
-        }]
-      });
+      }, null);
     })();
     /***/
 
@@ -4143,7 +4116,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(LoginComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this18 = this;
+          var _this20 = this;
 
           this.loginForm = this.formBuilder.group({
             email: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required],
@@ -4161,16 +4134,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           if (!this.loggedIn) {
             this.FBLogin();
             setTimeout(function () {
-              console.log("loggedIn: " + _this18.loggedIn);
+              console.log("loggedIn: " + _this20.loggedIn);
 
-              if (_this18.loggedIn) {
+              if (_this20.loggedIn) {
                 console.log("login successful.");
                 var userData = {
-                  "email": _this18.FB_email,
-                  "f_name": _this18.FB_fname,
-                  "l_name": _this18.FB_lname,
-                  "user_id": _this18.FB_id,
-                  "role": _this18.FB_role
+                  "email": _this20.FB_email,
+                  "f_name": _this20.FB_fname,
+                  "l_name": _this20.FB_lname,
+                  "user_id": _this20.FB_id,
+                  "role": _this20.FB_role
                 };
                 console.log(JSON.stringify(userData));
                 localStorage.setItem("FB_user", JSON.stringify(userData));
@@ -4179,10 +4152,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 console.log("name: " + JSON.parse(localStorage.getItem("FB_user")).f_name + " " + JSON.parse(localStorage.getItem("FB_user")).l_name); // Database functions
                 // Student is added (returns error if email already exists, code continues)
 
-                _this18.studentService.addStudent(userData).subscribe(); // Data is updated (in case email already existed but user data is different)
+                _this20.studentService.addStudent(userData).subscribe(); // Data is updated (in case email already existed but user data is different)
 
 
-                _this18.studentService.updateStudent(_this18.FB_email, userData).subscribe();
+                _this20.studentService.updateStudent(_this20.FB_email, userData).subscribe();
               }
             }, 1000);
           }
@@ -4191,7 +4164,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "onSubmit",
         value: function onSubmit(email, password) {
-          var _this19 = this;
+          var _this21 = this;
 
           this.submitted = true; // stop here if form is invalid
 
@@ -4204,24 +4177,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["first"])()).subscribe(function (data) {
             console.log(data); //this.loading = false;
 
-            _this19.router.navigate([_this19.returnUrl]);
+            _this21.router.navigate([_this21.returnUrl]);
           }, function (error) {
-            _this19.error = error;
+            _this21.error = error;
           });
         }
       }, {
         key: "FBLogin",
         value: function FBLogin() {
-          var _this20 = this;
+          var _this22 = this;
 
           console.log("FBlogin");
           this.authFB.signIn(angularx_social_login__WEBPACK_IMPORTED_MODULE_3__["FacebookLoginProvider"].PROVIDER_ID);
           this.authFB.authState.subscribe(function (user) {
-            _this20.FB_id = user.id;
-            _this20.FB_email = user.email;
-            _this20.FB_fname = user.firstName;
-            _this20.FB_lname = user.lastName;
-            _this20.loggedIn = user != null;
+            _this22.FB_id = user.id;
+            _this22.FB_email = user.email;
+            _this22.FB_fname = user.firstName;
+            _this22.FB_lname = user.lastName;
+            _this22.loggedIn = user != null;
           });
           console.log(this.FB_id);
           console.log(this.FB_email); //localStorage.setItem("FB_email", this.FB_email);
@@ -4546,11 +4519,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(ProfileComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this21 = this;
+          var _this23 = this;
 
           this.authService.getProfile().subscribe(function (data) {
-            _this21.profileData = data;
-            console.log(_this21.profileData);
+            _this23.profileData = data;
+            console.log(_this23.profileData);
             console.log("The profile data is: " + JSON.stringify(data));
           });
           /*this.authService.getTest().subscribe((data) => {
@@ -4843,15 +4816,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
 
       if (rf & 2) {
-        var cu_r2 = ctx.ngIf;
+        var currentUser_r2 = ctx.ngIf;
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
 
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate2"]("Hello, ", cu_r2.f_name, " ", cu_r2.l_name, "!");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate2"]("Hello, ", currentUser_r2.f_name, " ", currentUser_r2.l_name, "!");
 
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
 
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"]("Role: ", cu_r2.role, "");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"]("Role: ", currentUser_r2.role, "");
       }
     }
 
@@ -4865,7 +4838,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /*#__PURE__*/
     function () {
       function HeaderComponent(router, authenticationService, FB, authFB) {
-        var _this22 = this;
+        var _this24 = this;
 
         _classCallCheck(this, HeaderComponent);
 
@@ -4874,36 +4847,39 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.FB = FB;
         this.authFB = authFB;
         this.authenticationService.currentUser.subscribe(function (x) {
-          return _this22.currentUser = Promise.resolve(x);
+          return _this24.currentUser = x;
         });
       }
 
       _createClass(HeaderComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this23 = this;
-
           console.log("header OnInit");
-          this.currentUser.then(function (user) {
-            console.log("ngOnInit");
-            console.log(user);
-            _this23.isAdmin = true;
-          });
-          this.currentUserAsync = this.authenticationService.currentUser.subscribe();
+          console.log(this.currentUser);
+
+          if (this.currentUser.role == "admin") {
+            this.isAdmin = true;
+          }
+
+          this.currentUserAsync = this.authenticationService.currentUser;
         }
       }, {
         key: "ngOnChanges",
         value: function ngOnChanges() {
-          var _this24 = this;
+          var _this25 = this;
 
           this.authenticationService.currentUser.subscribe(function (x) {
-            return _this24.currentUser = Promise.resolve(x);
+            console.log("header on changes subscribed");
+            _this25.currentUser = x;
+            console.log(_this25.currentUser);
           });
-          this.currentUser.then(function (user) {
-            console.log("ngOnChanges");
-            console.log(user);
-            _this24.isAdmin = true;
-          });
+          console.log("header on changes");
+          console.log(this.currentUser);
+
+          if (this.currentUser.role == "admin") {
+            this.isAdmin = true;
+          }
+
           this.currentUserAsync = this.authenticationService.currentUser.subscribe();
         }
       }, {

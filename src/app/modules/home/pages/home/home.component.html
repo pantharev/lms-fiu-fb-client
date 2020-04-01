@@ -9,15 +9,15 @@
     </div>
     <div class="row justify-content-center">
         <div class="col-4 center-form">
-            <ng-container *ngIf="userPayload">
-                <a *ngIf="userPayload.role == 'admin'" routerLink="/create-announcement" class="btn btn-primary"
+            <ng-container *ngIf="currentUser">
+                <a *ngIf="currentUser.role == 'admin'" routerLink="/create-announcement" class="btn btn-primary"
                     style="margin-top:30px">Create Announcement</a>
             </ng-container>
             <h2>Announcements:</h2>
             <div *ngFor="let announcement of globalAnnouncements" class="announcement">
                 <p>{{announcement.user}} | {{announcement.created >= announcement.changed ? (announcement.created | date:'short') : (announcement.changed | date:'short')}}</p>
                 <div [innerHTML]="announcement.content" class="custom-font"></div>
-                <div *ngIf="userPayload.role == 'admin'">
+                <div *ngIf="currentUser.role == 'admin'">
                     <a routerLink="/edit-announcement/{{announcement.id}}" class="btn btn-success">Edit</a>
                     <button type="button" (click)="deleteAnnouncement(announcement.id)"
                         class="btn btn-danger">Delete</button>

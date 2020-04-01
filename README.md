@@ -1,6 +1,7 @@
 # Client
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.22.
+The project has since been upgraded to use Angular 9 core and cli.
 
 ## Development server
 

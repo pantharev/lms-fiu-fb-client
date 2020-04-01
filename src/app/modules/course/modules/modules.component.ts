@@ -17,9 +17,8 @@ import { ModuleService } from 'src/app/core/services/module.service';
 import { User } from '@app/core/models/user';
 import decode from 'jwt-decode';
 
-import { throwToolbarMixedModesError } from '@angular/material';
-
 import { analyzeAndValidateNgModules } from '@angular/compiler';
+import { resolve } from 'url';
 
 @Component({
   selector: 'app-modules',
@@ -53,6 +52,7 @@ export class ModulesComponent implements OnInit {
   quizzes = ['quiz1', 'quiz2', 'quiz3'];
 
   points: number;
+  averagePoints;
   urlPath;
   courseId;
   toggleContent = [];
@@ -66,6 +66,12 @@ export class ModulesComponent implements OnInit {
   updateVideoForm: FormGroup;
   updatePdfForm: FormGroup;
   updateSurveyForm: FormGroup;
+  submitted = false;
+  error = '';
+  invalidLink = false;
+  validLink = false;
+  invalidQuiz = false;
+  validQuiz = false;
 
   fileToUpload: File = null;
   contentObject = {
@@ -77,6 +83,8 @@ export class ModulesComponent implements OnInit {
     lockedUntil: "",
     link: ""
   }
+
+  waitForProgressBarTimeout;
 
   constructor(
     private moduleService: ModuleService,
@@ -101,29 +109,52 @@ export class ModulesComponent implements OnInit {
       this.courseId = params.id;
       console.log("param id is: " + params.id);
     })
-    if(!this.currentUser){
+    /*if(!this.currentUser){
       return;
-    }
+    }*/
     this.todayDate = new Date();
     //console.log(this.todayDate.toLocaleString());
-    this.tokenPayload = decode(this.currentUser.token);
-    this.isAdmin = (this.tokenPayload.role === "admin");
-    this.isInstructor = (this.tokenPayload.role === "instructor");
-    this.isStudent = (this.tokenPayload.role === "student");
+    //this.tokenPayload = decode(this.currentUser.token);
+    this.isAdmin = (this.currentUser.role === "admin");
+    this.isInstructor = (this.currentUser.role === "instructor");
+    this.isStudent = (this.currentUser.role === "student");
+
     this.fetchModules(this.courseId);
+    this.getAvgStudentPoints(this.courseId, this.currentUser.id);
+
+    //this.waitForProgressBar();
+
     this.studentCourseService.getStudentsByCourseId(this.courseId).subscribe((data: []) => {
       data.forEach((val: any, i, arr) => {
-        if(val.student_id == this.tokenPayload.id) {
+        if(val.student_id == this.currentUser.id) {
           //console.log("Got student: " + JSON.stringify(val));
           this.points = val.points;
           console.log("Points: " + this.points);
-          document.getElementById('progressbar').style.width = this.points + "%";
+          //document.getElementById('progressbar').style.width = this.points + "%";
         }
       })
     })
+
+  }
+
+  ngOnDestroy() {
+    //clearTimeout(this.waitForProgressBarTimeout);
   }
 
   // BEGIN UTILITY FUNCTIONS
+
+  waitForProgressBar(){
+    console.log("waiting for progress bar");
+    if(document.getElementById('progressbarAvg')){
+      document.getElementById('progressbarAvg').style.width = this.averagePoints.average + "%";
+    }
+    else{
+      this.waitForProgressBarTimeout = setTimeout(() => {
+        this.waitForProgressBar();
+      }, 1000)
+    }
+  }
+
   makeForms() {
     this.videoForm = this.fb.group({
       link: ['', Validators.required]
@@ -147,6 +178,19 @@ export class ModulesComponent implements OnInit {
     })
   }
 
+  // convenience gettera for easy access to form fields
+  get v() { return this.videoForm.controls; }
+
+  get p() { return this.pdfForm.controls; }
+
+  get s() { return this.surveyForm.controls; }
+
+  get vu() { return this.updateVideoForm.controls; }
+
+  get pu() { return this.updatePdfForm.controls; }
+
+  get su() { return this.updateSurveyForm.controls; }
+
   pushLinksToArray(linksFromDB: any[], links: any[]) {
     linksFromDB.forEach((video) => {
       let videoObject = {
@@ -163,7 +207,15 @@ export class ModulesComponent implements OnInit {
       if(val.module_id === moduleId){
         this.moduleVideosFetched[moduleId] = true;
 
-        let id = val.link.substring(32, 43);
+        //console.log("link: " + val.link);
+        let len: number = val.link.length;
+        let id;
+        if(len >= 43){
+          id = val.link.substring(32, 43);
+        }
+        else if(len == 28){
+          id = val.link.substring(17, 28)
+        }
         let videoUrl: SafeResourceUrl;
         let url: string;
         let videoObject = {};
@@ -219,7 +271,8 @@ export class ModulesComponent implements OnInit {
 
         pdfObject = {
           pdf_id: val.pdf_id,
-          pdf: cleanPDF
+          pdf: cleanPDF,
+          rawPdf: val.pdf
         }
 
         if(this.safePdfs.get(moduleId)){
@@ -269,6 +322,11 @@ export class ModulesComponent implements OnInit {
   }
       
   open(content) {
+    this.submitted = false;
+    this.invalidLink = false;
+    this.invalidQuiz = false;
+    this.validLink = false;
+    this.invalidQuiz = false;
     this.modalService.open(content, { size: 'lg', centered: true });
   }
       
@@ -284,19 +342,45 @@ export class ModulesComponent implements OnInit {
   }
 
   openUpdateVideo(content, videoUrl) {
+    this.submitted = false;
+    this.invalidLink = false;
+    this.validLink = false;
     this.modalService.open(content, { size: 'lg', centered: true });
     this.updateVideoForm.get('linkInput').setValue(videoUrl);
   }
 
   openUpdatePDF(content, pdf){
+    this.submitted = false;
     this.modalService.open(content, { size: 'lg', centered: true });
-    this.updatePdfForm.get('pdf').setValue(pdf);
+    console.log("The updatePDF: " + pdf);
+    //this.updatePdfForm.get('pdf').setValue(pdf);
   }
 
   openUpdateSurvey(content, surveyName, surveyUrl){
+    this.submitted = false;
+    this.invalidQuiz = false;
+    this.validQuiz = false;
     this.modalService.open(content, { size: 'lg', centered: true });
     this.updateSurveyForm.get('name').setValue(surveyName);
     this.updateSurveyForm.get('link').setValue(surveyUrl);
+  }
+
+  getAvgStudentPoints(courseId, studentId){
+    console.log("Called avgstudentpoints on student_id: " + studentId);
+    this.studentCourseService.getAvgStudentPoints(courseId, studentId).subscribe((data) => {
+      this.averagePoints = data;
+      console.log("avg: " + JSON.stringify(data));
+      this.averagePoints.average = this.toFixed(this.averagePoints.average, 2);
+    })
+  }
+
+  toFixed(value, precision) {
+    var power = Math.pow(10, precision || 0);
+    return String(Math.round(value * power) / power);
+  }
+
+  viewDiscussion(courseId, moduleId){
+    this.router.navigate([`courses/${courseId}/discussion/${moduleId}`]);
   }
   // END UTILITY FUNCTIONS
 
@@ -307,15 +391,20 @@ export class ModulesComponent implements OnInit {
 
   fetchModules(courseId) {
     this.moduleService.getModulesByCourseId(courseId).subscribe((data: []) => {
-      
       data.forEach((moduleO: any, i, arr) => {
-        let lockedUntil = new Date(moduleO.lockedUntil.toString());
+        //let lockedUntil = new Date(moduleO.lockedUntil.toString());
+        let lockedUntil = new Date(moduleO.lockedUntil);
+        let dd = String(lockedUntil.getDate() + 1).padStart(2, '0');
+        let mm = String(lockedUntil.getMonth() + 1).padStart(2, '0'); //January is 0!
+        let yyyy = lockedUntil.getFullYear();
+
+        let givenDate = mm + '/' + dd + '/' + yyyy;
         this.moduleLocked[i] = false;
         if(this.todayDate < lockedUntil){
           //console.log(this.todayDate.toLocaleDateString() + " < " + JSON.stringify(moduleO));
           this.moduleLocked[i] = true;
         }
-        moduleO.lockedUntil = lockedUntil.toLocaleDateString();
+        moduleO.lockedUntil = givenDate;
       })
       this.modules = data;
       //console.log(this.modules);
@@ -343,13 +432,60 @@ export class ModulesComponent implements OnInit {
   // END MODULES CRUD
 
   // BEGIN VIDEOS CRUD
+
+  handleValidLink(event){
+    //console.log(event.target.value);
+    let input: String = event.target.value;
+    let isYoutubeLink: Boolean = false;
+    let len = input.length;
+
+    if(input.includes("https://www.youtube.com/watch?v=") || input.includes("https://youtu.be/")){
+      console.log("Includes youtube link");
+      isYoutubeLink = true;
+    } else{
+      isYoutubeLink = false;
+    }
+
+    if((len == 28 || len >= 43) && isYoutubeLink){
+      this.validLink = true;
+      this.invalidLink = false;
+    }
+    else{
+      this.validLink = false;
+    }
+  }
+
   addVideo(link, moduleId) {
-    this.videoService.addVideo(link, moduleId).subscribe(() => {
+    this.submitted = true;
+
+    if(this.videoForm.invalid){
+      return;
+    }
+
+    if(!this.validLink){
+      this.invalidLink = true;
+      return;
+    }
+
+    this.videoService.addVideo(link, moduleId).subscribe((data) => {
       alert("Added video");
+    }, (error) => {
+      this.error = error;
     })
   }
 
   updateVideo(link, videoId) {
+    this.submitted = true;
+
+    if(this.updateVideoForm.invalid){
+      return;
+    }
+
+    if(!this.validLink){
+      this.invalidLink = true;
+      return;
+    }
+
     //console.log("link: " + link + " " + "videoId: " + videoId);
     this.videoService.updateVideo(link, videoId).subscribe(() => {
       alert("Updated video");
@@ -411,14 +547,20 @@ export class ModulesComponent implements OnInit {
   }
 
   addPdf(moduleId) {
+    this.submitted = true;
+
+    if(this.pdfForm.invalid){
+      return;
+    }
+
     //console.log("fileName: " + this.pdfForm.get('pdf').value.name + " fileSize: " + this.pdfForm.get('pdf').value.size);
     const formData: FormData = new FormData();
     formData.append('fileKey', this.pdfForm.get('pdf').value);
     formData.append('fileKey', moduleId);
     //console.log(formData.getAll('fileKey'));
     this.pdfService.addPDF(formData).subscribe(
-      (res) => {console.log(res); alert("Added PDF!"); },
-      (err) => console.log(err)
+      (res) => { console.log(res); alert("Added PDF!"); },
+      (err) => { console.log(err); this.error = err; }
     );
   }
 
@@ -450,6 +592,12 @@ export class ModulesComponent implements OnInit {
   }
 
   updatePDF(pdfId, moduleId){
+    this.submitted = true;
+
+    if(this.updatePdfForm.invalid){
+      return;
+    }
+
     //console.log("updatePDF");
     const formData: FormData = new FormData();
     formData.append('fileKey', this.updatePdfForm.get('pdf').value);
@@ -472,7 +620,40 @@ export class ModulesComponent implements OnInit {
   // END PDFS CRUD
 
   // BEGIN SURVEYS CRUD (QUIZZES/EXAMS)
+
+  handleValidQuiz(event){
+    let input: String = event.target.value;
+    let len = input.length;
+    let isValidQuiz: Boolean = false;
+
+    if(input.includes("https://fiu.qualtrics.com/jfe/form/")){
+      isValidQuiz = true;
+    }
+    else{
+      isValidQuiz = false;
+    }
+
+    if((len == 53) && isValidQuiz){
+      this.validQuiz = true;
+      this.invalidQuiz = false;
+    }
+    else{
+      this.validQuiz = false;
+    }
+  }
+
   addSurvey(name, link, moduleId) {
+    this.submitted = true;
+
+    if(this.surveyForm.invalid){
+      return;
+    }
+
+    if(!this.validQuiz){
+      this.invalidQuiz = true;
+      return;
+    }
+
     this.surveyService.addSurvey(name, link, moduleId).subscribe(() => {
       alert("Added survey");
     })
@@ -506,6 +687,17 @@ export class ModulesComponent implements OnInit {
   }
 
   updateSurvey(name, link, surveyId) {
+    this.submitted = true;
+
+    if(this.updateSurveyForm.invalid){
+      return;
+    }
+
+    if(!this.validQuiz){
+      this.invalidQuiz = true;
+      return;
+    }
+
     //console.log("link: " + link + " " + "videoId: " + videoId);
     this.surveyService.updateSurvey(name, link, surveyId).subscribe(() => {
       alert("Updated Quiz/Exam");

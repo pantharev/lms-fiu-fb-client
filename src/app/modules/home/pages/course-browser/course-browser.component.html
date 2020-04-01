@@ -71,7 +71,7 @@
                     <td>{{ course.seats }}</td>
                     <td>{{ course.start_date }}</td>
                     <td>{{ course.end_date }}</td>
-                    <td *ngIf="currentUser && !coursesUnavailable[index]; else elseBlock"><button type="submit" (click)="studentEnroll(studentId, course.id, course.name, 'pending')" class="btn btn-success">Enroll</button></td>
+                    <td *ngIf="currentUser && !coursesUnavailable[index]; else elseBlock"><button type="submit" (click)="studentEnroll(currentUser.id, course.id, course.name, 'pending')" class="btn btn-success">Enroll</button></td>
                     <ng-template #elseBlock>
                         <td *ngIf="currentUser"><button class="btn btn-danger" style="cursor: not-allowed" disabled>Full</button></td>
                     </ng-template>

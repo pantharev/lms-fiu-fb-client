@@ -12,4 +12,22 @@ export class StudentService {
   getStudents() {
     return this.http.get(`${environment.apiURL}/students`);
   }
+
+  getInstructors(){
+    return this.http.get(`${environment.apiURL}/students/i`);
+  }
+
+  addStudent(student) {
+    return this.http.post(`${environment.apiURL}/students`, student);
+  }
+
+  updateStudent(email, student) {
+    return this.http.put(`${environment.apiURL}/students/`, student);
+  }
+
+  getStudentByEmail(studentEmail){
+    console.log("Called getStudentByEmail");
+    console.log(studentEmail);
+    return this.http.get(`${environment.apiURL}/students/${studentEmail}`);
+  }
 }

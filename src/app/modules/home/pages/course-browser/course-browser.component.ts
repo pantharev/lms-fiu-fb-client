@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
 
 import io from "socket.io-client";
 import decode from 'jwt-decode';
-import { throwToolbarMixedModesError } from '@angular/material';
+import { throwToolbarMixedModesError } from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-course-browser',
@@ -45,19 +45,28 @@ export class CourseBrowserComponent implements OnInit {
   currentUser: User;
   tokenUser: User;
   studentId;
+  studentEmail
 
-  constructor(private courseService: CourseService, private studentCourseService: StudentCourseService, private authService: AuthenticationService, private router: Router, private route: ActivatedRoute) { }
+  constructor(private courseService: CourseService, private studentCourseService: StudentCourseService, private authService: AuthenticationService, private router: Router, private route: ActivatedRoute) { 
+    this.authService.currentUser.subscribe(x => this.currentUser = x);
+  }
 
   ngOnInit() {
     let page = this.route.snapshot.paramMap.get('page') || this.page;
     this.fetchCourses(page);
     this.socket = io.connect(environment.apiURL);
+    this.studentEmail = JSON.parse(localStorage.getItem("FB_user")).email;
+
+    console.log("course-browser:");
+    console.log(this.currentUser);
+    this.studentId = this.currentUser.id;
     if(this.authService.currentUserValue){
       this.currentUser = this.authService.currentUserValue;
-      this.tokenUser = decode(this.currentUser.token);
+      //this.tokenUser = decode(this.currentUser.token);
       if(this.currentUser)
-        this.studentId = this.tokenUser.id;
+        this.studentId = this.currentUser.id;
     }
+    
     //console.log("Init page: " + page);
   }
 

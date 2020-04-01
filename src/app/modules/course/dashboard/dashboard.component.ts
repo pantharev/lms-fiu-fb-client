@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { User } from '@app/core/models/user';
 import { Course } from '@app/core/models/course.model';
 
 import { CourseService } from '@app/core/services/course.service';
 import { StudentCourseService } from 'src/app/core/services/student-course.service';
 import { AuthenticationService } from '@app/core/services/authentication.service';
+import { AnnouncementService } from '@app/core/services/announcement.service';
 import decode from 'jwt-decode';
 
 @Component({
@@ -16,20 +18,26 @@ export class DashboardComponent implements OnInit {
 
   courses: Course[] = [];
   course: Course;
-  currentStudent: User;
+  currentUser: User;
   tokenPayload: User;
+  isAdmin: Boolean;
   hasCourses;
   listCourses;
   studentId;
   courseDrop: Boolean = false;
+  checkedCourses: number[] = [];
+  isChecked: Boolean[] = [];
 
-  constructor(private studentCourseService: StudentCourseService, private courseService: CourseService, private authService: AuthenticationService) { }
+  constructor(private studentCourseService: StudentCourseService, private courseService: CourseService, private authService: AuthenticationService, private router: Router, private announcementService: AnnouncementService) { }
 
   ngOnInit() {  
-    this.currentStudent = this.authService.currentUserValue;
-    if(this.currentStudent){
-      this.tokenPayload = decode(this.currentStudent.token);
-      this.studentId = this.tokenPayload.id;
+    this.currentUser = this.authService.currentUserValue;
+    if(this.currentUser){
+      //this.tokenPayload = decode(this.currentStudent.token);
+      this.isAdmin = (this.currentUser.role == 'admin');
+      this.studentId = this.currentUser.id;
+      //this.isAdmin = (this.tokenPayload.role == 'admin');      
+      //this.studentId = this.tokenPayload.id;
       //this.hasCourses = this.asyncFetchStudentCourses(this.studentId);
       this.listCourses = this.studentCourseService.getCoursesByStudentId(this.studentId);
       console.log(this.studentId);
@@ -105,5 +113,34 @@ export class DashboardComponent implements OnInit {
     else {
       this.courseDrop = false;
     }
+  }
+
+  createAnnouncement(){
+    //console.log(this.checkedCourses);
+    this.announcementService.nextCheckedCourses(this.checkedCourses);
+    this.router.navigate(['/courses/create-announcement']);
+  }
+
+  checkBox(i, courseId){
+    if(this.currentUser.role != 'admin'){
+      return;
+    }
+    if(this.isChecked[i]){
+      this.isChecked[i] = false;
+      // remove course from array
+      this.checkedCourses.forEach((value, index, arr) => {
+        if(value == courseId){
+          console.log(courseId + " " + index);
+          this.checkedCourses.splice(index, 1);
+        }
+      })
+    }
+    else{
+      this.isChecked[i] = true;
+      console.log("courseId: " + courseId + " has been checked");
+      // add course to array
+      this.checkedCourses.push(courseId);
+    }
+    console.log(this.isChecked[i]);
   }
 }

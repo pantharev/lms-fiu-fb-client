@@ -1,0 +1,14 @@
+<div class="center-form announcement">
+<form [formGroup]="postForm">
+
+    <div class="form-group">
+        <textarea class="form-control" rows="2" placeholder="Add a post..." [ngClass]="{ 'is-invalid': submitted && p.post.errors }" required formControlName="post" #post style="width: 300px"
+          matInput cdkTextareaAutosize cdkAutosizeMinRows="2"></textarea>
+        <div *ngIf="submitted && p.post.errors" class="invalid-feedback">
+            <div *ngIf="p.post.errors.required">Post cannot be empty</div>
+        </div>
+    </div>
+
+    <button type="submit" (click)="createPost(post.value)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Create Post</button>
+</form>
+</div>

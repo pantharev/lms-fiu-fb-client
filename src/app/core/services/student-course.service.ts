@@ -49,4 +49,13 @@ export class StudentCourseService {
   declineStudentEnrollment(student_id, course_id) {
     return this.http.delete(`${environment.apiURL}/student-courses/${student_id}/${course_id}`);
   }
+
+  updatePoints(student_id, course_id, points){
+    const student_course = {
+      student_id: student_id,
+      course_id: course_id,
+      points: points
+    }
+    return this.http.put(`${environment.apiURL}/student-courses/up/score`, student_course);
+  }
 }

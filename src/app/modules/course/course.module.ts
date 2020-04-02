@@ -24,9 +24,10 @@ import { CreateAnnouncementComponent } from './announcementsManagement/create-an
 import { AnnouncementsComponent } from './announcementsManagement/announcements/announcements.component';
 import { EditAnnouncementComponent } from './announcementsManagement/edit-announcement/edit-announcement.component';
 import { ViewCreatedAnnouncementsComponent } from './announcementsManagement/view-created-announcements/view-created-announcements.component';
+import { QuizScoreComponent } from './quiz-score/quiz-score.component';
  
 @NgModule({
-  declarations: [ DashboardComponent, ModulesComponent, CreateModuleComponent, EditModuleComponent, SidebarComponent, SidebarButtonComponent, LeaderboardComponent, HomeComponent, HomeEditComponent, DiscussionComponent, CreatePostComponent, EditPostComponent, CreateAnnouncementComponent, AnnouncementsComponent, EditAnnouncementComponent, ViewCreatedAnnouncementsComponent],
+  declarations: [ DashboardComponent, ModulesComponent, CreateModuleComponent, EditModuleComponent, SidebarComponent, SidebarButtonComponent, LeaderboardComponent, HomeComponent, HomeEditComponent, DiscussionComponent, CreatePostComponent, EditPostComponent, CreateAnnouncementComponent, AnnouncementsComponent, EditAnnouncementComponent, ViewCreatedAnnouncementsComponent, QuizScoreComponent],
   imports: [
     CommonModule,
     CourseRoutingModule,

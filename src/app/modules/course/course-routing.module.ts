@@ -13,12 +13,14 @@ import { CreateAnnouncementComponent } from './announcementsManagement/create-an
 import { AnnouncementsComponent } from './announcementsManagement/announcements/announcements.component';
 import { EditAnnouncementComponent } from './announcementsManagement/edit-announcement/edit-announcement.component';
 import { ViewCreatedAnnouncementsComponent } from './announcementsManagement/view-created-announcements/view-created-announcements.component';
+import { QuizScoreComponent } from './quiz-score/quiz-score.component';
 
 import { AuthenticationService as AuthGuard } from '@app/core/services/authentication.service';
 
 const routes: Routes = [
   { path: 'create-announcement', component: CreateAnnouncementComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin'}, pathMatch: 'full' },
   { path: 'view-created-announcements', component: ViewCreatedAnnouncementsComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin'}, pathMatch: 'full'},
+  { path : 'quiz-score', component: QuizScoreComponent, canActivate: [AuthGuard] },
   { path: 'edit-announcement/:announcementId', component: EditAnnouncementComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin'}, pathMatch: 'full'},
   { path: '', component: DashboardComponent, canActivate: [AuthGuard], pathMatch: 'full' },
   { path: ':id', component: HomeComponent, canActivate: [AuthGuard], pathMatch: 'full' },

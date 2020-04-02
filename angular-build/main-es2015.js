@@ -794,6 +794,14 @@ class StudentCourseService {
     declineStudentEnrollment(student_id, course_id) {
         return this.http.delete(`${src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL}/student-courses/${student_id}/${course_id}`);
     }
+    updatePoints(student_id, course_id, points) {
+        const student_course = {
+            student_id: student_id,
+            course_id: course_id,
+            points: points
+        };
+        return this.http.put(`${src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL}/student-courses/up/score`, student_course);
+    }
 }
 StudentCourseService.ɵfac = function StudentCourseService_Factory(t) { return new (t || StudentCourseService)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"])); };
 StudentCourseService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: StudentCourseService, factory: StudentCourseService.ɵfac, providedIn: 'root' });

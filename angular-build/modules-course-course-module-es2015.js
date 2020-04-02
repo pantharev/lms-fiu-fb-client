@@ -3778,7 +3778,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _announcementsManagement_announcements_announcements_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./announcementsManagement/announcements/announcements.component */ "./src/app/modules/course/announcementsManagement/announcements/announcements.component.ts");
 /* harmony import */ var _announcementsManagement_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./announcementsManagement/edit-announcement/edit-announcement.component */ "./src/app/modules/course/announcementsManagement/edit-announcement/edit-announcement.component.ts");
 /* harmony import */ var _announcementsManagement_view_created_announcements_view_created_announcements_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./announcementsManagement/view-created-announcements/view-created-announcements.component */ "./src/app/modules/course/announcementsManagement/view-created-announcements/view-created-announcements.component.ts");
-/* harmony import */ var _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @app/core/services/authentication.service */ "./src/app/core/services/authentication.service.ts");
+/* harmony import */ var _quiz_score_quiz_score_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./quiz-score/quiz-score.component */ "./src/app/modules/course/quiz-score/quiz-score.component.ts");
+/* harmony import */ var _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @app/core/services/authentication.service */ "./src/app/core/services/authentication.service.ts");
+
 
 
 
@@ -3797,18 +3799,19 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const routes = [
-    { path: 'create-announcement', component: _announcementsManagement_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_10__["CreateAnnouncementComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_14__["AuthenticationService"]], data: { expectedRole: 'admin' }, pathMatch: 'full' },
-    { path: 'view-created-announcements', component: _announcementsManagement_view_created_announcements_view_created_announcements_component__WEBPACK_IMPORTED_MODULE_13__["ViewCreatedAnnouncementsComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_14__["AuthenticationService"]], data: { expectedRole: 'admin' }, pathMatch: 'full' },
-    { path: 'edit-announcement/:announcementId', component: _announcementsManagement_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_12__["EditAnnouncementComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_14__["AuthenticationService"]], data: { expectedRole: 'admin' }, pathMatch: 'full' },
-    { path: '', component: _dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_2__["DashboardComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_14__["AuthenticationService"]], pathMatch: 'full' },
-    { path: ':id', component: _home_home_component__WEBPACK_IMPORTED_MODULE_3__["HomeComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_14__["AuthenticationService"]], pathMatch: 'full' },
-    { path: ':id/announcements', component: _announcementsManagement_announcements_announcements_component__WEBPACK_IMPORTED_MODULE_11__["AnnouncementsComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_14__["AuthenticationService"]] },
-    { path: ':id/modules', component: _modules_modules_component__WEBPACK_IMPORTED_MODULE_4__["ModulesComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_14__["AuthenticationService"]] },
-    { path: ':id/leaderboard', component: _leaderboard_leaderboard_component__WEBPACK_IMPORTED_MODULE_5__["LeaderboardComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_14__["AuthenticationService"]] },
-    { path: ':id/create-module', component: _modulesManagement_create_module_create_module_component__WEBPACK_IMPORTED_MODULE_6__["CreateModuleComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_14__["AuthenticationService"]], data: { expectedRole: 'instructor' } },
-    { path: ':id/edit-module/:moduleId', component: _modulesManagement_edit_module_edit_module_component__WEBPACK_IMPORTED_MODULE_7__["EditModuleComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_14__["AuthenticationService"]], data: { expectedRole: 'instructor' } },
-    { path: ':id/edit-home', component: _home_edit_home_edit_component__WEBPACK_IMPORTED_MODULE_8__["HomeEditComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_14__["AuthenticationService"]], data: { expectedRole: 'instructor' } },
-    { path: ':id/discussion/:moduleId', component: _modulesDiscussion_discussion_discussion_component__WEBPACK_IMPORTED_MODULE_9__["DiscussionComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_14__["AuthenticationService"]] },
+    { path: 'create-announcement', component: _announcementsManagement_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_10__["CreateAnnouncementComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_15__["AuthenticationService"]], data: { expectedRole: 'admin' }, pathMatch: 'full' },
+    { path: 'view-created-announcements', component: _announcementsManagement_view_created_announcements_view_created_announcements_component__WEBPACK_IMPORTED_MODULE_13__["ViewCreatedAnnouncementsComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_15__["AuthenticationService"]], data: { expectedRole: 'admin' }, pathMatch: 'full' },
+    { path: 'quiz-score', component: _quiz_score_quiz_score_component__WEBPACK_IMPORTED_MODULE_14__["QuizScoreComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_15__["AuthenticationService"]] },
+    { path: 'edit-announcement/:announcementId', component: _announcementsManagement_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_12__["EditAnnouncementComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_15__["AuthenticationService"]], data: { expectedRole: 'admin' }, pathMatch: 'full' },
+    { path: '', component: _dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_2__["DashboardComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_15__["AuthenticationService"]], pathMatch: 'full' },
+    { path: ':id', component: _home_home_component__WEBPACK_IMPORTED_MODULE_3__["HomeComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_15__["AuthenticationService"]], pathMatch: 'full' },
+    { path: ':id/announcements', component: _announcementsManagement_announcements_announcements_component__WEBPACK_IMPORTED_MODULE_11__["AnnouncementsComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_15__["AuthenticationService"]] },
+    { path: ':id/modules', component: _modules_modules_component__WEBPACK_IMPORTED_MODULE_4__["ModulesComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_15__["AuthenticationService"]] },
+    { path: ':id/leaderboard', component: _leaderboard_leaderboard_component__WEBPACK_IMPORTED_MODULE_5__["LeaderboardComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_15__["AuthenticationService"]] },
+    { path: ':id/create-module', component: _modulesManagement_create_module_create_module_component__WEBPACK_IMPORTED_MODULE_6__["CreateModuleComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_15__["AuthenticationService"]], data: { expectedRole: 'instructor' } },
+    { path: ':id/edit-module/:moduleId', component: _modulesManagement_edit_module_edit_module_component__WEBPACK_IMPORTED_MODULE_7__["EditModuleComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_15__["AuthenticationService"]], data: { expectedRole: 'instructor' } },
+    { path: ':id/edit-home', component: _home_edit_home_edit_component__WEBPACK_IMPORTED_MODULE_8__["HomeEditComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_15__["AuthenticationService"]], data: { expectedRole: 'instructor' } },
+    { path: ':id/discussion/:moduleId', component: _modulesDiscussion_discussion_discussion_component__WEBPACK_IMPORTED_MODULE_9__["DiscussionComponent"], canActivate: [_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_15__["AuthenticationService"]] },
 ];
 class CourseRoutingModule {
 }
@@ -3866,6 +3869,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _announcementsManagement_announcements_announcements_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./announcementsManagement/announcements/announcements.component */ "./src/app/modules/course/announcementsManagement/announcements/announcements.component.ts");
 /* harmony import */ var _announcementsManagement_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./announcementsManagement/edit-announcement/edit-announcement.component */ "./src/app/modules/course/announcementsManagement/edit-announcement/edit-announcement.component.ts");
 /* harmony import */ var _announcementsManagement_view_created_announcements_view_created_announcements_component__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./announcementsManagement/view-created-announcements/view-created-announcements.component */ "./src/app/modules/course/announcementsManagement/view-created-announcements/view-created-announcements.component.ts");
+/* harmony import */ var _quiz_score_quiz_score_component__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./quiz-score/quiz-score.component */ "./src/app/modules/course/quiz-score/quiz-score.component.ts");
+
 
 
 
@@ -3903,7 +3908,7 @@ CourseModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjec
             _angular_material_tooltip__WEBPACK_IMPORTED_MODULE_5__["MatTooltipModule"],
             _angular_material_input__WEBPACK_IMPORTED_MODULE_6__["MatInputModule"]
         ]] });
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsetNgModuleScope"](CourseModule, { declarations: [_dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_7__["DashboardComponent"], _modules_modules_component__WEBPACK_IMPORTED_MODULE_9__["ModulesComponent"], _modulesManagement_create_module_create_module_component__WEBPACK_IMPORTED_MODULE_13__["CreateModuleComponent"], _modulesManagement_edit_module_edit_module_component__WEBPACK_IMPORTED_MODULE_14__["EditModuleComponent"], _sidebar_sidebar_component__WEBPACK_IMPORTED_MODULE_10__["SidebarComponent"], _sidebar_button_sidebar_button_component__WEBPACK_IMPORTED_MODULE_11__["SidebarButtonComponent"], _leaderboard_leaderboard_component__WEBPACK_IMPORTED_MODULE_12__["LeaderboardComponent"], _home_home_component__WEBPACK_IMPORTED_MODULE_15__["HomeComponent"], _home_edit_home_edit_component__WEBPACK_IMPORTED_MODULE_16__["HomeEditComponent"], _modulesDiscussion_discussion_discussion_component__WEBPACK_IMPORTED_MODULE_18__["DiscussionComponent"], _modulesDiscussion_create_post_create_post_component__WEBPACK_IMPORTED_MODULE_17__["CreatePostComponent"], _modulesDiscussion_edit_post_edit_post_component__WEBPACK_IMPORTED_MODULE_19__["EditPostComponent"], _announcementsManagement_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_20__["CreateAnnouncementComponent"], _announcementsManagement_announcements_announcements_component__WEBPACK_IMPORTED_MODULE_21__["AnnouncementsComponent"], _announcementsManagement_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_22__["EditAnnouncementComponent"], _announcementsManagement_view_created_announcements_view_created_announcements_component__WEBPACK_IMPORTED_MODULE_23__["ViewCreatedAnnouncementsComponent"]], imports: [_angular_common__WEBPACK_IMPORTED_MODULE_1__["CommonModule"],
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsetNgModuleScope"](CourseModule, { declarations: [_dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_7__["DashboardComponent"], _modules_modules_component__WEBPACK_IMPORTED_MODULE_9__["ModulesComponent"], _modulesManagement_create_module_create_module_component__WEBPACK_IMPORTED_MODULE_13__["CreateModuleComponent"], _modulesManagement_edit_module_edit_module_component__WEBPACK_IMPORTED_MODULE_14__["EditModuleComponent"], _sidebar_sidebar_component__WEBPACK_IMPORTED_MODULE_10__["SidebarComponent"], _sidebar_button_sidebar_button_component__WEBPACK_IMPORTED_MODULE_11__["SidebarButtonComponent"], _leaderboard_leaderboard_component__WEBPACK_IMPORTED_MODULE_12__["LeaderboardComponent"], _home_home_component__WEBPACK_IMPORTED_MODULE_15__["HomeComponent"], _home_edit_home_edit_component__WEBPACK_IMPORTED_MODULE_16__["HomeEditComponent"], _modulesDiscussion_discussion_discussion_component__WEBPACK_IMPORTED_MODULE_18__["DiscussionComponent"], _modulesDiscussion_create_post_create_post_component__WEBPACK_IMPORTED_MODULE_17__["CreatePostComponent"], _modulesDiscussion_edit_post_edit_post_component__WEBPACK_IMPORTED_MODULE_19__["EditPostComponent"], _announcementsManagement_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_20__["CreateAnnouncementComponent"], _announcementsManagement_announcements_announcements_component__WEBPACK_IMPORTED_MODULE_21__["AnnouncementsComponent"], _announcementsManagement_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_22__["EditAnnouncementComponent"], _announcementsManagement_view_created_announcements_view_created_announcements_component__WEBPACK_IMPORTED_MODULE_23__["ViewCreatedAnnouncementsComponent"], _quiz_score_quiz_score_component__WEBPACK_IMPORTED_MODULE_24__["QuizScoreComponent"]], imports: [_angular_common__WEBPACK_IMPORTED_MODULE_1__["CommonModule"],
         _course_routing_module__WEBPACK_IMPORTED_MODULE_8__["CourseRoutingModule"],
         _angular_forms__WEBPACK_IMPORTED_MODULE_3__["ReactiveFormsModule"],
         _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_2__["NgbModule"],
@@ -3913,7 +3918,7 @@ CourseModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjec
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](CourseModule, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["NgModule"],
         args: [{
-                declarations: [_dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_7__["DashboardComponent"], _modules_modules_component__WEBPACK_IMPORTED_MODULE_9__["ModulesComponent"], _modulesManagement_create_module_create_module_component__WEBPACK_IMPORTED_MODULE_13__["CreateModuleComponent"], _modulesManagement_edit_module_edit_module_component__WEBPACK_IMPORTED_MODULE_14__["EditModuleComponent"], _sidebar_sidebar_component__WEBPACK_IMPORTED_MODULE_10__["SidebarComponent"], _sidebar_button_sidebar_button_component__WEBPACK_IMPORTED_MODULE_11__["SidebarButtonComponent"], _leaderboard_leaderboard_component__WEBPACK_IMPORTED_MODULE_12__["LeaderboardComponent"], _home_home_component__WEBPACK_IMPORTED_MODULE_15__["HomeComponent"], _home_edit_home_edit_component__WEBPACK_IMPORTED_MODULE_16__["HomeEditComponent"], _modulesDiscussion_discussion_discussion_component__WEBPACK_IMPORTED_MODULE_18__["DiscussionComponent"], _modulesDiscussion_create_post_create_post_component__WEBPACK_IMPORTED_MODULE_17__["CreatePostComponent"], _modulesDiscussion_edit_post_edit_post_component__WEBPACK_IMPORTED_MODULE_19__["EditPostComponent"], _announcementsManagement_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_20__["CreateAnnouncementComponent"], _announcementsManagement_announcements_announcements_component__WEBPACK_IMPORTED_MODULE_21__["AnnouncementsComponent"], _announcementsManagement_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_22__["EditAnnouncementComponent"], _announcementsManagement_view_created_announcements_view_created_announcements_component__WEBPACK_IMPORTED_MODULE_23__["ViewCreatedAnnouncementsComponent"]],
+                declarations: [_dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_7__["DashboardComponent"], _modules_modules_component__WEBPACK_IMPORTED_MODULE_9__["ModulesComponent"], _modulesManagement_create_module_create_module_component__WEBPACK_IMPORTED_MODULE_13__["CreateModuleComponent"], _modulesManagement_edit_module_edit_module_component__WEBPACK_IMPORTED_MODULE_14__["EditModuleComponent"], _sidebar_sidebar_component__WEBPACK_IMPORTED_MODULE_10__["SidebarComponent"], _sidebar_button_sidebar_button_component__WEBPACK_IMPORTED_MODULE_11__["SidebarButtonComponent"], _leaderboard_leaderboard_component__WEBPACK_IMPORTED_MODULE_12__["LeaderboardComponent"], _home_home_component__WEBPACK_IMPORTED_MODULE_15__["HomeComponent"], _home_edit_home_edit_component__WEBPACK_IMPORTED_MODULE_16__["HomeEditComponent"], _modulesDiscussion_discussion_discussion_component__WEBPACK_IMPORTED_MODULE_18__["DiscussionComponent"], _modulesDiscussion_create_post_create_post_component__WEBPACK_IMPORTED_MODULE_17__["CreatePostComponent"], _modulesDiscussion_edit_post_edit_post_component__WEBPACK_IMPORTED_MODULE_19__["EditPostComponent"], _announcementsManagement_create_announcement_create_announcement_component__WEBPACK_IMPORTED_MODULE_20__["CreateAnnouncementComponent"], _announcementsManagement_announcements_announcements_component__WEBPACK_IMPORTED_MODULE_21__["AnnouncementsComponent"], _announcementsManagement_edit_announcement_edit_announcement_component__WEBPACK_IMPORTED_MODULE_22__["EditAnnouncementComponent"], _announcementsManagement_view_created_announcements_view_created_announcements_component__WEBPACK_IMPORTED_MODULE_23__["ViewCreatedAnnouncementsComponent"], _quiz_score_quiz_score_component__WEBPACK_IMPORTED_MODULE_24__["QuizScoreComponent"]],
                 imports: [
                     _angular_common__WEBPACK_IMPORTED_MODULE_1__["CommonModule"],
                     _course_routing_module__WEBPACK_IMPORTED_MODULE_8__["CourseRoutingModule"],
@@ -5747,6 +5752,14 @@ class ModulesComponent {
     ngOnInit() {
         this.route.params.subscribe(params => {
             this.courseId = params.id;
+            this.courseIdPromise = new Promise((resolve, reject) => {
+                if (params.id) {
+                    resolve(params.id);
+                }
+                else {
+                    reject("couldn't find course id");
+                }
+            });
             console.log("param id is: " + params.id);
         });
         /*if(!this.currentUser){
@@ -5915,21 +5928,25 @@ class ModulesComponent {
                 this.moduleSurveysFetched[moduleId] = true;
                 let surveyUrl;
                 let surveyWithEmailUrl = survey.link;
-                surveyWithEmailUrl = survey.link + '?email=' + this.currentUser.email;
-                console.log(surveyWithEmailUrl);
-                surveyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(surveyWithEmailUrl);
-                let surveyObject = {
-                    surveyUrl: surveyUrl,
-                    survey_id: survey.survey_id,
-                    name: survey.name,
-                    url: survey.link
-                };
-                if (this.safeSurveys.get(moduleId)) {
-                    this.safeSurveys.get(moduleId).push(surveyObject);
-                }
-                else {
-                    this.safeSurveys.set(moduleId, [surveyObject]);
-                }
+                this.courseIdPromise.then((id) => {
+                    let courseId = parseInt(id, 10);
+                    console.log(courseId);
+                    surveyWithEmailUrl = survey.link + '?email=' + this.currentUser.email + '&course=' + courseId;
+                    //console.log(surveyWithEmailUrl);
+                    surveyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(surveyWithEmailUrl);
+                    let surveyObject = {
+                        surveyUrl: surveyUrl,
+                        survey_id: survey.survey_id,
+                        name: survey.name,
+                        url: survey.link
+                    };
+                    if (this.safeSurveys.get(moduleId)) {
+                        this.safeSurveys.get(moduleId).push(surveyObject);
+                    }
+                    else {
+                        this.safeSurveys.set(moduleId, [surveyObject]);
+                    }
+                });
             }
         });
     }
@@ -7116,6 +7133,114 @@ EditModuleComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefi
                 styleUrls: ['./edit-module.component.scss']
             }]
     }], function () { return [{ type: _app_core_services_module_service__WEBPACK_IMPORTED_MODULE_2__["ModuleService"] }, { type: _angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"] }, { type: _angular_router__WEBPACK_IMPORTED_MODULE_3__["ActivatedRoute"] }, { type: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormBuilder"] }]; }, null); })();
+
+
+/***/ }),
+
+/***/ "./src/app/modules/course/quiz-score/quiz-score.component.ts":
+/*!*******************************************************************!*\
+  !*** ./src/app/modules/course/quiz-score/quiz-score.component.ts ***!
+  \*******************************************************************/
+/*! exports provided: QuizScoreComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "QuizScoreComponent", function() { return QuizScoreComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/__ivy_ngcc__/fesm2015/core.js");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/__ivy_ngcc__/fesm2015/router.js");
+/* harmony import */ var _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @app/core/services/authentication.service */ "./src/app/core/services/authentication.service.ts");
+/* harmony import */ var _app_core_services_student_course_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @app/core/services/student-course.service */ "./src/app/core/services/student-course.service.ts");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/__ivy_ngcc__/fesm2015/common.js");
+
+
+
+
+
+
+class QuizScoreComponent {
+    constructor(route, authenticationService, studentCourseService) {
+        this.route = route;
+        this.authenticationService = authenticationService;
+        this.studentCourseService = studentCourseService;
+        this.authenticationService.currentUser.subscribe(user => this.currentUser = Promise.resolve(user));
+    }
+    ngOnInit() {
+        this.route.queryParamMap.subscribe((params) => {
+            this.createPromises(params);
+            this.updateStudentPoints();
+        });
+    }
+    createPromises(params) {
+        this.score = new Promise((resolve, reject) => {
+            if (params.get('score') == null) {
+                reject("unable to find score");
+            }
+            else {
+                resolve(params.get('score'));
+            }
+        });
+        this.courseId = new Promise((resolve, reject) => {
+            if (params.get('course') == null) {
+                reject("unable to find courseId");
+            }
+            else {
+                resolve(params.get('course'));
+            }
+        });
+    }
+    updateStudentPoints() {
+        this.courseId.then((id) => {
+            let courseId = parseInt(id, 10);
+            console.log("found courseId: " + courseId);
+            this.score.then((score) => {
+                this.currentUser.then((user) => {
+                    console.log("found score for: " + user.email + "\nid: " + user.id);
+                    console.log(score);
+                    this.studentCourseService.updatePoints(user.id, courseId, score).subscribe((data) => {
+                        console.log("Updated points for " + user.email);
+                        console.log(data);
+                    });
+                });
+            }).catch((reason) => {
+                console.error(reason);
+            });
+        }).catch((reason) => {
+            console.error(reason);
+        });
+    }
+}
+QuizScoreComponent.ɵfac = function QuizScoreComponent_Factory(t) { return new (t || QuizScoreComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_1__["ActivatedRoute"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_2__["AuthenticationService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_core_services_student_course_service__WEBPACK_IMPORTED_MODULE_3__["StudentCourseService"])); };
+QuizScoreComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: QuizScoreComponent, selectors: [["app-quiz-score"]], decls: 10, vars: 6, consts: [[1, "center-form"], [2, "font-size", "larger"]], template: function QuizScoreComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "h2");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](3, "async");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "p", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](6, "async");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](7, "hr");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "p");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](9, "Please close this window to continue with the course.");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    } if (rf & 2) {
+        var tmp_0_0 = null;
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"]("Your Score: (", (tmp_0_0 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](3, 2, ctx.currentUser)) == null ? null : tmp_0_0.email, ")");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](6, 4, ctx.score));
+    } }, pipes: [_angular_common__WEBPACK_IMPORTED_MODULE_4__["AsyncPipe"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL21vZHVsZXMvY291cnNlL3F1aXotc2NvcmUvcXVpei1zY29yZS5jb21wb25lbnQuc2NzcyJ9 */"] });
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](QuizScoreComponent, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
+        args: [{
+                selector: 'app-quiz-score',
+                templateUrl: './quiz-score.component.html',
+                styleUrls: ['./quiz-score.component.scss']
+            }]
+    }], function () { return [{ type: _angular_router__WEBPACK_IMPORTED_MODULE_1__["ActivatedRoute"] }, { type: _app_core_services_authentication_service__WEBPACK_IMPORTED_MODULE_2__["AuthenticationService"] }, { type: _app_core_services_student_course_service__WEBPACK_IMPORTED_MODULE_3__["StudentCourseService"] }]; }, null); })();
 
 
 /***/ }),

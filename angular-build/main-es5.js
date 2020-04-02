@@ -1506,6 +1506,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         value: function declineStudentEnrollment(student_id, course_id) {
           return this.http["delete"]("".concat(src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL, "/student-courses/").concat(student_id, "/").concat(course_id));
         }
+      }, {
+        key: "updatePoints",
+        value: function updatePoints(student_id, course_id, points) {
+          var student_course = {
+            student_id: student_id,
+            course_id: course_id,
+            points: points
+          };
+          return this.http.put("".concat(src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL, "/student-courses/up/score"), student_course);
+        }
       }]);
 
       return StudentCourseService;

@@ -55,6 +55,7 @@ export class ModulesComponent implements OnInit {
   averagePoints;
   urlPath;
   courseId;
+  courseIdPromise: Promise<string>;
   toggleContent = [];
   moduleVideosFetched = [];
   modulePDFsFetched = [];
@@ -107,6 +108,13 @@ export class ModulesComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.courseId = params.id;
+      this.courseIdPromise = new Promise((resolve, reject) => {
+        if(params.id){
+          resolve(params.id);
+        } else {
+          reject("couldn't find course id");
+        }
+      });
       console.log("param id is: " + params.id);
     })
     /*if(!this.currentUser){
@@ -303,20 +311,29 @@ export class ModulesComponent implements OnInit {
         this.moduleSurveysFetched[moduleId] = true;
 
         let surveyUrl: SafeResourceUrl;
-        surveyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(survey.link);
-        let surveyObject = {
-          surveyUrl: surveyUrl,
-          survey_id: survey.survey_id,
-          name: survey.name,
-          url: survey.link
-        }
+        let surveyWithEmailUrl = survey.link;
 
-        if(this.safeSurveys.get(moduleId)){
-          this.safeSurveys.get(moduleId).push(surveyObject);
-        }
-        else {
-          this.safeSurveys.set(moduleId, [surveyObject]);
-        }
+        this.courseIdPromise.then((id) => {
+          let courseId = parseInt(id, 10);
+          console.log(courseId);
+
+          surveyWithEmailUrl = survey.link + '?email=' + this.currentUser.email + '&course=' + courseId;
+          //console.log(surveyWithEmailUrl);
+          surveyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(surveyWithEmailUrl);
+          let surveyObject = {
+            surveyUrl: surveyUrl,
+            survey_id: survey.survey_id,
+            name: survey.name,
+            url: survey.link
+          }
+  
+          if(this.safeSurveys.get(moduleId)){
+            this.safeSurveys.get(moduleId).push(surveyObject);
+          }
+          else {
+            this.safeSurveys.set(moduleId, [surveyObject]);
+          }  
+        });
       }
     })
   }

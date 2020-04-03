@@ -230,12 +230,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.authFB = authFB;
         this.title = 'LMS-FIU';
         this.FB_User = {
+          id: 0,
+          email: '',
           f_name: '',
           l_name: '',
-          email: '',
-          role: '',
           user_id: '',
-          id: 0
+          role: ''
         };
         this.loggedIn = false;
         this.fbInitiated = false;
@@ -312,8 +312,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 _this4.studentService.getStudentByEmail(_this4.FB_User.email).subscribe(function (user) {
                   // In DB
                   console.log(user);
-                  _this4.FB_User.role = user[0].role;
-                  _this4.FB_User.id = user[0].id;
+                  _this4.FB_User.role = user.role;
+                  _this4.FB_User.id = user.id;
                   console.log(_this4.FB_User);
 
                   _this4.inStudentDB(_this4.FB_User);
@@ -331,40 +331,44 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         key: "inStudentDB",
         value: function inStudentDB(FBUser) {
           var userData = {
+            "id": FBUser.id,
             "email": FBUser.email,
             "f_name": FBUser.f_name,
             "l_name": FBUser.l_name,
-            "role": FBUser.role,
             "user_id": FBUser.user_id,
-            "id": FBUser.id
+            "role": FBUser.role
           };
           this.authenticationService.loginWithFB(userData);
           console.log("Student found in DB, updating info");
-          console.log(this.currentUser.role);
-          this.studentService.updateStudent(this.FB_email, userData).subscribe(function () {
+          console.log(FBUser.role);
+          /*this.studentService.updateStudent(this.FB_email, userData).subscribe(() => {
             console.log("updated student");
-          });
+          });*/
+
           localStorage.setItem("FB_user", JSON.stringify(userData));
-          console.log(JSON.stringify(userData));
+          console.log(userData);
         }
       }, {
         key: "notInStudentDB",
         value: function notInStudentDB(FBUser) {
           var userData = {
+            "id": '',
             "email": FBUser.email,
             "f_name": FBUser.f_name,
             "l_name": FBUser.l_name,
             "user_id": FBUser.user_id,
-            "id": FBUser.id,
             "role": FBUser.role
           };
           this.authenticationService.loginWithFB(userData);
           console.log("Student not found in DB, adding");
-          this.studentService.addStudent(userData).subscribe(function () {
+          this.studentService.addStudent(userData).subscribe(function (user) {
+            console.log(user);
+            console.log(user.id);
+            userData.id = user.id;
             console.log("added to db");
+            localStorage.setItem("FB_user", JSON.stringify(userData));
+            console.log(userData);
           });
-          localStorage.setItem("FB_user", JSON.stringify(userData));
-          console.log(JSON.stringify(userData));
         }
       }]);
 
@@ -1501,6 +1505,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         key: "declineStudentEnrollment",
         value: function declineStudentEnrollment(student_id, course_id) {
           return this.http["delete"]("".concat(src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL, "/student-courses/").concat(student_id, "/").concat(course_id));
+        }
+      }, {
+        key: "updatePoints",
+        value: function updatePoints(student_id, course_id, points) {
+          var student_course = {
+            student_id: student_id,
+            course_id: course_id,
+            points: points
+          };
+          return this.http.put("".concat(src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].apiURL, "/student-courses/up/score"), student_course);
         }
       }]);
 
@@ -4213,7 +4227,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       },
       directives: [_angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterLinkWithHref"]],
       pipes: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["DatePipe"]],
-      styles: [".center-footer[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: row;\n  justify-content: center;\n  align-items: center;\n  padding: 20px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvc2hhcmVkL2Zvb3Rlci9DOlxcVXNlcnNcXEppbW15XFxEb2N1bWVudHNcXEdpdEh1YlxcbG1zLWZpdS1mYi1jbGllbnQvc3JjXFxhcHBcXHNoYXJlZFxcZm9vdGVyXFxmb290ZXIuY29tcG9uZW50LnNjc3MiLCJzcmMvYXBwL3NoYXJlZC9mb290ZXIvZm9vdGVyLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksYUFBQTtFQUNBLG1CQUFBO0VBQ0EsdUJBQUE7RUFDQSxtQkFBQTtFQUNBLGFBQUE7QUNDSiIsImZpbGUiOiJzcmMvYXBwL3NoYXJlZC9mb290ZXIvZm9vdGVyLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmNlbnRlci1mb290ZXIge1xyXG4gICAgZGlzcGxheTogZmxleDtcclxuICAgIGZsZXgtZGlyZWN0aW9uOiByb3c7XHJcbiAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcclxuICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XHJcbiAgICBwYWRkaW5nOiAyMHB4O1xyXG59IiwiLmNlbnRlci1mb290ZXIge1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbGV4LWRpcmVjdGlvbjogcm93O1xuICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgcGFkZGluZzogMjBweDtcbn0iXX0= */"]
+      styles: [".center-footer[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: row;\n  justify-content: center;\n  align-items: center;\n  padding: 20px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvc2hhcmVkL2Zvb3Rlci9DOlxcVXNlcnNcXE5pY29sYXNcXERlc2t0b3BcXExNU0ZJVS1GQlxcbG1zLWZpdS1mYi1jbGllbnQvc3JjXFxhcHBcXHNoYXJlZFxcZm9vdGVyXFxmb290ZXIuY29tcG9uZW50LnNjc3MiLCJzcmMvYXBwL3NoYXJlZC9mb290ZXIvZm9vdGVyLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksYUFBQTtFQUNBLG1CQUFBO0VBQ0EsdUJBQUE7RUFDQSxtQkFBQTtFQUNBLGFBQUE7QUNDSiIsImZpbGUiOiJzcmMvYXBwL3NoYXJlZC9mb290ZXIvZm9vdGVyLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmNlbnRlci1mb290ZXIge1xyXG4gICAgZGlzcGxheTogZmxleDtcclxuICAgIGZsZXgtZGlyZWN0aW9uOiByb3c7XHJcbiAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcclxuICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XHJcbiAgICBwYWRkaW5nOiAyMHB4O1xyXG59IiwiLmNlbnRlci1mb290ZXIge1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbGV4LWRpcmVjdGlvbjogcm93O1xuICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgcGFkZGluZzogMjBweDtcbn0iXX0= */"]
     });
     /*@__PURE__*/
 
@@ -4309,7 +4323,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }
 
-    function HeaderComponent_ul_17_Template(rf, ctx) {
+    function HeaderComponent_ul_18_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "ul", 6);
 
@@ -4367,6 +4381,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.authenticationService = authenticationService;
         this.FB = FB;
         this.authFB = authFB;
+        this.isAdmin = null;
         this.authenticationService.currentUser.subscribe(function (x) {
           return _this22.currentUser = x;
         });
@@ -4375,55 +4390,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(HeaderComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          console.log("header OnInit");
-          console.log(this.currentUser);
-          /*
-          if(this.currentUser.role == "admin"){
-            this.isAdmin = true;
-          }
-          this.currentUserAsync = this.authenticationService.currentUser;
-          */
-
-          this.waitForCurrentUser();
-          console.log(this.currentUser);
-        }
-      }, {
-        key: "ngOnChanges",
-        value: function ngOnChanges() {
           var _this23 = this;
 
-          this.authenticationService.currentUser.subscribe(function (x) {
-            console.log("header on changes subscribed");
-            _this23.currentUser = x;
-            console.log(_this23.currentUser);
-          });
-          console.log("header on changes");
+          console.log("header OnInit");
+          console.log(this.currentUser); //async
+
+          this.currentUserAsync = this.authenticationService.currentUser;
+          this.authenticationService.currentUser.subscribe(function (user) {
+            _this23.isAdmin = Promise.resolve(true);
+          }); //this.waitForCurrentUser();
+
           console.log(this.currentUser);
-
-          if (this.currentUser.role == "admin") {
-            this.isAdmin = true;
-          }
-
-          this.currentUserAsync = this.authenticationService.currentUser.subscribe();
-        }
-      }, {
-        key: "ngAfterViewChecked",
-        value: function ngAfterViewChecked() {
-          /*
-          if (!this.currentUser){
-            this.authenticationService.currentUser.subscribe(x => {
-              console.log("header on changes subscribed");
-              this.currentUser = x;
-              console.log(this.currentUser);
-            });
-            console.log("header on changes");
-            console.log(this.currentUser);
-            if (this.currentUser.role == "admin") {
-              this.isAdmin = true;
-            }
-            this.currentUserAsync = this.authenticationService.currentUser.subscribe();
-          }
-          */
         }
       }, {
         key: "waitForCurrentUser",
@@ -4440,7 +4417,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             console.log(this.currentUser);
 
             if (this.currentUser.role == "admin") {
-              this.isAdmin = true;
+              this.isAdmin = Promise.resolve(true);
             }
 
             this.currentUserAsync = this.authenticationService.currentUser;
@@ -4454,13 +4431,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "logout",
         value: function logout() {
-          /*
-          this.authenticationService.logout().subscribe(() => {
-            console.log("Logged out");
-            this.router.navigate(['/login']);
-          });
-          //this.router.navigate(['/login']);
-          */
           this.authFB.signOut();
           this.router.navigate(['/login']);
         }
@@ -4476,9 +4446,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     HeaderComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
       type: HeaderComponent,
       selectors: [["app-header"]],
-      features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]],
-      decls: 19,
-      vars: 6,
+      decls: 20,
+      vars: 8,
       consts: [[1, "navbar", "navbar-expand-lg", "navbar-dark", "lms-bg"], ["routerLink", "/", 1, "navbar-brand"], ["src", "../../../assets/android-chrome-512x512.png", "alt", "FIU Logo", "width", "32", "height", "32"], ["type", "button", "data-toggle", "collapse", "data-target", "#navbarNav", "aria-controls", "navbarNav", "aria-expanded", "false", "aria-label", "Toggle navigation", 1, "navbar-toggler"], [1, "navbar-toggler-icon"], ["id", "navbarNav", 1, "collapse", "navbar-collapse"], [1, "navbar-nav"], [1, "nav-item"], ["routerLink", "/", "routerLinkActive", "active", 1, "nav-link", 3, "routerLinkActiveOptions"], ["routerLink", "/course-library", "routerLinkActive", "active", 1, "nav-link"], ["routerLink", "/courses", "routerLinkActive", "active", 1, "nav-link"], ["class", "nav-item", 4, "ngIf"], ["class", "navbar-nav", 4, "ngIf"], ["routerLink", "/admin", "routerLinkActive", "active", 1, "nav-link"], [1, "nav-welcome"]],
       template: function HeaderComponent_Template(rf, ctx) {
         if (rf & 1) {
@@ -4532,13 +4501,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](16, HeaderComponent_li_16_Template, 3, 0, "li", 11);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](17, "async");
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](17, HeaderComponent_ul_17_Template, 7, 3, "ul", 12);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](18, "async");
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](18, HeaderComponent_ul_18_Template, 7, 3, "ul", 12);
+
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](19, "async");
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         }
@@ -4546,20 +4517,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (rf & 2) {
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](8);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLinkActiveOptions", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](5, _c0));
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLinkActiveOptions", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](7, _c0));
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](8);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.isAdmin);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](17, 3, ctx.isAdmin));
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](18, 3, ctx.currentUserAsync));
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](19, 5, ctx.currentUserAsync));
         }
       },
       directives: [_ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_5__["NgbNavbar"], _angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterLinkWithHref"], _angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterLinkActive"], _angular_common__WEBPACK_IMPORTED_MODULE_6__["NgIf"]],
       pipes: [_angular_common__WEBPACK_IMPORTED_MODULE_6__["AsyncPipe"]],
-      styles: [".navbar-nav[_ngcontent-%COMP%] {\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen, Ubuntu, Cantarell, \"Open Sans\", \"Helvetica Neue\", sans-serif;\n  font-weight: 500;\n}\n.active-link[_ngcontent-%COMP%] {\n  color: red;\n  background-color: transparent;\n}\n.nav-welcome[_ngcontent-%COMP%] {\n  display: block;\n  color: white;\n  padding: 0.5rem 1rem;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvc2hhcmVkL2hlYWRlci9DOlxcVXNlcnNcXEppbW15XFxEb2N1bWVudHNcXEdpdEh1YlxcbG1zLWZpdS1mYi1jbGllbnQvc3JjXFxhcHBcXHNoYXJlZFxcaGVhZGVyXFxoZWFkZXIuY29tcG9uZW50LnNjc3MiLCJzcmMvYXBwL3NoYXJlZC9oZWFkZXIvaGVhZGVyLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7O0VBQUE7QUFNQTs7O0VBQUE7QUFLQTtFQUNJLHdJQUFBO0VBQ0EsZ0JBQUE7QUNESjtBRElBO0VBQ0ksVUFBQTtFQUNBLDZCQUFBO0FDREo7QURJQTtFQUNJLGNBQUE7RUFDQSxZQUFBO0VBQ0Esb0JBQUE7QUNESiIsImZpbGUiOiJzcmMvYXBwL3NoYXJlZC9oZWFkZXIvaGVhZGVyLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLyoubmF2YmFyLW5hdiB7XHJcbiAgICBmb250LXdlaWdodDogYm9sZDtcclxuICAgIGNvbG9yOiB3aGl0ZTtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50O1xyXG59Ki9cclxuXHJcbi8qLm5hdi1saW5rLWlubmVyIHtcclxuICAgIGNvbG9yOiB3aGl0ZTtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50O1xyXG59Ki9cclxuXHJcbi5uYXZiYXItbmF2IHtcclxuICAgIGZvbnQtZmFtaWx5OiAtYXBwbGUtc3lzdGVtLCBCbGlua01hY1N5c3RlbUZvbnQsICdTZWdvZSBVSScsIFJvYm90bywgT3h5Z2VuLCBVYnVudHUsIENhbnRhcmVsbCwgJ09wZW4gU2FucycsICdIZWx2ZXRpY2EgTmV1ZScsIHNhbnMtc2VyaWY7XHJcbiAgICBmb250LXdlaWdodDogNTAwO1xyXG59XHJcblxyXG4uYWN0aXZlLWxpbmsge1xyXG4gICAgY29sb3I6IHJlZDtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50O1xyXG59XHJcblxyXG4ubmF2LXdlbGNvbWUge1xyXG4gICAgZGlzcGxheTogYmxvY2s7XHJcbiAgICBjb2xvcjogd2hpdGU7XHJcbiAgICBwYWRkaW5nOiAwLjVyZW0gMXJlbTtcclxufVxyXG4iLCIvKi5uYXZiYXItbmF2IHtcbiAgICBmb250LXdlaWdodDogYm9sZDtcbiAgICBjb2xvcjogd2hpdGU7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdHJhbnNwYXJlbnQ7XG59Ki9cbi8qLm5hdi1saW5rLWlubmVyIHtcbiAgICBjb2xvcjogd2hpdGU7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdHJhbnNwYXJlbnQ7XG59Ki9cbi5uYXZiYXItbmF2IHtcbiAgZm9udC1mYW1pbHk6IC1hcHBsZS1zeXN0ZW0sIEJsaW5rTWFjU3lzdGVtRm9udCwgXCJTZWdvZSBVSVwiLCBSb2JvdG8sIE94eWdlbiwgVWJ1bnR1LCBDYW50YXJlbGwsIFwiT3BlbiBTYW5zXCIsIFwiSGVsdmV0aWNhIE5ldWVcIiwgc2Fucy1zZXJpZjtcbiAgZm9udC13ZWlnaHQ6IDUwMDtcbn1cblxuLmFjdGl2ZS1saW5rIHtcbiAgY29sb3I6IHJlZDtcbiAgYmFja2dyb3VuZC1jb2xvcjogdHJhbnNwYXJlbnQ7XG59XG5cbi5uYXYtd2VsY29tZSB7XG4gIGRpc3BsYXk6IGJsb2NrO1xuICBjb2xvcjogd2hpdGU7XG4gIHBhZGRpbmc6IDAuNXJlbSAxcmVtO1xufSJdfQ== */"]
+      styles: [".navbar-nav[_ngcontent-%COMP%] {\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen, Ubuntu, Cantarell, \"Open Sans\", \"Helvetica Neue\", sans-serif;\n  font-weight: 500;\n}\n.active-link[_ngcontent-%COMP%] {\n  color: red;\n  background-color: transparent;\n}\n.nav-welcome[_ngcontent-%COMP%] {\n  display: block;\n  color: white;\n  padding: 0.5rem 1rem;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvc2hhcmVkL2hlYWRlci9DOlxcVXNlcnNcXE5pY29sYXNcXERlc2t0b3BcXExNU0ZJVS1GQlxcbG1zLWZpdS1mYi1jbGllbnQvc3JjXFxhcHBcXHNoYXJlZFxcaGVhZGVyXFxoZWFkZXIuY29tcG9uZW50LnNjc3MiLCJzcmMvYXBwL3NoYXJlZC9oZWFkZXIvaGVhZGVyLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7O0VBQUE7QUFNQTs7O0VBQUE7QUFLQTtFQUNJLHdJQUFBO0VBQ0EsZ0JBQUE7QUNESjtBRElBO0VBQ0ksVUFBQTtFQUNBLDZCQUFBO0FDREo7QURJQTtFQUNJLGNBQUE7RUFDQSxZQUFBO0VBQ0Esb0JBQUE7QUNESiIsImZpbGUiOiJzcmMvYXBwL3NoYXJlZC9oZWFkZXIvaGVhZGVyLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLyoubmF2YmFyLW5hdiB7XHJcbiAgICBmb250LXdlaWdodDogYm9sZDtcclxuICAgIGNvbG9yOiB3aGl0ZTtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50O1xyXG59Ki9cclxuXHJcbi8qLm5hdi1saW5rLWlubmVyIHtcclxuICAgIGNvbG9yOiB3aGl0ZTtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50O1xyXG59Ki9cclxuXHJcbi5uYXZiYXItbmF2IHtcclxuICAgIGZvbnQtZmFtaWx5OiAtYXBwbGUtc3lzdGVtLCBCbGlua01hY1N5c3RlbUZvbnQsICdTZWdvZSBVSScsIFJvYm90bywgT3h5Z2VuLCBVYnVudHUsIENhbnRhcmVsbCwgJ09wZW4gU2FucycsICdIZWx2ZXRpY2EgTmV1ZScsIHNhbnMtc2VyaWY7XHJcbiAgICBmb250LXdlaWdodDogNTAwO1xyXG59XHJcblxyXG4uYWN0aXZlLWxpbmsge1xyXG4gICAgY29sb3I6IHJlZDtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50O1xyXG59XHJcblxyXG4ubmF2LXdlbGNvbWUge1xyXG4gICAgZGlzcGxheTogYmxvY2s7XHJcbiAgICBjb2xvcjogd2hpdGU7XHJcbiAgICBwYWRkaW5nOiAwLjVyZW0gMXJlbTtcclxufVxyXG4iLCIvKi5uYXZiYXItbmF2IHtcbiAgICBmb250LXdlaWdodDogYm9sZDtcbiAgICBjb2xvcjogd2hpdGU7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdHJhbnNwYXJlbnQ7XG59Ki9cbi8qLm5hdi1saW5rLWlubmVyIHtcbiAgICBjb2xvcjogd2hpdGU7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdHJhbnNwYXJlbnQ7XG59Ki9cbi5uYXZiYXItbmF2IHtcbiAgZm9udC1mYW1pbHk6IC1hcHBsZS1zeXN0ZW0sIEJsaW5rTWFjU3lzdGVtRm9udCwgXCJTZWdvZSBVSVwiLCBSb2JvdG8sIE94eWdlbiwgVWJ1bnR1LCBDYW50YXJlbGwsIFwiT3BlbiBTYW5zXCIsIFwiSGVsdmV0aWNhIE5ldWVcIiwgc2Fucy1zZXJpZjtcbiAgZm9udC13ZWlnaHQ6IDUwMDtcbn1cblxuLmFjdGl2ZS1saW5rIHtcbiAgY29sb3I6IHJlZDtcbiAgYmFja2dyb3VuZC1jb2xvcjogdHJhbnNwYXJlbnQ7XG59XG5cbi5uYXYtd2VsY29tZSB7XG4gIGRpc3BsYXk6IGJsb2NrO1xuICBjb2xvcjogd2hpdGU7XG4gIHBhZGRpbmc6IDAuNXJlbSAxcmVtO1xufSJdfQ== */"]
     });
     /*@__PURE__*/
 
@@ -4687,7 +4658,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   /***/
   function _(module, exports, __webpack_require__) {
     module.exports = __webpack_require__(
-    /*! C:\Users\Jimmy\Documents\GitHub\lms-fiu-fb-client\src\main.ts */
+    /*! C:\Users\Nicolas\Desktop\LMSFIU-FB\lms-fiu-fb-client\src\main.ts */
     "./src/main.ts");
     /***/
   },

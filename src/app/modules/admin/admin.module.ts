@@ -9,10 +9,12 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdminRoutingModule } from './admin-routing.module';
 import { EditCourseComponent } from './edit-course/edit-course.component';
 import { PendingEnrollmentComponent } from './pending-enrollment/pending-enrollment.component';
+import { PromotionComponent } from './promotion/promotion.component';
+import { SidebarAdminComponent } from './sidebar-admin/sidebar-admin.component';
 
 
 @NgModule({
-  declarations: [CreateCourseComponent, DashboardComponent, EditCourseComponent, PendingEnrollmentComponent],
+  declarations: [CreateCourseComponent, DashboardComponent, EditCourseComponent, PendingEnrollmentComponent, PromotionComponent, SidebarAdminComponent],
   imports: [
     CommonModule,
     AdminRoutingModule,

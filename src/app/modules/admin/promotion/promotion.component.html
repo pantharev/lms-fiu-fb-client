@@ -1,0 +1,69 @@
+<!-- <h2 class="center-form">Admin Dashboard</h2> -->
+
+<!-- <div *ngIf="isAdmin" class="center-form"> -->
+
+<app-sidebar-admin></app-sidebar-admin>
+<div id="main">
+    <div class="center-form">
+        <!-- <div *ngIf="currentUser"> -->
+        <h2>User Manager</h2>
+
+        <!-- </div> -->
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th *ngFor="let colName of displayedColumns" scope="col">{{ colName }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let student of students.res; let i = index" class="trstyle">
+                    <th scope="row">{{ student.id }}</th>
+                    <td style="max-width: 250px; word-wrap: break-word;">{{ student.email }}</td>
+                    <td style="max-width: 125px; word-wrap: break-word;">{{ student.f_name }} {{ student.l_name }}</td>
+                    <td style="max-width: 125px; word-wrap: break-word;">{{ student.role}}</td>
+                    <td>
+                        <button type="button" (click)="updateRole(student, 'student')" class="btn btn-primary"><i
+                                class="fas fa-user"></i> Make Student</button>
+                        <button type="button" (click)="updateRole(student, 'instructor')" class="btn btn-info"><i
+                                class="fas fa-chalkboard-teacher"></i> Make Instructor</button>
+                        <button type="button" (click)="updateRole(student, 'admin')" class="btn btn-warning"><i
+                                class="fas fa-user-cog"></i> Make Admin</button>
+                        <button type="button" (click)="delete(student.id)" class="btn btn-danger"><i
+                                class="fas fa-minus-circle"></i> Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <nav aria-label="Page navigation course-library">
+            <ul class="pagination">
+
+                <ng-container *ngIf="page == 0; else elseBlock">
+                    <li class="page-item disabled"><button class="page-link"
+                            (click)="fetchPageStudents(page-1)">Previous</button></li>
+                </ng-container>
+                <ng-template #elseBlock>
+                    <li class="page-item"><button class="page-link"
+                            (click)="fetchPageStudents(page-1)">Previous</button>
+                    </li>
+                </ng-template>
+
+                <ng-container *ngFor="let maxPages of maxPagesArray; let i = index">
+                    <li class="page-item"><button class="page-link" (click)="fetchPageStudents(i)">{{i}}</button></li>
+                </ng-container>
+
+                <ng-container *ngIf="page == maxPages - 1; else elseBlock2">
+                    <li class="page-item disabled"><button class="page-link"
+                            (click)="fetchPageStudents(page+1)">Next</button></li>
+                </ng-container>
+                <ng-template #elseBlock2>
+                    <li class="page-item"><button class="page-link" (click)="fetchPageStudents(page+1)">Next</button>
+                    </li>
+                </ng-template>
+
+            </ul>
+        </nav>
+
+    </div>
+</div>

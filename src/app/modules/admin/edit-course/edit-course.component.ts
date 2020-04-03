@@ -112,7 +112,7 @@ export class EditCourseComponent implements OnInit {
       this.studentCourseService.enrollStudentToCourse(instructor.id, this.id, 'enrolled').subscribe(() => {
         console.log("Added new instructor to course");
       });
-      this.router.navigate(['/admin']);
+      this.router.navigate(['/admin/dashboard']);
     });
   }
 

@@ -31,14 +31,14 @@ export class DashboardComponent implements OnInit {
 
   constructor(private courseService: CourseService, private router: Router, private route: ActivatedRoute, private authenticationService: AuthenticationService, private studentCourseService: StudentCourseService) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
-   }
+  }
 
   ngOnInit() {
     let page = this.route.snapshot.paramMap.get('page') || this.page;
     this.fetchCourses(page);
     console.log(this.currentUser);
     this.isAdmin = (JSON.parse(localStorage.getItem("FB_user")).role == 'admin');
-    
+
     /*
     this.currentUser = this.authenticationService.currentUserValue;
     if(this.currentUser){
@@ -50,28 +50,28 @@ export class DashboardComponent implements OnInit {
     */
   }
 
-  pendingEnrollmentsNotification(courses: []){
+  pendingEnrollmentsNotification(courses: []) {
     courses.forEach((course: Course, index, arr) => {
       let start_date = new Date(course.start_date.toString());
       let end_date = new Date(course.end_date.toString());
 
       course.start_date = start_date.toLocaleDateString();
       course.end_date = end_date.toLocaleDateString();
-      if(course.seats < 1){
+      if (course.seats < 1) {
         return;
       }
       this.students[index] = 0;
-          this.studentCourseService.getStudentsByCourseId(course.id).subscribe((res: []) => {
-            res.forEach((val: any) => {
-              if(val.enrollment_status == "pending"){
-                this.students[index]++;
-              }
-            })
-            console.log(course.name + " pending students: " + this.students[index]);
-            //this.students = res;
-            //console.log("i: " + index + " course: " + JSON.stringify(course));
-            //console.log(this.students);
-          });
+      this.studentCourseService.getStudentsByCourseId(course.id).subscribe((res: []) => {
+        res.forEach((val: any) => {
+          if (val.enrollment_status == "pending") {
+            this.students[index]++;
+          }
+        })
+        console.log(course.name + " pending students: " + this.students[index]);
+        //this.students = res;
+        //console.log("i: " + index + " course: " + JSON.stringify(course));
+        //console.log(this.students);
+      });
     });
   }
 
@@ -88,13 +88,13 @@ export class DashboardComponent implements OnInit {
         console.log('Data requested...');
 
         this.pendingEnrollmentsNotification(this.courses.res);
-        this.router.navigate(['/admin', { page: page}]);
+        this.router.navigate(['/admin/dashboard', { page: page }]);
       });
   }
 
   fetchPageCourses(pageNo) {
     //console.log("pageNo: " + pageNo);
-    if(pageNo < 0) {
+    if (pageNo < 0) {
       return;
     }
     this.courseService.getCourses(pageNo, this.numberPerPage)
@@ -107,8 +107,8 @@ export class DashboardComponent implements OnInit {
         this.pendingEnrollmentsNotification(this.courses.res);
 
         console.log('Data requested...' + pageNo);
-    
-        this.router.navigate(['/admin', { page: this.courses.pagination.current}]);
+
+        this.router.navigate(['/admin/dashboard', { page: this.courses.pagination.current }]);
       });
   }
 
@@ -118,7 +118,7 @@ export class DashboardComponent implements OnInit {
 
   deleteCourse(id) {
     let r = confirm(`Delete Course ${id}: Are you sure?`);
-    if(r == true){
+    if (r == true) {
       this.courseService.deleteCourse(id).subscribe(() => {
         //this.fetchCourses();
       });

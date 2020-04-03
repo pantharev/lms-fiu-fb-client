@@ -1,68 +1,73 @@
-<h2 class="center-form">Admin Dashboard</h2>
+<!-- <h2 class="center-form">Admin Dashboard</h2> -->
 
 <!-- <div *ngIf="isAdmin" class="center-form"> -->
-<div class="center-form">
-    <!-- <div *ngIf="currentUser"> -->
-    <h2>Courses</h2>
-    <nav class="nav flex-column col-sm-1">
-        <a routerLink="/admin/create-course" routerLinkActive="active" class="nav-link btn btn-success"><i
-                class="fas fa-plus-circle"></i> Create New Course</a>
-    </nav>
 
-    <!-- </div> -->
+<app-sidebar-admin></app-sidebar-admin>
+<div id="main">
+    <div class="center-form">
+        <!-- <div *ngIf="currentUser"> -->
+        <h2>Course Manager</h2>
+        <nav class="nav flex-column col-sm-1">
+            <a routerLink="/admin/create-course" routerLinkActive="active" class="nav-link btn btn-success"><i
+                    class="fas fa-plus-circle"></i> Create New Course</a>
+        </nav>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th *ngFor="let colName of displayedColumns" scope="col">{{ colName }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let course of courses.res; let i = index" class="trstyle">
-                <th scope="row">{{ course.id }}</th>
-                <td style="max-width: 125px; word-wrap: break-word;">{{ course.name }}</td>
-                <td style="max-width: 200px; word-wrap: break-word;">{{ course.description }}</td>
-                <td>{{ course.seats }}</td>
-                <td>{{ course.start_date }}</td>
-                <td>{{ course.end_date }}</td>
-                <td>
-                    <button type="button" (click)="editCourse(course.id)" class="btn btn-primary"><i
-                            class="fas fa-edit"></i> Edit</button>
-                    <button type="button" (click)="deleteCourse(course.id)" class="btn btn-danger"><i
-                            class="fas fa-minus-circle"></i> Delete</button>
-                    <button type="button" (click)="pendingEnrollment(course.id)" class="btn btn-warning"
-                        style="margin-left: 20px"><span *ngIf="students[i] > 0"
-                            class="badge badge-light">{{students[i]}}</span> Pending Enrollments</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+        <!-- </div> -->
 
-    <nav aria-label="Page navigation course-library">
-        <ul class="pagination">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th *ngFor="let colName of displayedColumns" scope="col">{{ colName }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let course of courses.res; let i = index" class="trstyle">
+                    <th scope="row">{{ course.id }}</th>
+                    <td style="max-width: 125px; word-wrap: break-word;">{{ course.name }}</td>
+                    <td style="max-width: 200px; word-wrap: break-word;">{{ course.description }}</td>
+                    <td>{{ course.seats }}</td>
+                    <td>{{ course.start_date }}</td>
+                    <td>{{ course.end_date }}</td>
+                    <td>
+                        <button type="button" (click)="editCourse(course.id)" class="btn btn-primary"><i
+                                class="fas fa-edit"></i> Edit</button>
+                        <button type="button" (click)="deleteCourse(course.id)" class="btn btn-danger"><i
+                                class="fas fa-minus-circle"></i> Delete</button>
+                        <button type="button" (click)="pendingEnrollment(course.id)" class="btn btn-warning"
+                            style="margin-left: 20px"><span *ngIf="students[i] > 0"
+                                class="badge badge-light">{{students[i]}}</span> Pending Enrollments</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-            <ng-container *ngIf="page == 0; else elseBlock">
-                <li class="page-item disabled"><button class="page-link"
-                        (click)="fetchPageCourses(page-1)">Previous</button></li>
-            </ng-container>
-            <ng-template #elseBlock>
-                <li class="page-item"><button class="page-link" (click)="fetchPageCourses(page-1)">Previous</button>
-                </li>
-            </ng-template>
+        <nav aria-label="Page navigation course-library">
+            <ul class="pagination">
 
-            <ng-container *ngFor="let maxPages of maxPagesArray; let i = index">
-                <li class="page-item"><button class="page-link" (click)="fetchPageCourses(i)">{{i}}</button></li>
-            </ng-container>
+                <ng-container *ngIf="page == 0; else elseBlock">
+                    <li class="page-item disabled"><button class="page-link"
+                            (click)="fetchPageCourses(page-1)">Previous</button></li>
+                </ng-container>
+                <ng-template #elseBlock>
+                    <li class="page-item"><button class="page-link" (click)="fetchPageCourses(page-1)">Previous</button>
+                    </li>
+                </ng-template>
 
-            <ng-container *ngIf="page == maxPages - 1; else elseBlock2">
-                <li class="page-item disabled"><button class="page-link"
-                        (click)="fetchPageCourses(page+1)">Next</button></li>
-            </ng-container>
-            <ng-template #elseBlock2>
-                <li class="page-item"><button class="page-link" (click)="fetchPageCourses(page+1)">Next</button></li>
-            </ng-template>
+                <ng-container *ngFor="let maxPages of maxPagesArray; let i = index">
+                    <li class="page-item"><button class="page-link" (click)="fetchPageCourses(i)">{{i}}</button></li>
+                </ng-container>
 
-        </ul>
-    </nav>
+                <ng-container *ngIf="page == maxPages - 1; else elseBlock2">
+                    <li class="page-item disabled"><button class="page-link"
+                            (click)="fetchPageCourses(page+1)">Next</button></li>
+                </ng-container>
+                <ng-template #elseBlock2>
+                    <li class="page-item"><button class="page-link" (click)="fetchPageCourses(page+1)">Next</button>
+                    </li>
+                </ng-template>
 
+            </ul>
+        </nav>
+
+    </div>
 </div>

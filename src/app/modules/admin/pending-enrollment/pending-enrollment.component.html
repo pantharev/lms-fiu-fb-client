@@ -13,14 +13,16 @@
     <tbody>
         <tr *ngFor="let student of students">
             <ng-container *ngIf="student.enrollment_status == 'pending'">
-            <th scope="row">{{ student.student_id}}</th>
-            <td>{{ student.email }}</td>
-            <td>{{ student.f_name }}</td>
-            <td>{{ student.l_name }}</td>
-            <td>
-                <button type="button" (click)="acceptEnrollment(student.student_id, student.course_id, 'enrolled')" class="btn btn-success">Accept</button>
-                <button type="button" (click)="declineEnrollment(student.student_id, student.course_id)" class="btn btn-danger">Decline</button>
-            </td>
+                <th scope="row">{{ student.student_id}}</th>
+                <td>{{ student.email }}</td>
+                <td>{{ student.f_name }}</td>
+                <td>{{ student.l_name }}</td>
+                <td>
+                    <button type="button" (click)="acceptEnrollment(student.student_id, student.course_id, 'enrolled')"
+                        class="btn btn-success">Accept</button>
+                    <button type="button" (click)="declineEnrollment(student.student_id, student.course_id)"
+                        class="btn btn-danger">Decline</button>
+                </td>
             </ng-container>
         </tr>
     </tbody>
@@ -30,4 +32,4 @@
     <h2 class="center-form">No seats available!</h2>
 </ng-template>
 
-<a routerLink="/admin" class="btn btn-warning"><i class="fas fa-arrow-circle-left"></i> Go Back</a>
+<a routerLink="/admin/dashboard" class="btn btn-warning"><i class="fas fa-arrow-circle-left"></i> Go Back</a>

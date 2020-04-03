@@ -7,12 +7,14 @@ import { EditCourseComponent } from './edit-course/edit-course.component';
 import { PendingEnrollmentComponent } from './pending-enrollment/pending-enrollment.component';
 
 import { AuthenticationService as AuthGuard } from '@app/core/services/authentication.service';
+import { PromotionComponent } from './promotion/promotion.component';
 
 const routes: Routes = [
-  { path: '', component: DashboardComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin'} },
-  { path: 'create-course', component: CreateCourseComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin'} },
-  { path: 'edit-course/:id', component: EditCourseComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin'} },
-  { path: 'pending-enrollment/:id', component: PendingEnrollmentComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin'} }
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+  { path: 'create-course', component: CreateCourseComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+  { path: 'edit-course/:id', component: EditCourseComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+  { path: 'pending-enrollment/:id', component: PendingEnrollmentComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+  { path: 'promotion', component: PromotionComponent, canActivate: [AuthGuard], data: {expectedRole: 'admin' } }
 ]
 
 @NgModule({

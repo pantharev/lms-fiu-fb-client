@@ -88,7 +88,7 @@ export class DashboardComponent implements OnInit {
         console.log('Data requested...');
 
         this.pendingEnrollmentsNotification(this.courses.res);
-        this.router.navigate(['/admin/dashboard', { page: page }]);
+        this.router.navigate(['/admin/dashboard'], { queryParams: {page: page } });
       });
   }
 
@@ -108,7 +108,7 @@ export class DashboardComponent implements OnInit {
 
         console.log('Data requested...' + pageNo);
 
-        this.router.navigate(['/admin/dashboard', { page: this.courses.pagination.current }]);
+        this.router.navigate(['/admin/dashboard'], { queryParams: { page: this.courses.pagination.current} });
       });
   }
 

@@ -1687,7 +1687,7 @@ class CourseBrowserComponent {
             });
             //console.log('Data requested...');
             //console.log(this.courses);
-            this.router.navigate(['/course-library', { page: page }]);
+            this.router.navigate(['/course-library'], { queryParams: { page: page } });
         });
     }
     fetchPageCourses(pageNo) {
@@ -1714,7 +1714,7 @@ class CourseBrowserComponent {
             console.log('Data requested...' + pageNo);
             //console.log(this.courses);
             //console.log("Current page: " + this.courses.pagination.current);
-            this.router.navigate(['/course-library', { page: this.courses.pagination.current }]);
+            this.router.navigate(['/course-library'], { queryParams: { page: this.courses.pagination.current } });
         });
     }
     studentEnroll(studentId, courseId, course_name, enrollment_status) {

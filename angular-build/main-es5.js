@@ -3333,9 +3333,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             //console.log(this.courses);
 
 
-            _this15.router.navigate(['/course-library', {
-              page: page
-            }]);
+            _this15.router.navigate(['/course-library'], {
+              queryParams: {
+                page: page
+              }
+            });
           });
         }
       }, {
@@ -3371,9 +3373,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             console.log('Data requested...' + pageNo); //console.log(this.courses);
             //console.log("Current page: " + this.courses.pagination.current);
 
-            _this16.router.navigate(['/course-library', {
-              page: _this16.courses.pagination.current
-            }]);
+            _this16.router.navigate(['/course-library'], {
+              queryParams: {
+                page: _this16.courses.pagination.current
+              }
+            });
           });
         }
       }, {

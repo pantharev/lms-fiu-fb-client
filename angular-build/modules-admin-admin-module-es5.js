@@ -4453,9 +4453,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             _this15.pendingEnrollmentsNotification(_this15.courses.res);
 
-            _this15.router.navigate(['/admin', {
-              page: page
-            }]);
+            _this15.router.navigate(['/admin'], {
+              queryParams: {
+                page: page
+              }
+            });
           });
         }
       }, {
@@ -4479,9 +4481,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             console.log('Data requested...' + pageNo);
 
-            _this16.router.navigate(['/admin', {
-              page: _this16.courses.pagination.current
-            }]);
+            _this16.router.navigate(['/admin'], {
+              queryParams: {
+                page: _this16.courses.pagination.current
+              }
+            });
           });
         }
       }, {

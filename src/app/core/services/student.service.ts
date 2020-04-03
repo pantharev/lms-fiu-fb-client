@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -8,9 +8,16 @@ import { environment } from 'src/environments/environment';
 export class StudentService {
 
   constructor(private http: HttpClient) { }
-
+  /*
   getStudents() {
     return this.http.get(`${environment.apiURL}/students`);
+  }
+  */
+
+  getStudents(pageNo, npp) {
+    let params = new HttpParams().set("page", pageNo).set("npp", npp);
+    let headers = new HttpHeaders().set('Content-Type', 'application/json');
+    return this.http.get(`${environment.apiURL}/students`, {headers: headers, params: params});
   }
 
   getInstructors(){
@@ -21,7 +28,7 @@ export class StudentService {
     return this.http.post(`${environment.apiURL}/students`, student);
   }
 
-  updateStudent(email, student) {
+  updateStudent(student) {
     return this.http.put(`${environment.apiURL}/students/`, student);
   }
 
@@ -29,5 +36,9 @@ export class StudentService {
     console.log("Called getStudentByEmail");
     console.log(studentEmail);
     return this.http.get(`${environment.apiURL}/students/${studentEmail}`);
+  }
+
+  deleteStudent(id){
+    return this.http.delete(`${environment.apiURL}/students/${id}`);
   }
 }

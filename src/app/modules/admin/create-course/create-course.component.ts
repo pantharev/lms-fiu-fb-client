@@ -20,9 +20,9 @@ export class CreateCourseComponent implements OnInit {
   courseForm: FormGroup;
   labels = ['name', 'description', 'seats', 'start_date', 'end_date'];
   submitted = false;
-  todayDate: Promise<string>|null = null;
-  startDateEvent: Promise<String>|null = null;
-  endDateEvent: Promise<String>|null = null;
+  todayDate: Promise<string> | null = null;
+  startDateEvent: Promise<String> | null = null;
+  endDateEvent: Promise<String> | null = null;
   startDateSelected = false;
   endDateSelected = false;
   instructors: Observable<any>;
@@ -36,7 +36,7 @@ export class CreateCourseComponent implements OnInit {
       start_date: ['', Validators.required],
       end_date: ['', Validators.required]
     });
-   }
+  }
 
   get c() { return this.courseForm.controls; }
 
@@ -71,7 +71,7 @@ export class CreateCourseComponent implements OnInit {
     console.log(instructor);
 
     console.log(instructor.id);
-    if(!this.courseForm.valid){
+    if (!this.courseForm.valid) {
       console.log("invalid");
       return;
     }
@@ -84,11 +84,11 @@ export class CreateCourseComponent implements OnInit {
       this.courseDetailsService.createCourseDetails(course.id, "<p>Recommended inputs: Course Name, Instructor Name, Office (location/hours), Phone number, and email.</p>").subscribe(() => {
         console.log("course details created");
       });
-      this.router.navigate(['/admin']);
+      this.router.navigate(['/admin/dashboard']);
     });
   }
 
-  onStartDateSelect(event){
+  onStartDateSelect(event) {
     console.log("startDateSelected");
     this.startDateEvent = new Promise<String>((resolve, reject) => {
       resolve(String(event.month).padStart(2, '0') + '/' + String(event.day).padStart(2, '0') + '/' + event.year);
@@ -96,7 +96,7 @@ export class CreateCourseComponent implements OnInit {
     this.startDateSelected = true;
   }
 
-  onEndDateSelect(event){
+  onEndDateSelect(event) {
     console.log("endDateSelected");
     this.endDateEvent = new Promise<String>((resolve, reject) => {
       resolve(String(event.month).padStart(2, '0') + '/' + String(event.day).padStart(2, '0') + '/' + event.year);
@@ -104,7 +104,7 @@ export class CreateCourseComponent implements OnInit {
     this.endDateSelected = true;
   }
 
-  formatDate(date){
+  formatDate(date) {
     let newDate = new Date(date);
     let dd = String(newDate.getDate()).padStart(2, '0');
     let mm = String(newDate.getMonth() + 1).padStart(2, '0'); //January is 0!

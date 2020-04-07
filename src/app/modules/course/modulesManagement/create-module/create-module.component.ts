@@ -50,6 +50,10 @@ export class CreateModuleComponent implements OnInit {
 
     lockedUntil = yyyy + '-' + mm + '-' + dd;
 
+    this.m.lockedUntil = lockedUntil;
+
+    console.log("locked until: " + this.m.lockedUntil); //leave this log here
+
     console.log("going to submit lockedUntil: " + lockedUntil);
     if(!this.moduleForm.valid){
       return;

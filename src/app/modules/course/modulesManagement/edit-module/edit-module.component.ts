@@ -69,6 +69,10 @@ export class EditModuleComponent implements OnInit {
 
     lockedUntil = yyyy + '-' + mm + '-' + dd;
 
+    this.mu.lockedUntil = lockedUntil;
+
+    console.log("locked until: " + this.mu.lockedUntil); //leave this log here
+
     //console.log("going to submit lockedUntil: " + lockedUntil);
     if(!this.updateForm.valid){
       return;

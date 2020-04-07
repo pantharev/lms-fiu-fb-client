@@ -63,10 +63,12 @@ export class CreateCourseComponent implements OnInit {
     this.submitted = true;
 
     start_date = this.formatDate(start_date);
+    this.c.start_date = start_date;
     console.log("going to submit start_date: " + start_date);
 
     end_date = this.formatDate(end_date);
-    console.log("going to submit end_date: " + end_date);
+    this.c.end_date = end_date;
+    console.log("going to submit end_date: " + end_date + " " + this.c.end_date); //leave this log here
 
     console.log(instructor);
 

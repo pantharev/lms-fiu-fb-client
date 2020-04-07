@@ -51,7 +51,7 @@ export class PromotionComponent implements OnInit {
         console.log('Data requested...');
 
         //this.pendingEnrollmentsNotification(this.courses.res);
-        this.router.navigate(['/admin/promotion', { page: page }]);
+        this.router.navigate(['/admin/promotion'], { queryParams: {page: page} });
       });
   }
 
@@ -69,7 +69,7 @@ export class PromotionComponent implements OnInit {
 
         console.log('Data requested...' + pageNo);
 
-        this.router.navigate(['/admin/promotion', { page: this.students.pagination.current }]);
+        this.router.navigate(['/admin/promotion'], { queryParams: {page: this.students.pagination.current} });
       });
   }
 

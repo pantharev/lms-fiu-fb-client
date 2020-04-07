@@ -51,13 +51,13 @@ export class PendingEnrollmentComponent implements OnInit {
   acceptEnrollment(studentId, courseId, enrollment_status) {
     // Update student enrollment_status = 'enrolled'
     let ret = confirm(`Accept student ${studentId} enrollment?`);
-    if(ret == true){
+    if (ret == true) {
       this.studentCourseService.acceptStudentEnrollment(studentId, courseId, enrollment_status).subscribe(res => {
         //alert(`Accepted student ${studentId} enrollment`);
 
         // remove student from view
-        for (var i = 0; i < this.students.length; i++){
-          if(this.students[i].student_id === studentId) {
+        for (var i = 0; i < this.students.length; i++) {
+          if (this.students[i].student_id === studentId) {
             this.students.splice(i, 1);
           }
         }
@@ -68,11 +68,17 @@ export class PendingEnrollmentComponent implements OnInit {
         })
 
         // Send e-mail notification to student
-        this.studentService.getStudentById(studentId).subscribe((student) => {
-          console.log("About to send email to following student:");
-          console.log(student);
-          this.emailer.sendMessage(student).subscribe(() => {
-            console.log("Sent!");
+        this.courseService.getCourseById(courseId).subscribe((course) => {
+          this.studentService.getStudentById(studentId).subscribe((student) => {
+            console.log(student);
+            console.log(course);
+            let studentCourse = {
+              student: student,
+              course: course
+            }
+            this.emailer.sendMessage(studentCourse).subscribe(() => {
+              console.log("Sent!");
+            });
           });
         });
       });

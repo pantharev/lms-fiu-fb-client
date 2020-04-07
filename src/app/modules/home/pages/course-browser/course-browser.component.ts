@@ -24,18 +24,20 @@ export class CourseBrowserComponent implements OnInit {
   //courses: Course[];
   courses: any = {};
   coursesUnavailable: Boolean[] = [];
-  pages: any = [];
-  searchedCourses: any = [];
+  coursesUnavailableSearched: Boolean;
+  pages: any[] = [];
+  searchedCourses: any[] = [];
   displayedColumns = ['id', 'name', 'description', 'seats', 'start_date', 'end_date', 'Enrollment'];
-  page = 0;
+  page: number = 0;
   currentPage;
+  currQueryPage: number;
   maxPages;
   maxPagesArray;
   socket;
   searchValue;
   searchedCourse;
   searchedCourseObject;
-  searchedCoursesArray;
+  searchedCoursesArray: any[] = [];
   foundCourse = false;
   foundCourses = false;
   foundCoursesN: number = 0;
@@ -45,15 +47,26 @@ export class CourseBrowserComponent implements OnInit {
   currentUser: User;
   tokenUser: User;
   studentId;
-  studentEmail
+  studentEmail;
+  enrollment_status: any[] = [];
+  enrollment_status_searched_course: any;
+  searchInputVal: any;
+  gotData: Boolean = false;
+  disablePaginationBool: Boolean = false;
 
   constructor(private courseService: CourseService, private studentCourseService: StudentCourseService, private authService: AuthenticationService, private router: Router, private route: ActivatedRoute) { 
     this.authService.currentUser.subscribe(x => this.currentUser = x);
   }
 
   ngOnInit() {
-    let page = this.route.snapshot.paramMap.get('page') || this.page;
-    this.fetchCourses(page);
+    this.searchInputVal = "";
+    
+    this.route.queryParams.subscribe((params) => {
+      this.currQueryPage = params.page;
+      console.log("current query page: ", this.currQueryPage);
+      this.fetchCourses(this.currQueryPage);
+    })
+
     this.socket = io.connect(environment.apiURL);
     this.studentEmail = JSON.parse(localStorage.getItem("FB_user")).email;
 
@@ -66,14 +79,44 @@ export class CourseBrowserComponent implements OnInit {
       if(this.currentUser)
         this.studentId = this.currentUser.id;
     }
-    
     //console.log("Init page: " + page);
   }
 
-  fetchCourses(page) {
+  showAll(){
+    this.fetchPageCourses(this.currQueryPage);
+    this.searchInputVal = "";
+    this.foundCoursesN = 0;
+    this.gotData = false;
+  }
+
+  fetchStudentCourse(studentId, courseId, i){ // make i >= 0 if array
+    this.studentCourseService.getByStudentCourseId(studentId, courseId).subscribe((student_course: any) => {
+      //console.log("fetched student_course");
+      //console.log(student_course);
+      //console.log(this.enrollment_status);
+
+      if(student_course && i >= 0) {
+        this.enrollment_status[i] = student_course.enrollment_status;
+      } else if(student_course && i < 0) {
+        this.enrollment_status_searched_course = student_course.enrollment_status;
+      }
+    })
+  }
+
+  fetchCourses(page: number) {
+    this.disablePaginationBool = false;
     this.courseService.getCourses(page, this.numberPerPage)
       .subscribe((data: {}) => {
         this.courses = data;
+
+        console.log("zero out enrollment_status array");
+        this.enrollment_status.splice(0, this.enrollment_status.length);
+
+        this.courses.res.forEach((course: Course, i, arr) => {
+          console.log(course);
+          this.fetchStudentCourse(this.studentId, course.id, i);
+        })
+
         this.page = page;
         this.currentPage = this.courses.pagination.current;
         this.maxPages = this.courses.pagination.maxPages;
@@ -82,12 +125,17 @@ export class CourseBrowserComponent implements OnInit {
         //console.log(this.pages);
         console.log('Data requested...');
         //console.log(this.courses.res);
+
+        console.log("zero out coursesUnavailable array");
+        this.coursesUnavailable.splice(0, this.coursesUnavailable.length);
+
         this.courses.res.forEach((course: Course, index, arr) => {
           let start_date = new Date(arr[index].start_date.toString());
           let end_date = new Date(arr[index].end_date.toString());
 
           arr[index].start_date = start_date.toLocaleDateString();
           arr[index].end_date = end_date.toLocaleDateString();
+
           this.coursesUnavailable[index] = false;
           if(course.seats < 1){
             this.coursesUnavailable[index] = true;
@@ -99,17 +147,32 @@ export class CourseBrowserComponent implements OnInit {
       });
   }
 
-  fetchPageCourses(pageNo) {
+  fetchPageCourses(pageNo: number) {
     console.log("pageNo: " + pageNo);
     if(pageNo < 0) {
       return;
     }
+    this.disablePaginationBool = false;
+
     this.courseService.getCourses(pageNo, this.numberPerPage)
       .subscribe((data: any = {}) => {
         this.courses = data;
+
+        console.log("zero out enrollment_status array");
+        this.enrollment_status.splice(0, this.enrollment_status.length);
+
+        this.courses.res.forEach((course: Course, i, arr) => {
+          //console.log(course);
+          this.fetchStudentCourse(this.studentId, course.id, i);
+        })
+
         this.page = pageNo;
         this.currentPage = this.courses.pagination.current;
         this.maxPages = this.courses.pagination.maxPages;
+
+        console.log("zero out coursesUnavailable array");
+        this.coursesUnavailable.splice(0, this.coursesUnavailable.length);
+
         this.courses.res.forEach((course: Course, index, arr) => {
             let start_date = new Date(arr[index].start_date.toString());
             let end_date = new Date(arr[index].end_date.toString());
@@ -144,17 +207,22 @@ export class CourseBrowserComponent implements OnInit {
 
   searchCourse(searchTerm) {
     if(searchTerm == ""){
-      this.foundCoursesN = 0;
+      this.showAll();
       return;
     }
 
     //console.log("socketid: " + this.socket.id);
+    this.gotData = false;
     this.socket.emit('search', searchTerm);
 
     this.socket.on('search-data', (course) => {
-        this.searchedCourses.length = 0;
+        if(this.gotData){
+          return;
+        }
+        this.searchedCourses.splice(0, this.searchedCourses.length);
         this.num++;
-        //console.log(course);
+        this.gotData = true;
+
         course.forEach((val, i, arr) => {
             this.searchedCourses.push(arr[i]);
         });
@@ -162,8 +230,9 @@ export class CourseBrowserComponent implements OnInit {
       });
     }
 
-  searchedCourseFn(course) {
+  searchedCourseFn(course: Course) {
     this.foundCoursesN = 1;
+    this.disablePaginationBool = true;
 
     let start_date = new Date(course.start_date.toString());
     let end_date = new Date(course.end_date.toString());
@@ -172,21 +241,41 @@ export class CourseBrowserComponent implements OnInit {
     course.end_date = end_date.toLocaleDateString();
 
     this.searchedCourseObject = course;
+
+    this.fetchStudentCourse(this.studentId, course.id, -1);
+    this.coursesUnavailableSearched = course.seats < 1 ? true : false;
     //console.log("searched course: " + JSON.stringify(this.searchedCourseObject));
   }
 
   searchCourseFnAll(courses){
     this.foundCoursesN = 2;
+    this.disablePaginationBool = true;
 
-    courses.forEach((course) => {
+    console.log("zero out coursesUnavailable array");
+    this.coursesUnavailable.splice(0, this.coursesUnavailable.length);
+
+    courses.forEach((course: Course, index) => {
       let start_date = new Date(course.start_date.toString());
       let end_date = new Date(course.end_date.toString());
 
       course.start_date = start_date.toLocaleDateString();
       course.end_date = end_date.toLocaleDateString();
+
+      this.coursesUnavailable[index] = false;
+      if(course.seats < 1){
+        this.coursesUnavailable[index] = true;
+      }
     })
 
     this.searchedCoursesArray = courses;
+
+    console.log("zero out enrollment_status array");
+    this.enrollment_status.splice(0, this.enrollment_status.length);
+
+    this.searchedCoursesArray.forEach((course: Course, i, arr) => {
+      console.log(course);
+      this.fetchStudentCourse(this.studentId, course.id, i);
+    })
     //console.log("searched courses: " + JSON.stringify(this.searchedCoursesArray));
 
   }

@@ -71,7 +71,9 @@ export class PendingEnrollmentComponent implements OnInit {
         this.studentService.getStudentById(studentId).subscribe((student) => {
           console.log("About to send email to following student:");
           console.log(student);
-          this.emailer.sendMessage(student);
+          this.emailer.sendMessage(student).subscribe(() => {
+            console.log("Sent!");
+          });
         });
       });
     }

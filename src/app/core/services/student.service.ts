@@ -32,10 +32,15 @@ export class StudentService {
     return this.http.put(`${environment.apiURL}/students/`, student);
   }
 
-  getStudentByEmail(studentEmail){
+  getStudentById(id){
+    console.log("Called getStudentById");
+    console.log(id);
+    return this.http.get(`${environment.apiURL}/students/${id}`);
+  }
+  getStudentByEmail(email){
     console.log("Called getStudentByEmail");
-    console.log(studentEmail);
-    return this.http.get(`${environment.apiURL}/students/${studentEmail}`);
+    console.log(email);
+    return this.http.get(`${environment.apiURL}/students/email/${email}`);
   }
 
   deleteStudent(id){

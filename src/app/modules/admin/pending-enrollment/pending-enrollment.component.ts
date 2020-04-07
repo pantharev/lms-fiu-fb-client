@@ -3,6 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { StudentCourseService } from 'src/app/core/services/student-course.service';
 import { CourseService } from 'src/app/core/services/course.service';
+import { StudentService } from 'src/app/core/services/student.service';
+import { EmailNotificationService } from 'src/app/core/services/email-notification.service';
 
 import { Course } from '@app/core/models/course.model';
 
@@ -18,7 +20,7 @@ export class PendingEnrollmentComponent implements OnInit {
   students: any = [];
   noSeats: Boolean = false;
 
-  constructor(private studentCourseService: StudentCourseService, private courseService: CourseService, private route: ActivatedRoute) { }
+  constructor(private studentCourseService: StudentCourseService, private courseService: CourseService, private studentService: StudentService, private emailer: EmailNotificationService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -42,6 +44,7 @@ export class PendingEnrollmentComponent implements OnInit {
         this.students = res;
         //console.log(this.students);
       });*/
+      
     });
   }
 
@@ -64,6 +67,12 @@ export class PendingEnrollmentComponent implements OnInit {
           this.course.seats = this.course.seats - 1;
         })
 
+        // Send e-mail notification to student
+        this.studentService.getStudentById(studentId).subscribe((student) => {
+          console.log("About to send email to following student:");
+          console.log(student);
+          this.emailer.sendMessage(student);
+        });
       });
     }
   }
@@ -85,5 +94,4 @@ export class PendingEnrollmentComponent implements OnInit {
       });
     }
   }
-
 }

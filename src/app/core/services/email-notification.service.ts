@@ -9,10 +9,10 @@ export class EmailNotificationService {
 
   constructor(private http: HttpClient) { }
 
-  sendMessage(body){
+  sendMessage(student){
     console.log("service telling server.js to send message");
-    console.log(body);
+    console.log(student);
     console.log("posting to " + environment.apiURL + "/sendmail");
-    return this.http.post(`${environment.apiURL}/sendmail`, body);
+    return this.http.post(`${environment.apiURL}/sendmail`, student);
   }
 }

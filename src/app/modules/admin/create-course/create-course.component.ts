@@ -33,8 +33,8 @@ export class CreateCourseComponent implements OnInit {
       instructor: ['', Validators.required],
       description: ['', Validators.required],
       seats: ['', Validators.required],
-      start_date: ['', Validators.required],
-      end_date: ['', Validators.required]
+      start_date: [''],
+      end_date: ['']
     });
   }
 
@@ -49,6 +49,9 @@ export class CreateCourseComponent implements OnInit {
     this.todayDate = new Promise<string>((resolve, reject) => { resolve(mm + '/' + dd + '/' + yyyy); });
     //this.todayDate = mm + '/' + dd + '/' + yyyy;
     //console.log(this.todayDate);
+    this.courseForm.get('start_date').patchValue(mm + '/' + dd + '/' + yyyy);
+    this.courseForm.get('end_date').patchValue(mm + '/' + dd + '/' + yyyy);
+
     this.instructors = this.studentService.getInstructors();
   }
 
@@ -63,18 +66,27 @@ export class CreateCourseComponent implements OnInit {
     this.submitted = true;
 
     start_date = this.formatDate(start_date);
-    this.c.start_date = start_date;
+    //this.c.start_date = start_date;
     console.log("going to submit start_date: " + start_date);
 
     end_date = this.formatDate(end_date);
-    this.c.end_date = end_date;
-    console.log("going to submit end_date: " + end_date + " " + this.c.end_date); //leave this log here
+    //this.c.end_date = end_date;
+    console.log("going to submit end_date: " + end_date); //leave this log here
 
     console.log(instructor);
+
+    this.courseForm.get('start_date').clearValidators();
+    this.courseForm.get('start_date').updateValueAndValidity();
+    this.courseForm.get('end_date').clearValidators();
+    this.courseForm.get('end_date').updateValueAndValidity();
 
     console.log(instructor.id);
     if (!this.courseForm.valid) {
       console.log("invalid");
+      return;
+    } else if(this.courseForm.get('start_date').value == "" && this.courseForm.get('end_date').value == ""){
+      console.log(this.courseForm.get('start_date').value);
+      console.log(this.courseForm.get('end_date').value);
       return;
     }
 

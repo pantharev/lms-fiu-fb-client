@@ -20,7 +20,7 @@ export class CreateModuleComponent implements OnInit {
     this.moduleForm = this.fb.group({
       number: ['', Validators.required],
       title: ['', Validators.required],
-      lockedUntil: ['', Validators.required]
+      lockedUntil: ['']
     });
    }
 
@@ -38,6 +38,8 @@ export class CreateModuleComponent implements OnInit {
     let yyyy = today.getFullYear();
 
     this.todayDate = new Promise((resolve, reject) => { resolve(mm + '/' + dd + '/' + yyyy)});
+
+    this.moduleForm.get('lockedUntil').patchValue(mm + '/' + dd + '/' + yyyy);
   }
 
   addModule(number, title, lockedUntil) {
@@ -50,12 +52,15 @@ export class CreateModuleComponent implements OnInit {
 
     lockedUntil = yyyy + '-' + mm + '-' + dd;
 
-    this.m.lockedUntil = lockedUntil;
-
-    console.log("locked until: " + this.m.lockedUntil); //leave this log here
+    this.moduleForm.get('lockedUntil').clearValidators();
+    this.moduleForm.get('lockedUntil').updateValueAndValidity();
 
     console.log("going to submit lockedUntil: " + lockedUntil);
     if(!this.moduleForm.valid){
+      console.log("invalid");
+      return;
+    } else if(this.moduleForm.get('lockedUntil').value == ""){
+      console.log("empty locked until value");
       return;
     }
 

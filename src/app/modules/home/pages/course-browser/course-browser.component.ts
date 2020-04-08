@@ -87,7 +87,7 @@ export class CourseBrowserComponent implements OnInit, OnDestroy {
   }
 
   showAll(){
-    this.fetchPageCourses(this.currQueryPage);
+    this.fetchPageCourses(this.page);
     this.searchInputVal = "";
     this.foundCoursesN = 0;
     this.gotData = false;
@@ -97,13 +97,15 @@ export class CourseBrowserComponent implements OnInit, OnDestroy {
     this.studentCourseService.getByStudentCourseId(studentId, courseId).subscribe((student_course: any) => {
       //console.log("fetched student_course");
       //console.log(student_course);
-      //console.log(this.enrollment_status);
+      console.log("i: " + i + "status: " + student_course.enrollment_status);
 
       if(student_course && i >= 0) {
         this.enrollment_status[i] = student_course.enrollment_status;
       } else if(student_course && i < 0) {
         this.enrollment_status_searched_course = student_course.enrollment_status;
       }
+    }, (error) => {
+      console.log("error", error);
     })
   }
 

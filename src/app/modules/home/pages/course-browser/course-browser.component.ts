@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpParams } from '@angular/common/http';
 
@@ -19,7 +19,7 @@ import { throwToolbarMixedModesError } from '@angular/material/toolbar';
   templateUrl: './course-browser.component.html',
   styleUrls: ['./course-browser.component.scss']
 })
-export class CourseBrowserComponent implements OnInit {
+export class CourseBrowserComponent implements OnInit, OnDestroy {
 
   //courses: Course[];
   courses: any = {};
@@ -61,11 +61,11 @@ export class CourseBrowserComponent implements OnInit {
   ngOnInit() {
     this.searchInputVal = "";
     
-    this.route.queryParams.subscribe((params) => {
-      this.currQueryPage = params.page;
-      console.log("current query page: ", this.currQueryPage);
-      this.fetchCourses(this.currQueryPage);
-    })
+    this.route.queryParamMap.subscribe((params) => {
+      this.page = parseInt(params.get('page'), 10) || 0;
+      console.log("page: " + this.page);
+      this.fetchCourses(this.page);
+    });
 
     this.socket = io.connect(environment.apiURL);
     this.studentEmail = JSON.parse(localStorage.getItem("FB_user")).email;
@@ -80,6 +80,10 @@ export class CourseBrowserComponent implements OnInit {
         this.studentId = this.currentUser.id;
     }
     //console.log("Init page: " + page);
+  }
+
+  ngOnDestroy(){
+    this.socket.close();
   }
 
   showAll(){
@@ -143,7 +147,7 @@ export class CourseBrowserComponent implements OnInit {
       });
         //console.log('Data requested...');
         //console.log(this.courses);
-        this.router.navigate(['/course-library'], { queryParams: { page: page } });
+        this.router.navigate([], { queryParams: { page: page }, relativeTo: this.route });
       });
   }
 
@@ -187,7 +191,7 @@ export class CourseBrowserComponent implements OnInit {
         console.log('Data requested...' + pageNo);
         //console.log(this.courses);
         //console.log("Current page: " + this.courses.pagination.current);
-        this.router.navigate(['/course-library'], { queryParams: { page: this.courses.pagination.current } });
+        this.router.navigate([], { queryParams: { page: this.courses.pagination.current }, relativeTo: this.route });
       });
   }
 

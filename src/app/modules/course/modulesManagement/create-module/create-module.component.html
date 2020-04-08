@@ -22,13 +22,13 @@
             <label for="lockedUntil">Locked Until</label>
             <div class="input-group">
                 <input class="form-control" placeholder="yyyy-mm-dd"
-                       name="dp" ngbDatepicker (dateSelect)="onDateSelect($event)" #d="ngbDatepicker" formControlName="lockedUntil" #lockedUntil readonly [value]="todayDate | async" [ngClass]="{ 'is-invalid': submitted && m.lockedUntil.errors }" required>
+                       name="dp" ngbDatepicker (dateSelect)="onDateSelect($event)" #d="ngbDatepicker" formControlName="lockedUntil" #lockedUntil readonly [value]="todayDate | async">
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary far fa-calendar-alt" (click)="d.toggle()" type="button"></button>
                 </div>
-                <div *ngIf="submitted && m.lockedUntil.errors" class="invalid-feedback">
+                <!--<div *ngIf="submitted && m.lockedUntil.errors" class="invalid-feedback">
                     <div *ngIf="m.lockedUntil.errors.required">Locked Until is required</div>
-                </div>
+                </div>-->
             </div>
         </div>
     

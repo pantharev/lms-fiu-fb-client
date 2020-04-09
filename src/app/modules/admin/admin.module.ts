@@ -13,6 +13,7 @@ import { PromotionComponent } from './promotion/promotion.component';
 import { SidebarAdminComponent } from './sidebar-admin/sidebar-admin.component';
 
 
+
 @NgModule({
   declarations: [CreateCourseComponent, DashboardComponent, EditCourseComponent, PendingEnrollmentComponent, PromotionComponent, SidebarAdminComponent],
   imports: [

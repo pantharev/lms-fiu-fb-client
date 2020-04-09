@@ -3,6 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { StudentCourseService } from 'src/app/core/services/student-course.service';
 import { CourseService } from 'src/app/core/services/course.service';
+import { StudentService } from 'src/app/core/services/student.service';
+import { EmailNotificationService } from 'src/app/core/services/email-notification.service';
 
 import { Course } from '@app/core/models/course.model';
 
@@ -18,7 +20,7 @@ export class PendingEnrollmentComponent implements OnInit {
   students: any = [];
   noSeats: Boolean = false;
 
-  constructor(private studentCourseService: StudentCourseService, private courseService: CourseService, private route: ActivatedRoute) { }
+  constructor(private studentCourseService: StudentCourseService, private courseService: CourseService, private studentService: StudentService, private emailer: EmailNotificationService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -42,19 +44,20 @@ export class PendingEnrollmentComponent implements OnInit {
         this.students = res;
         //console.log(this.students);
       });*/
+      
     });
   }
 
   acceptEnrollment(studentId, courseId, enrollment_status) {
     // Update student enrollment_status = 'enrolled'
     let ret = confirm(`Accept student ${studentId} enrollment?`);
-    if(ret == true){
+    if (ret == true) {
       this.studentCourseService.acceptStudentEnrollment(studentId, courseId, enrollment_status).subscribe(res => {
         //alert(`Accepted student ${studentId} enrollment`);
 
         // remove student from view
-        for (var i = 0; i < this.students.length; i++){
-          if(this.students[i].student_id === studentId) {
+        for (var i = 0; i < this.students.length; i++) {
+          if (this.students[i].student_id === studentId) {
             this.students.splice(i, 1);
           }
         }
@@ -64,6 +67,20 @@ export class PendingEnrollmentComponent implements OnInit {
           this.course.seats = this.course.seats - 1;
         })
 
+        // Send e-mail notification to student
+        this.courseService.getCourseById(courseId).subscribe((course) => {
+          this.studentService.getStudentById(studentId).subscribe((student) => {
+            console.log(student);
+            console.log(course);
+            let studentCourse = {
+              student: student,
+              course: course
+            }
+            this.emailer.sendMessage(studentCourse).subscribe(() => {
+              console.log("Sent!");
+            });
+          });
+        });
       });
     }
   }
@@ -85,5 +102,4 @@ export class PendingEnrollmentComponent implements OnInit {
       });
     }
   }
-
 }

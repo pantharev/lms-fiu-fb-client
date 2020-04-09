@@ -9,6 +9,7 @@ import { PendingEnrollmentComponent } from './pending-enrollment/pending-enrollm
 import { AuthenticationService as AuthGuard } from '@app/core/services/authentication.service';
 import { PromotionComponent } from './promotion/promotion.component';
 
+
 const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
   { path: 'create-course', component: CreateCourseComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin' } },

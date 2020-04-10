@@ -95,18 +95,18 @@
                     </div>
                     <div class="modal-body">
 
-                        <form [formGroup]="pdfForm" (ngSubmit)="addPdf(module.module_id)"class="col-9" method="POST" enctype="multipart/form-data">
+                        <form [formGroup]="pdfForm" class="col-9"> <!--method="POST" enctype="multipart/form-data">-->
 
                             <div class="form-group">
-                                <label for="pdf"><span style="color: red">*</span>Select a PDF File</label>
-                                <input id="theFile" type="file" class="form-control" [ngClass]="{ 'is-invalid': submitted && p.pdf.errors }" name="pdf" #file (change)="handleFileInput($event)" required>
+                                <label for="pdf"><span style="color: red">*</span>Insert PDF link</label>
+                                <input id="theFile" type="text" class="form-control" formControlName="pdf" [ngClass]="{ 'is-invalid': submitted && p.pdf.errors }" name="pdf" #pdf required>
                                 <div *ngIf="submitted && p.pdf.errors" class="invalid-feedback">
                                     <div *ngIf="p.pdf.errors.required">Pdf is required</div>
                                 </div>
                             </div>
 
                         
-                            <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add PDF</button>
+                            <button type="submit" class="btn btn-primary" (click)="addPdf(pdf.value, module.module_id)"><i class="fas fa-plus-circle"></i> Add PDF</button>
                         </form>
 
                     </div>
@@ -201,7 +201,8 @@
                                     <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
                                 </div>
                             </ng-template>
-                            <button class="btn btn-primary" (click)="open(contentPdf)">View Pdf {{j + 1}}</button>
+                            <!--<button class="btn btn-primary" (click)="open(contentPdf)">View Pdf {{j + 1}}</button>-->
+                            <a [href]="innerpdf.pdf" target="_blank" (click)="openPdfinWindow(innerpdf.rawPdf)" class="btn btn-primary">View Pdf {{j+1}}</a>
                             <button *ngIf="isAdmin || isInstructor" class="btn btn-danger flexbox-module-options" (click)="deletePDF(innerpdf.pdf_id, j)">Delete Pdf</button>
 
                             <!--FORM CONTENT IN MODAL FOR PDF EDIT-->
@@ -213,17 +214,17 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form [formGroup]="updatePdfForm" (ngSubmit)="updatePDF(innerpdf.pdf_id, module.module_id)"class="col-9" method="POST" enctype="multipart/form-data">
+                                <form [formGroup]="updatePdfForm" class="col-9">
 
                                     <div class="form-group">
-                                        <label for="pdf"><span style="color: red">*</span>Select a PDF File</label>
-                                        <input id="theFile" type="file" class="form-control" name="pdf" #file (change)="handleFileInputUpdate($event)" [ngClass]="{ 'is-invalid': submitted && pu.pdf.errors }" required>
+                                        <label for="pdf"><span style="color: red">*</span>Insert new PDF link</label>
+                                        <input id="theFile" type="text" class="form-control" formControlName="pdf" [ngClass]="{ 'is-invalid': submitted && pu.pdf.errors }" name="pdf" #pdf required>
                                         <div *ngIf="submitted && pu.pdf.errors" class="invalid-feedback">
                                             <div *ngIf="pu.pdf.errors.required">Pdf is required</div>
                                         </div>
                                     </div>
                                 
-                                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Update PDF</button>
+                                    <button type="submit" class="btn btn-primary" (click)="updatePDF(pdf.value, innerpdf.pdf_id, module.module_id)"><i class="fas fa-plus-circle"></i> Update PDF</button>
                                 </form>
                             </div>
                             <div class="modal-footer">

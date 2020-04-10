@@ -35,7 +35,7 @@ export class AuthService {
     return this.http.get(`${environment.apiURL}/test`);
   }
 
-  localLogin() {
-    
+  uploadFile(file) {
+    return this.http.post(`${environment.apiURL}/filesystem`, file);
   }
 }

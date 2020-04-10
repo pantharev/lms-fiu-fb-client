@@ -1,7 +1,10 @@
 <p>Your Profile</p>
-<ul *ngIf="profileData as user" style="list-style-type: none">
-        <li>{{user.role}}</li>
-        <li>{{user.email}}</li>
-        <li>{{user.f_name}}</li>
-        <li>{{user.l_name}}</li>
-</ul>
+
+<form [formGroup]="pdfForm" method="post" enctype="multipart/form-data" (ngSubmit)="addPdf()">
+
+        <div class="form-group">
+                <label for="file">Choose file to upload</label>
+                <input type="file" id="file" class="form-control" name="file" (change)="handleFileInputUpdate($event)">
+                <button type="submit" class="btn btn-success"><i class="fas fa-plus-circle"></i> Submit</button>
+        </div>
+</form>

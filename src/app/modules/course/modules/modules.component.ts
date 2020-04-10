@@ -247,19 +247,20 @@ export class ModulesComponent implements OnInit {
   pushPDFsToArray(pdfsFromDB: any[], pdfs: any[]) {
     pdfsFromDB.forEach((val) => {
       //console.log("val : " + i + " " + JSON.stringify(val));
-      let pdfData = val.pdf.data;
+      /*let pdfData = val.pdf.data;
       //console.log(Array.isArray(pdfData));
       let myBuffer = Uint8Array.from(pdfData);
 
       //console.log(myBuffer);
 
-      let blob = new Blob([myBuffer.buffer], { type: 'application/pdf' }); //application/octet-stream
+      let blob = new Blob([myBuffer.buffer], { type: 'application/pdf' }); //application/octet-stream*/
       //console.log(blob.size);
       //console.log(blob);
+      console.log(val);
       let pdfObject = {
         module_id: val.module_id, 
         pdf_id: val.pdf_id, 
-        pdf: blob
+        pdf: val.pdf
       }
       pdfs.push(pdfObject);
     })
@@ -273,9 +274,9 @@ export class ModulesComponent implements OnInit {
         let pdfObject = {};
         let cleanPDF: SafeResourceUrl;
 
-        let pdfURL = URL.createObjectURL(val.pdf);
+        //let pdfURL = URL.createObjectURL(val.pdf);
         
-        cleanPDF = this.sanitizer.bypassSecurityTrustResourceUrl(pdfURL);
+        cleanPDF = this.sanitizer.bypassSecurityTrustResourceUrl(val.pdf);
 
         pdfObject = {
           pdf_id: val.pdf_id,
@@ -370,7 +371,7 @@ export class ModulesComponent implements OnInit {
     this.submitted = false;
     this.modalService.open(content, { size: 'lg', centered: true });
     console.log("The updatePDF: " + pdf);
-    //this.updatePdfForm.get('pdf').setValue(pdf);
+    this.updatePdfForm.get('pdf').setValue(pdf);
   }
 
   openUpdateSurvey(content, surveyName, surveyUrl){
@@ -563,19 +564,40 @@ export class ModulesComponent implements OnInit {
     }
   }
 
-  addPdf(moduleId) {
+  openPdfinWindow(pdfUrl){
+    console.log("opening: " + pdfUrl);
+
+    if(window.innerWidth <= 640){
+      return;
+    }
+
+    let width = window.innerWidth * 0.66;
+    let height = width * window.innerHeight / window.innerWidth;
+    let top = (window.innerHeight - height) / 2;
+    let left = (window.innerWidth - width) / 2;
+    
+    window.open(pdfUrl, 'newwindow', `width=${width}, height=${height}, top=${top}, left=${left}`);
+    return false;
+  }
+
+  addPdf(pdfUrl, moduleId) {
     this.submitted = true;
 
     if(this.pdfForm.invalid){
       return;
     }
 
+    console.log("url: " + pdfUrl);
+    console.log("moduleId: " + moduleId);
+
     //console.log("fileName: " + this.pdfForm.get('pdf').value.name + " fileSize: " + this.pdfForm.get('pdf').value.size);
-    const formData: FormData = new FormData();
+    /*const formData: FormData = new FormData();
     formData.append('fileKey', this.pdfForm.get('pdf').value);
-    formData.append('fileKey', moduleId);
+    formData.append('fileKey', moduleId);*/
+
+
     //console.log(formData.getAll('fileKey'));
-    this.pdfService.addPDF(formData).subscribe(
+    this.pdfService.addPDF(pdfUrl, moduleId).subscribe(
       (res) => { console.log(res); alert("Added PDF!"); },
       (err) => { console.log(err); this.error = err; }
     );
@@ -584,7 +606,8 @@ export class ModulesComponent implements OnInit {
   fetchPdfs(courseId, modules) {
     console.log("Fetching pdfs: " + courseId);
     this.pdfService.fetchPDFs(courseId).subscribe((data: any[]) => {
-      //console.log(data);
+      console.log("pdf data: ");
+      console.log(data);
       this.pdfsFromDB = data;
       this.pushPDFsToArray(data, this.pdfs);
 
@@ -608,18 +631,19 @@ export class ModulesComponent implements OnInit {
     })
   }
 
-  updatePDF(pdfId, moduleId){
+  updatePDF(pdfUrl, pdfId, moduleId){
     this.submitted = true;
 
     if(this.updatePdfForm.invalid){
       return;
     }
 
-    //console.log("updatePDF");
-    const formData: FormData = new FormData();
+    console.log("updatePDF: " + pdfUrl + "id: " + pdfId);
+    /*const formData: FormData = new FormData();
     formData.append('fileKey', this.updatePdfForm.get('pdf').value);
-    formData.append('fileKey', moduleId);
-    this.pdfService.updatePDF(pdfId, formData).subscribe(() => {
+    formData.append('fileKey', moduleId);*/
+
+    this.pdfService.updatePDF(pdfUrl, pdfId).subscribe(() => {
       alert("Updated pdf");
     });
   }

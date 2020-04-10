@@ -10,16 +10,23 @@ export class PdfService {
 
   constructor(private http: HttpClient) { }
 
-  addPDF(formData) {
-    return this.http.post<any>(`${environment.apiURL}/pdfs`, formData);
+  addPDF(pdfUrl, module_id) {
+    let pdfObj = {
+      pdf: pdfUrl,
+      module_id: module_id
+    }
+    return this.http.post<any>(`${environment.apiURL}/pdfs`, pdfObj);
   }
 
   fetchPDFs(courseId): Observable<any> {
     return this.http.get(`${environment.apiURL}/pdfs/${courseId}`);
   }
 
-  updatePDF(pdfID, formData){
-    return this.http.put(`${environment.apiURL}/pdfs/${pdfID}`, formData);
+  updatePDF(pdfUrl, pdfID){
+    let pdfObj = {
+      pdf: pdfUrl
+    }
+    return this.http.put(`${environment.apiURL}/pdfs/${pdfID}`, pdfObj);
   }
 
   deletePDF(pdfID){

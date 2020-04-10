@@ -20,12 +20,20 @@
 
         <div class="align-self-stretch">
             <span>Class Average Points</span>
-            <p><ngb-progressbar type="info" textType="white" [value]="averagePoints ? averagePoints.average : 0" [showValue]="true" [striped]="true" height="30px"></ngb-progressbar></p>
+            <p><ngb-progressbar type="primary" textType="white" [value]="averagePoints ? averagePoints.average : 0"  [striped]="true" height="30px">{{averagePoints.average}}</ngb-progressbar></p>
+        </div>
+        <div class="align-self-stretch">
+            <span>Class Average Progress</span>
+            <p><ngb-progressbar type="info" textType="white" [value]="averagePoints ? averageProgress : 0" [showValue]="true" [striped]="true" height="30px"></ngb-progressbar></p>
         </div>
 
         <div class="align-self-stretch">
-            <span>Your points</span>
-            <p><ngb-progressbar type="primary" textType="white" [value]="points ? points : 0" [showValue]="true" [striped]="true" height="30px"></ngb-progressbar></p>
+            <span>Your Points</span>
+            <p><ngb-progressbar type="primary" textType="white" [value]="points ? points : 0" [striped]="true" height="30px">{{points}}</ngb-progressbar></p>
+        </div>
+        <div class="align-self-stretch">
+            <span>Your Progress</span>
+            <p><ngb-progressbar type="info" textType="white" [value]="progress ? progress : 0" [showValue]="true" [striped]="true" height="30px"></ngb-progressbar></p>
         </div>
 
         <!-- End Progress Bars -->

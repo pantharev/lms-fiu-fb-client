@@ -52,7 +52,10 @@ export class ModulesComponent implements OnInit {
   quizzes = ['quiz1', 'quiz2', 'quiz3'];
 
   points: number;
+  progress;  // Points as a percentage of totalpoints
+  totalPoints;
   averagePoints;
+  averageProgress;
   urlPath;
   courseId;
   courseIdPromise: Promise<string>;
@@ -109,7 +112,7 @@ export class ModulesComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.courseId = params.id;
       this.courseIdPromise = new Promise((resolve, reject) => {
-        if(params.id){
+        if (params.id) {
           resolve(params.id);
         } else {
           reject("couldn't find course id");
@@ -129,17 +132,37 @@ export class ModulesComponent implements OnInit {
 
     this.fetchModules(this.courseId);
     this.getAvgStudentPoints(this.courseId, this.currentUser.id);
+    //this.getMaxPoints(this.courseId);   // Fetch the max possible points, for calculating progress %
 
     //this.waitForProgressBar();
 
-    this.studentCourseService.getStudentsByCourseId(this.courseId).subscribe((data: []) => {
-      data.forEach((val: any, i, arr) => {
-        if(val.student_id == this.currentUser.id) {
-          //console.log("Got student: " + JSON.stringify(val));
-          this.points = val.points;
-          console.log("Points: " + this.points);
-          //document.getElementById('progressbar').style.width = this.points + "%";
-        }
+    console.log("getting max points");
+    this.surveyService.fetchSurveys(this.courseId).subscribe((surveys) => {
+
+      let numSurveys = Object.keys(surveys).length;
+      console.log("Num surveys: " + numSurveys);
+      if (numSurveys == null || numSurveys == 0) {
+        this.totalPoints = 1; // Avoid divide by 0 later in function
+      }
+      else {
+        // For now, the total points in the course is equal to 20 per survey. This can be changed later when we can retrieve
+        // the total points for each Qualtrics quiz. 
+        this.totalPoints = numSurveys * 20;
+      }
+      console.log("Max points set to " + this.totalPoints);
+
+      this.studentCourseService.getStudentsByCourseId(this.courseId).subscribe((data: []) => {
+        data.forEach((val: any, i, arr) => {
+          if (val.student_id == this.currentUser.id) {
+            //console.log("Got student: " + JSON.stringify(val));
+            this.points = val.points;
+            this.progress = this.toFixed(((val.points / this.totalPoints) * 100),2);
+            console.log("Points: " + this.points);
+            console.log("Points as %: " + this.progress);
+            console.log("Calculation: " + this.points + "/" + this.totalPoints);
+            //document.getElementById('progressbar').style.width = this.points + "%";
+          }
+        })
       })
     })
 
@@ -388,6 +411,7 @@ export class ModulesComponent implements OnInit {
       this.averagePoints = data;
       console.log("avg: " + JSON.stringify(data));
       this.averagePoints.average = this.toFixed(this.averagePoints.average, 2);
+      this.averageProgress = this.toFixed(((this.averagePoints.average / this.totalPoints)*100), 2);
     })
   }
 

@@ -27,7 +27,7 @@ export class EditModuleComponent implements OnInit {
      this.updateForm = this.fb.group({
        number: ['', Validators.required],
        title: ['', Validators.required],
-       lockedUntil: ['', Validators.required]
+       lockedUntil: ['']
      })
    }
 
@@ -43,9 +43,9 @@ export class EditModuleComponent implements OnInit {
         //console.log(this.module);
         //console.log(this.module.id);
 
-        this.updateForm.get('number').setValue(this.module.number);
-        this.updateForm.get('title').setValue(this.module.title);
-        this.updateForm.get('lockedUntil').setValue(this.module.lockedUntil);
+        this.updateForm.get('number').patchValue(this.module.number);
+        this.updateForm.get('title').patchValue(this.module.title);
+        this.updateForm.get('lockedUntil').patchValue(this.module.lockedUntil);
         //this.givenDate = this.module.lockedUntil;
         let newDate = new Date(this.module.lockedUntil.toString());
         let dd = String(newDate.getDate() + 1).padStart(2, '0');
@@ -55,6 +55,7 @@ export class EditModuleComponent implements OnInit {
         this.givenDate = new Promise((resolve, reject) => { resolve(mm + '/' + dd + '/' + yyyy); });
         this.startDate = (""+this.module.lockedUntil).split("-");
         //console.log(this.startDate);
+        this.updateForm.get('lockedUntil').patchValue(mm + '/' + dd + '/' + yyyy);
       })
     })
   }
@@ -69,10 +70,18 @@ export class EditModuleComponent implements OnInit {
 
     lockedUntil = yyyy + '-' + mm + '-' + dd;
 
+    this.updateForm.get('lockedUntil').clearValidators();
+    this.updateForm.get('lockedUntil').updateValueAndValidity();
+
     //console.log("going to submit lockedUntil: " + lockedUntil);
     if(!this.updateForm.valid){
+      console.log("invalid");
+      return;
+    }  else if(this.updateForm.get('lockedUntil').value == ""){
+      console.log("empty locked until value");
       return;
     }
+
       this.moduleService.updateModule(this.id, number, title, lockedUntil).subscribe(res => {
         alert('Module updated successfully');
       });

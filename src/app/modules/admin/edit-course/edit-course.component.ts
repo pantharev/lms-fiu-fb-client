@@ -39,8 +39,8 @@ export class EditCourseComponent implements OnInit {
       instructor: ['', Validators.required],
       description: ['', Validators.required],
       seats: ['', Validators.required],
-      start_date: ['', Validators.required],
-      end_date: ['', Validators.required]
+      start_date: [''],
+      end_date: ['']
     });
   }
 
@@ -57,11 +57,11 @@ export class EditCourseComponent implements OnInit {
 
         this.hDateFormat(this.course);
 
-        //console.log(this.course.start_date);
+        console.log(this.course.start_date);
 
-        this.updateForm.get('name').setValue(this.course.name);
-        this.updateForm.get('description').setValue(this.course.description);
-        this.updateForm.get('seats').setValue(this.course.seats);
+        this.updateForm.get('name').patchValue(this.course.name);
+        this.updateForm.get('description').patchValue(this.course.description);
+        this.updateForm.get('seats').patchValue(this.course.seats);
 
         this.studentCourseService.getInstructorByCourseId(this.id).subscribe((instructor: any) => {
           console.log(instructor);
@@ -75,15 +75,16 @@ export class EditCourseComponent implements OnInit {
         let yyyy = newDate.getFullYear();
 
         this.startDate = new Promise<string>((resolve, reject) => { resolve(mm + '/' + dd + '/' + yyyy); });
+        this.updateForm.get('start_date').patchValue(mm + '/' + dd + '/' + yyyy);
 
         newDate = new Date(this.course.end_date.toString());
         dd = String(newDate.getDate()).padStart(2, '0');
         mm = String(newDate.getMonth() + 1).padStart(2, '0'); //January is 0!
         yyyy = newDate.getFullYear();
 
-        this.endDate = new Promise<string>((resolve, relect) => { resolve(mm + '/' + dd + '/' + yyyy); });
-        //this.updateForm.get('start_date').setValue(this.course.start_date);
-        //this.updateForm.get('end_date').setValue(this.course.end_date);
+        this.endDate = new Promise<string>((resolve, reject) => { resolve(mm + '/' + dd + '/' + yyyy); });
+        this.updateForm.get('end_date').patchValue(mm + '/' + dd + '/' + yyyy);
+
       });
     });
   }
@@ -92,14 +93,30 @@ export class EditCourseComponent implements OnInit {
     this.submitted = true;
 
     start_date = this.formatDate(start_date);
-    console.log("going to submit start_date: " + start_date);
+    //this.cu.start_date = start_date;
+    //this.updateForm.get('start_date').setValue(start_date);
+    console.log("going to submit start_date: " + start_date + " " + this.updateForm.get('start_date').value);
 
     end_date = this.formatDate(end_date);
-    console.log("going to submit end_date: " + end_date);
+    //this.cu.end_date = end_date;
+    //this.updateForm.get('end_date').setValue(end_date);
+    console.log("going to submit end_date: " + end_date + " " + this.updateForm.get('end_date').value); //leave this log here
 
-    console.log(instructor);
-    console.log(instructor.id);
+    this.updateForm.get('start_date').clearValidators();
+    this.updateForm.get('start_date').updateValueAndValidity();
+    this.updateForm.get('end_date').clearValidators();
+    this.updateForm.get('end_date').updateValueAndValidity();
+
+    if(instructor){
+      console.log(instructor);
+      console.log(instructor.id);
+    }
     if (!this.updateForm.valid) {
+      console.log("invalid form");
+      return;
+    } else if(this.updateForm.get('start_date').value == "" && this.updateForm.get('end_date').value == ""){
+      console.log(this.updateForm.get('start_date').value);
+      console.log(this.updateForm.get('end_date').value);
       return;
     }
 

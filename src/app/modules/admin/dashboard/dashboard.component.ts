@@ -34,8 +34,12 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    let page = this.route.snapshot.paramMap.get('page') || this.page;
-    this.fetchCourses(page);
+    this.route.queryParamMap.subscribe((params) => {
+      this.page = parseInt(params.get('page'), 10) || 0;
+      console.log("page: " + this.page);
+      this.fetchCourses(this.page);
+    });
+
     console.log(this.currentUser);
     this.isAdmin = (JSON.parse(localStorage.getItem("FB_user")).role == 'admin');
 
@@ -88,7 +92,7 @@ export class DashboardComponent implements OnInit {
         console.log('Data requested...');
 
         this.pendingEnrollmentsNotification(this.courses.res);
-        this.router.navigate(['/admin/dashboard'], { queryParams: {page: page } });
+        this.router.navigate([], { queryParams: { page: page }, relativeTo: this.route });
       });
   }
 
@@ -108,7 +112,7 @@ export class DashboardComponent implements OnInit {
 
         console.log('Data requested...' + pageNo);
 
-        this.router.navigate(['/admin/dashboard'], { queryParams: { page: this.courses.pagination.current} });
+        this.router.navigate([], { queryParams: { page: this.courses.pagination.current }, relativeTo: this.route });
       });
   }
 

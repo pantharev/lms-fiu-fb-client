@@ -1,10 +1,12 @@
-<app-sidebar></app-sidebar>
-<div id="main">
-    <div class="flexbox-row">
-        <a *ngIf="isAdmin || isInstructor" routerLink="/courses/{{courseId}}/edit-home" class="btn btn-primary">Edit</a>
-        <ng-container *ngIf="courseContent | async as content">
-            <div [innerHTML]="content.content" style="margin-top: 30px;" class="custom-font clamp-words"></div>
-        </ng-container>
-    </div>
+<div class="center-table-row">
+    <app-sidebar></app-sidebar>
 
+    <div class="center-table-column">
+        <div class="flexbox-row">
+            <a *ngIf="isAdmin || isInstructor" routerLink="/courses/{{courseId}}/edit-home" class="btn btn-primary">Edit</a>
+            <ng-container *ngIf="courseContent | async as content">
+                <div [innerHTML]="content.content" style="margin-top: 30px;" class="custom-font clamp-words"></div>
+            </ng-container>
+        </div>
+    </div>
 </div>

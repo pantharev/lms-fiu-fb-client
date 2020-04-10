@@ -51,15 +51,14 @@
                     <input type="text" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker
                         (dateSelect)="onStartDateSelect($event)" #d="ngbDatepicker" formControlName="start_date"
                         #start_date readonly
-                        [value]="startDateSelected ? (startDateEvent | async) : (startDate | async)"
-                        [ngClass]="{ 'is-invalid': submitted && cu.start_date.errors }" required>
+                        [value]="startDateSelected ? (startDateEvent | async) : (startDate | async)">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary far fa-calendar-alt" (click)="d.toggle()"
                             type="button"></button>
                     </div>
-                    <div *ngIf="submitted && cu.start_date.errors" class="invalid-feedback">
+                    <!--<div *ngIf="submitted && cu.start_date.errors" class="invalid-feedback">
                         <div *ngIf="cu.start_date.errors.required">Start Date is required</div>
-                    </div>
+                    </div>-->
                 </div>
             </div>
 
@@ -68,15 +67,14 @@
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker
                         (dateSelect)="onEndDateSelect($event)" #d2="ngbDatepicker" formControlName="end_date" #end_date
-                        readonly [value]="endDateSelected ? (endDateEvent | async) : (endDate | async)"
-                        [ngClass]="{ 'is-invalid': submitted && cu.end_date.errors }" required>
+                        readonly [value]="endDateSelected ? (endDateEvent | async) : (endDate | async)">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary far fa-calendar-alt" (click)="d2.toggle()"
                             type="button"></button>
                     </div>
-                    <div *ngIf="submitted && cu.end_date.errors" class="invalid-feedback">
+                    <!--<div *ngIf="submitted && cu.end_date.errors" class="invalid-feedback">
                         <div *ngIf="cu.end_date.errors.required">End Date is required</div>
-                    </div>
+                    </div>-->
                 </div>
             </div>
 

@@ -1,9 +1,13 @@
-<app-sidebar></app-sidebar>
-<div id="main">
-    <div class="flexbox-row">
-        <h2>Announcements</h2>
-        <div *ngFor="let announcement of announcements | async">
-            <div [innerHTML]="announcement.content" class="announcement"></div>
-        </div>
+<div class="center-table-row">
+    <app-sidebar></app-sidebar>
+
+    <div class="center-table-column">
+        <!--<div class="flexbox-row">-->
+            <h2>Announcements</h2>
+            <div *ngFor="let announcement of announcements | async">
+                <div [innerHTML]="announcement.content" class="announcement"></div>
+            </div>
+        <!--</div>-->
     </div>
+
 </div>

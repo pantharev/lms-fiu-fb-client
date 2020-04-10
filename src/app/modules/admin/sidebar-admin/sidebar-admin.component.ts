@@ -32,7 +32,7 @@ export class SidebarAdminComponent implements OnInit {
 
   ngAfterViewChecked() {
     document.getElementById("mySidenav").style.width = "250px";
-    document.getElementById("main").style.marginLeft = "250px";
+    //document.getElementById("main").style.marginLeft = "0px";
     document.getElementById("mySidenav").style.display = "block";
     document.getElementById(this.routeName).style.color = "#ffffff";
     document.getElementById(this.routeName).style.backgroundColor = "#2d3d97";
@@ -42,6 +42,6 @@ export class SidebarAdminComponent implements OnInit {
     //console.log("sidebar destroy");
     document.getElementById("mySidenav").style.display = "none";
     document.getElementById("mySidenav").style.width = "0";
-    document.getElementById("main").style.marginLeft = "0";
+    //document.getElementById("main").style.marginLeft = "0";
   }
 }

@@ -58,4 +58,8 @@ export class StudentCourseService {
     }
     return this.http.put(`${environment.apiURL}/student-courses/up/score`, student_course);
   }
+
+  getByStudentCourseId(studentId, courseId){
+    return this.http.get(`${environment.apiURL}/student-courses/sc/${studentId}/${courseId}`);
+  }
 }

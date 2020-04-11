@@ -12,7 +12,7 @@
 
         <!-- STUDENTS -->
         <div class="flexbox-row" *ngFor="let student of students; let index = index">
-            <div class="flexbox-container">
+            <div class="flexbox-container" [ngClass]="{'currentUser': currentUser.id == student.student_id}">
                 <div class="flexbox-cell left">{{student.student_id}}</div>
                 <div class="flexbox-cell right">{{student.points}}</div>
             </div>

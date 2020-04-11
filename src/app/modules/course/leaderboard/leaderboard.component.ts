@@ -13,7 +13,7 @@ import { User } from '@app/core/models/user';
 })
 export class LeaderboardComponent implements OnInit {
 
-  students: any = [];
+  students: any[] = [];
   average;
   courseId;
   currentUser: User;
@@ -28,7 +28,7 @@ export class LeaderboardComponent implements OnInit {
       this.courseId = params.id;
       console.log("param id is: " + params.id);
     })
-    //this.userPayload = decode(this.currentUser.token);
+    //this.userPayload = decode(this.currentUser.token); 
 
     this.fetchStudents(this.courseId);
     this.getAvgStudentPoints(this.courseId, this.currentUser.id);
@@ -37,9 +37,13 @@ export class LeaderboardComponent implements OnInit {
   // Gets students from course ID
   fetchStudents(courseId) {
     console.log("fetching students");
-    this.studentCourseService.getStudentsByCourseId(courseId).subscribe((data) => {
+    this.studentCourseService.getStudentsByCourseId(courseId).subscribe((data: any[]) => {
       this.students = data;
-      console.log(data);
+      this.students.sort((a, b) => {
+        return b.points - a.points;
+      });
+
+      //console.log(this.students);
     });
   }
 

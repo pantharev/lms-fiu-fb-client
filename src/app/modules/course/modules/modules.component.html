@@ -203,7 +203,7 @@
                             </ng-template>
                             <!--<button class="btn btn-primary" (click)="open(contentPdf)">View Pdf {{j + 1}}</button>-->
                             <a [href]="innerpdf.pdf" target="_blank" (click)="openPdfinWindow(innerpdf.rawPdf)" class="btn btn-primary">View Pdf {{j+1}}</a>
-                            <button *ngIf="isAdmin || isInstructor" class="btn btn-danger flexbox-module-options" (click)="deletePDF(innerpdf.pdf_id, j)">Delete Pdf</button>
+                            <button *ngIf="isAdmin || isInstructor" class="btn btn-danger flexbox-module-options" (click)="deletePDF(innerpdf.pdf_id, j, module.module_id)">Delete Pdf</button>
 
                             <!--FORM CONTENT IN MODAL FOR PDF EDIT-->
                             <ng-template #contentPdfUpdate let-modal>
@@ -262,7 +262,7 @@
                                 </div>
                             </ng-template>
                             <button class="btn btn-primary" (click)="open(contentVideo)">Watch Video {{j + 1}}</button>
-                            <button *ngIf="isAdmin || isInstructor" class="btn btn-danger flexbox-module-options" (click)="deleteVideo(innerlink.video_id, j)">Delete Video</button>
+                            <button *ngIf="isAdmin || isInstructor" class="btn btn-danger flexbox-module-options" (click)="deleteVideo(innerlink.video_id, j, module.module_id)">Delete Video</button>
 
                             <!--FORM CONTENT IN MODAL FOR VIDEO EDIT-->
                             <ng-template #contentVideoUpdate let-modal>
@@ -294,7 +294,7 @@
                                             Invalid Youtube Link
                                         </div>
                                     
-                                        <button type="submit" (click)="updateVideo(linkInput.value, innerlink.video_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Update Video</button>
+                                        <button type="submit" (click)="updateVideo(linkInput.value, innerlink.video_id, module.module_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Update Video</button>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
@@ -331,7 +331,7 @@
                                 </div>
                             </ng-template>
                             <button class="btn btn-primary" (click)="open(contentSurvey)">Take Quiz {{j + 1}}</button>
-                            <button *ngIf="isAdmin || isInstructor" class="btn btn-danger flexbox-module-options" (click)="deleteSurvey(surveyObject.survey_id, j)">Delete Quiz/Exam</button>
+                            <button *ngIf="isAdmin || isInstructor" class="btn btn-danger flexbox-module-options" (click)="deleteSurvey(surveyObject.survey_id, j, module.module_id)">Delete Quiz/Exam</button>
 
                             <!--FORM CONTENT IN MODAL FOR QUIZ EDIT-->
                             <ng-template #contentSurveyUpdate let-modal>
@@ -371,7 +371,7 @@
                                             Invalid Qualtrics Link
                                         </div>
                                     
-                                        <button type="submit" (click)="updateSurvey(name.value, link.value, surveyObject.survey_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Update Quiz/Exam</button>
+                                        <button type="submit" (click)="updateSurvey(name.value, link.value, surveyObject.survey_id, module.module_id)" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Update Quiz/Exam</button>
                                     </form>
                                 </div>
                                 <div class="modal-footer">

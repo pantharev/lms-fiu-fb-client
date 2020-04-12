@@ -37,7 +37,7 @@ export class ModulesComponent implements OnInit {
   moduleLocked: Boolean[] = [];
 
   linksFromDB: string[] = new Array();
-  links: string[] = new Array();
+  links: any[] = new Array();
   safeLinks = new Map<number, Object[]>();
 
   pdfsFromDB: Blob[] = new Array();
@@ -149,6 +149,11 @@ export class ModulesComponent implements OnInit {
     //clearTimeout(this.waitForProgressBarTimeout);
   }
 
+  redirectTo(uri: string){
+    this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+    this.router.navigate([uri]));
+ }
+
   // BEGIN UTILITY FUNCTIONS
 
   waitForProgressBar(){
@@ -244,6 +249,32 @@ export class ModulesComponent implements OnInit {
     })
   }
 
+  updateVideoUrlObj(videoObject: any, moduleId: number){
+        let len: number = videoObject.link.length;
+        let id;
+        if(len >= 43){
+          id = videoObject.link.substring(32, 43);
+        }
+        else if(len == 28){
+          id = videoObject.link.substring(17, 28)
+        }
+        let videoUrl: SafeResourceUrl;
+        let url: string;
+        url = 'https://www.youtube.com/embed/' + id;
+        videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+        let cleanVideoObject = {
+          videoUrl: videoUrl,
+          video_id: videoObject.video_id,
+          url: videoObject.link
+        }
+        if(this.safeLinks.get(moduleId)){
+          this.safeLinks.get(moduleId).push(cleanVideoObject);
+        }
+        else {
+          this.safeLinks.set(moduleId, [cleanVideoObject]);
+        }
+  }
+
   pushPDFsToArray(pdfsFromDB: any[], pdfs: any[]) {
     pdfsFromDB.forEach((val) => {
       //console.log("val : " + i + " " + JSON.stringify(val));
@@ -294,6 +325,26 @@ export class ModulesComponent implements OnInit {
     })
   }
 
+  updatePdfDataObj(pdfObject, moduleId){
+    let cleanPDF: SafeResourceUrl;
+    let cleanPdfObject = {};
+        
+    cleanPDF = this.sanitizer.bypassSecurityTrustResourceUrl(pdfObject.pdf);
+
+    cleanPdfObject = {
+      pdf_id: pdfObject.pdf_id,
+      pdf: cleanPDF,
+      rawPdf: pdfObject.pdf
+    }
+
+    if(this.safePdfs.get(moduleId)){
+      this.safePdfs.get(moduleId).push(cleanPdfObject);
+    } 
+    else {
+      this.safePdfs.set(moduleId, [cleanPdfObject]);
+    }
+  }
+
   pushSurveysToArray(surveysFromDB: any[], surveys: any[]){
     surveysFromDB.forEach((survey) => {
       let surveyObject = {
@@ -337,6 +388,33 @@ export class ModulesComponent implements OnInit {
         });
       }
     })
+  }
+
+  updateSurveyUrlObj(surveyObject: any, moduleId){
+    let surveyUrl: SafeResourceUrl;
+    let surveyWithEmailUrl = surveyObject.link;
+
+    this.courseIdPromise.then((id) => {
+      let courseId = parseInt(id, 10);
+      console.log(courseId);
+
+      surveyWithEmailUrl = surveyObject.link + '?email=' + this.currentUser.email + '&course=' + courseId;
+      //console.log(surveyWithEmailUrl);
+      surveyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(surveyWithEmailUrl);
+      let cleanSurveyObject = {
+        surveyUrl: surveyUrl,
+        survey_id: surveyObject.survey_id,
+        name: surveyObject.name,
+        url: surveyObject.link
+      }
+
+      if(this.safeSurveys.get(moduleId)){
+        this.safeSurveys.get(moduleId).push(cleanSurveyObject);
+      }
+      else {
+        this.safeSurveys.set(moduleId, [cleanSurveyObject]);
+      }  
+    });
   }
       
   open(content) {
@@ -485,14 +563,28 @@ export class ModulesComponent implements OnInit {
       return;
     }
 
-    this.videoService.addVideo(link, moduleId).subscribe((data) => {
-      alert("Added video");
+    this.videoService.addVideo(link, moduleId).subscribe((video: any) => {
+      //alert(JSON.stringify(video));
+      let videoObject = {
+        link: video.link, 
+        module_id: video.module_id, 
+        video_id: video.id
+      };
+      this.modalService.dismissAll();
+      this.videoForm.get('link').setValue('');
+
+      //this.links.push(videoObject);
+      console.log(this.links.length);
+      this.updateVideoUrlObj(videoObject, video.module_id);
+      console.log("added new video");
+      /*this.modalService.dismissAll();
+      this.redirectTo(`/courses/${this.courseId}/modules`);*/
     }, (error) => {
       this.error = error;
     })
   }
 
-  updateVideo(link, videoId) {
+  updateVideo(link, videoId, moduleId) {
     this.submitted = true;
 
     if(this.updateVideoForm.invalid){
@@ -505,17 +597,63 @@ export class ModulesComponent implements OnInit {
     }
 
     //console.log("link: " + link + " " + "videoId: " + videoId);
-    this.videoService.updateVideo(link, videoId).subscribe(() => {
-      alert("Updated video");
+    this.videoService.updateVideo(link, videoId).subscribe((res: any) => {
+      //alert("Updated video");
+      console.log(JSON.stringify(res));
+      let videoObject = {
+        link: res.link, 
+        module_id: moduleId, 
+        video_id: res.id
+      };
+      this.modalService.dismissAll();
+      this.updateVideoForm.get('linkInput').setValue('');
+
+      //first splice from array
+      this.links.forEach((video: any, i, arr) => {
+        if(video.video_id == videoId){
+          console.log("found vid id: " + videoId + " at location: " + i);
+          this.links.splice(i, 1);
+          console.log(this.links);
+        }
+      })
+      console.log(this.safeLinks);
+      this.safeLinks.get(moduleId).forEach((video: any, i) => {
+        if(video.video_id == videoId){
+          console.log("found safevid id: " + videoId + " at location: " + i);
+          this.safeLinks.get(moduleId).splice(i, 1);
+          console.log(this.safeLinks);
+        }
+      })
+      //then add to array
+      this.updateVideoUrlObj(videoObject, moduleId);
+      console.log("Updated video");
     })
   }
 
-  deleteVideo(videoId, videoNumber: number) {
+  deleteVideo(videoId, videoNumber: number, moduleId) {
     //console.log("Delete video: " + videoId);
     let r = confirm("Delete video " + (videoNumber + 1) + ": Are you sure?");
     if(r){
-      this.videoService.deleteVideo(videoId).subscribe(() => {
-        alert("Deleted video");
+      this.videoService.deleteVideo(videoId).subscribe((data) => {
+        //this.redirectTo(`/courses/${this.courseId}/modules`);
+        console.log(this.links);
+        this.links.forEach((video: any, i, arr) => {
+          if(video.video_id == videoId){
+            console.log("found vid id: " + videoId + " at location: " + i);
+            this.links.splice(i, 1);
+            console.log(this.links);
+          }
+        })
+        console.log(this.safeLinks);
+        this.safeLinks.get(moduleId).forEach((video: any, i) => {
+          if(video.video_id == videoId){
+            console.log("found safevid id: " + videoId + " at location: " + i);
+            this.safeLinks.get(moduleId).splice(i, 1);
+            console.log(this.safeLinks);
+          }
+        })
+        //this.updateVideoUrl(this.links, moduleId);
+        console.log("deleted video");
       })
     }
   }
@@ -597,8 +735,19 @@ export class ModulesComponent implements OnInit {
 
 
     //console.log(formData.getAll('fileKey'));
-    this.pdfService.addPDF(pdfUrl, moduleId).subscribe(
-      (res) => { console.log(res); alert("Added PDF!"); },
+    this.pdfService.addPDF(pdfUrl, moduleId).subscribe((res) => { 
+        //console.log(res);
+        //alert(JSON.stringify(res));
+        let pdfObject = {
+          pdf_id: res.id,
+          pdf: res.pdf,
+          module_id: res.module_id
+        }
+        this.modalService.dismissAll();
+        this.pdfForm.get('pdf').setValue('');
+
+        this.updatePdfDataObj(pdfObject, moduleId);
+       },
       (err) => { console.log(err); this.error = err; }
     );
   }
@@ -643,17 +792,60 @@ export class ModulesComponent implements OnInit {
     formData.append('fileKey', this.updatePdfForm.get('pdf').value);
     formData.append('fileKey', moduleId);*/
 
-    this.pdfService.updatePDF(pdfUrl, pdfId).subscribe(() => {
-      alert("Updated pdf");
+    this.pdfService.updatePDF(pdfUrl, pdfId).subscribe((res: any) => {
+      //alert("Updated pdf");
+      let pdfObject = {
+        pdf_id: res.id,
+        pdf: res.pdf,
+        module_id: moduleId
+      }
+      this.modalService.dismissAll();
+      this.updatePdfForm.get('pdf').setValue('');
+
+      //first splice from arrays old value
+      this.pdfs.forEach((pdf: any, i, arr) => {
+        if(pdf.pdf_id == pdfId){
+          console.log("found pdf id: " + pdfId + " at location: " + i);
+          this.pdfs.splice(i, 1);
+          console.log(this.pdfs);
+        }
+      })
+      console.log(this.safePdfs);
+      this.safePdfs.get(moduleId).forEach((pdf: any, i) => {
+        if(pdf.pdf_id == pdfId){
+          console.log("found safepdf id: " + pdfId + " at location: " + i);
+          this.safePdfs.get(moduleId).splice(i, 1);
+          console.log(this.safePdfs);
+        }
+      })
+
+      //then add to arrays the updated value
+      this.updatePdfDataObj(pdfObject, moduleId);
+      console.log("Updated pdf");
     });
   }
 
-  deletePDF(pdfId, pdfNumber: number) {
+  deletePDF(pdfId, pdfNumber: number, moduleId) {
     //console.log("PDF ID: " + pdfId);
     let r = confirm("Delete PDF " + (pdfNumber + 1) + ": Are you sure?");
     if(r){
       this.pdfService.deletePDF(pdfId).subscribe(() => {
-        alert("Deleted pdf");
+        //alert("Deleted pdf");
+        this.pdfs.forEach((pdf: any, i, arr) => {
+          if(pdf.pdf_id == pdfId){
+            console.log("found pdf id: " + pdfId + " at location: " + i);
+            this.pdfs.splice(i, 1);
+            console.log(this.pdfs);
+          }
+        })
+        console.log(this.safePdfs);
+        this.safePdfs.get(moduleId).forEach((pdf: any, i) => {
+          if(pdf.pdf_id == pdfId){
+            console.log("found safepdf id: " + pdfId + " at location: " + i);
+            this.safePdfs.get(moduleId).splice(i, 1);
+            console.log(this.safePdfs);
+          }
+        })
       })
     }
   }
@@ -695,8 +887,21 @@ export class ModulesComponent implements OnInit {
       return;
     }
 
-    this.surveyService.addSurvey(name, link, moduleId).subscribe(() => {
-      alert("Added survey");
+    this.surveyService.addSurvey(name, link, moduleId).subscribe((res: any) => {
+      //alert("Added survey");
+      let surveyObject = {
+        name: res.name, 
+        link: res.link,
+        module_id: res.module_id,
+        survey_id: res.id
+      };
+      this.modalService.dismissAll();
+      this.surveyForm.get('name').setValue('');
+      this.surveyForm.get('link').setValue('');
+
+      console.log(this.surveys.length);
+      this.updateSurveyUrlObj(surveyObject, moduleId);
+      console.log("added new survey");
     })
   }
 
@@ -727,7 +932,7 @@ export class ModulesComponent implements OnInit {
     })
   }
 
-  updateSurvey(name, link, surveyId) {
+  updateSurvey(name, link, surveyId, moduleId) {
     this.submitted = true;
 
     if(this.updateSurveyForm.invalid){
@@ -740,18 +945,63 @@ export class ModulesComponent implements OnInit {
     }
 
     //console.log("link: " + link + " " + "videoId: " + videoId);
-    this.surveyService.updateSurvey(name, link, surveyId).subscribe(() => {
-      alert("Updated Quiz/Exam");
+    this.surveyService.updateSurvey(name, link, surveyId).subscribe((res: any) => {
+      //alert("Updated Quiz/Exam");
+      let surveyObject = {
+        name: res.name, 
+        link: res.link,
+        module_id: moduleId,
+        survey_id: res.id
+      };
+      this.modalService.dismissAll();
+      this.updateSurveyForm.get('name').setValue('');
+      this.updateSurveyForm.get('link').setValue('');
+
+      //first delete old surveys
+      this.surveys.forEach((survey: any, i, arr) => {
+        if(survey.survey_id == surveyId){
+          console.log("found survey id: " + surveyId + " at location: " + i);
+          this.surveys.splice(i, 1);
+          console.log(this.surveys);
+        }
+      })
+      console.log(this.safeSurveys);
+      this.safeSurveys.get(moduleId).forEach((survey: any, i) => {
+        if(survey.survey_id == surveyId){
+          console.log("found safesurvey id: " + surveyId + " at location: " + i);
+          this.safeSurveys.get(moduleId).splice(i, 1);
+          console.log(this.safeSurveys);
+        }
+      })
+      //then add updated survey
+      this.updateSurveyUrlObj(surveyObject, moduleId);
+      console.log("Updated survey(Quiz)");
     })
   }
 
-  deleteSurvey(surveyId, surveyNumber: number) {
+  deleteSurvey(surveyId, surveyNumber: number, moduleId) {
     //console.log("Delete video: " + videoId);
     let r = confirm("Delete Quiz/Exam " + (surveyNumber + 1) + ": Are you sure?");
     if(r){
       this.surveyService.deleteSurvey(surveyId).subscribe(() => {
-        alert("Deleted Quiz/Exam");
+        //alert("Deleted Quiz/Exam");
+        this.surveys.forEach((survey: any, i, arr) => {
+          if(survey.survey_id == surveyId){
+            console.log("found survey id: " + surveyId + " at location: " + i);
+            this.surveys.splice(i, 1);
+            console.log(this.surveys);
+          }
+        })
+        console.log(this.safeSurveys);
+        this.safeSurveys.get(moduleId).forEach((survey: any, i) => {
+          if(survey.survey_id == surveyId){
+            console.log("found safesurvey id: " + surveyId + " at location: " + i);
+            this.safeSurveys.get(moduleId).splice(i, 1);
+            console.log(this.safeSurveys);
+          }
+        })
       })
+      console.log("deleted survey");
     }
   }
   // END SURVEYS CRUD (QUIZZES/EXAMS)
